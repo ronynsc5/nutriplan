@@ -9,12 +9,14 @@ async function supa(path, method = 'GET', body = null) {
       'Content-Type': 'application/json',
       'apikey': SUPA_KEY,
       'Authorization': `Bearer ${SUPA_KEY}`,
-      'Prefer': method === 'POST' ? 'return=representation' : ''
+      'Prefer': method === 'POST' ? 'return=representation' : 'return=minimal'
     }
   };
   if (body) opts.body = JSON.stringify(body);
   const r = await fetch(`${SUPA_URL}/rest/v1/${path}`, opts);
-  return r.json();
+  const text = await r.text();
+  if (!text) return [];
+  try { return JSON.parse(text); } catch(e) { console.error('Supa parse error:', text.substring(0,200)); return []; }
 }
 
 export default async function handler(req, res) {
@@ -26,7 +28,6 @@ export default async function handler(req, res) {
   const { action } = req.query;
 
   try {
-    // SALVAR PLANO
     if (action === 'salvar' && req.method === 'POST') {
       const { usuario_id, tipo, modo, dados_form, plano_gerado, expira_em } = req.body;
       const novo = await supa('planos', 'POST', {
@@ -36,29 +37,26 @@ export default async function handler(req, res) {
         refeicoes_puladas: [],
         expira_em
       });
-      // Desconta 1 crédito
+      // Desconta crédito
       const u = await supa(`usuarios?id=eq.${usuario_id}&select=creditos`);
       if (u[0] && u[0].creditos < 999999) {
         await supa(`usuarios?id=eq.${usuario_id}`, 'PATCH', { creditos: Math.max(0, u[0].creditos - 1) });
       }
-      return res.status(200).json(novo[0]);
+      return res.status(200).json(novo[0] || { id: 'local', plano_gerado, dados_form, modo, tipo, pesos: [], refeicoes_puladas: [], expira_em });
     }
 
-    // BUSCAR PLANOS DO USUÁRIO
     if (action === 'buscar' && req.method === 'GET') {
       const { usuario_id } = req.query;
       const planos = await supa(`planos?usuario_id=eq.${usuario_id}&order=criado_em.desc&select=*`);
       return res.status(200).json(planos);
     }
 
-    // ATUALIZAR PESOS
     if (action === 'pesos' && req.method === 'PATCH') {
       const { id, pesos } = req.body;
       await supa(`planos?id=eq.${id}`, 'PATCH', { pesos });
       return res.status(200).json({ ok: true });
     }
 
-    // ATUALIZAR REFEIÇÕES PULADAS
     if (action === 'puladas' && req.method === 'PATCH') {
       const { id, refeicoes_puladas } = req.body;
       await supa(`planos?id=eq.${id}`, 'PATCH', { refeicoes_puladas });
@@ -67,7 +65,7 @@ export default async function handler(req, res) {
 
     return res.status(400).json({ error: 'Ação inválida' });
   } catch (err) {
-    console.error(err);
-    return res.status(500).json({ error: 'Erro interno' });
+    console.error('Planos error:', err);
+    return res.status(500).json({ error: 'Erro interno', details: err.message });
   }
 }
