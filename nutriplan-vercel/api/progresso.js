@@ -28,8 +28,13 @@ export default async function handler(req, res) {
   try {
     // SALVAR PROGRESSO
     if (action === 'salvar' && req.method === 'POST') {
-      const { usuario_id, tipo, conteudo, publico } = req.body;
-      const novo = await supa('progresso', 'POST', { usuario_id, tipo, conteudo, publico });
+      const { usuario_id, tipo, conteudo, publico, foto_url, peso, nota, frase_motivacional, foto_antes } = req.body;
+      const novo = await supa('progresso', 'POST', {
+        usuario_id, tipo, conteudo, publico,
+        foto_url: foto_url || null,
+        peso: peso || null,
+        nota: nota || null
+      });
       return res.status(200).json(novo[0]);
     }
 
