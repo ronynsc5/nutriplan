@@ -7,6 +7,9 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="NutriPlan">
+<meta property="og:title" content="NutriPlan — MFCT Estúdio">
+<meta property="og:description" content="Plano alimentar com IA + Instagram Fitness">
+<meta property="og:image" content="/img-saudavel.png">
 <title>NutriPlan — MFCT Estúdio</title>
 <link rel="manifest" href="/manifest.json">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500;600&family=Barlow+Condensed:wght@700;900&display=swap" rel="stylesheet">
@@ -17,8 +20,6 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--texto);min-height:100vh;overflow-x:hidden;padding-bottom:var(--bottom-h);}
-
-/* NAV */
 nav{position:fixed;top:0;left:0;right:0;z-index:200;background:var(--card);backdrop-filter:blur(16px);border-bottom:1px solid var(--cinza-cla);padding:0 1rem;display:flex;align-items:center;justify-content:space-between;height:var(--nav-h);}
 .logo{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--preto);display:flex;align-items:baseline;gap:6px;}
 .logo-sub{font-size:0.55rem;color:var(--cinza-med);letter-spacing:2px;text-transform:uppercase;}
@@ -26,8 +27,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:var(--card);backd
 .nav-btn{background:var(--preto);color:var(--card);border:none;border-radius:50px;padding:7px 14px;font-family:'DM Sans',sans-serif;font-size:0.78rem;font-weight:500;cursor:pointer;}
 .nav-btn.sec{background:transparent;color:var(--preto);border:1.5px solid var(--cinza-cla);}
 .btn-tema{background:none;border:none;font-size:1.2rem;cursor:pointer;padding:4px;}
-
-/* BOTTOM NAV */
 .bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:200;background:var(--card);border-top:1px solid var(--cinza-cla);height:var(--bottom-h);display:none;align-items:center;justify-content:space-around;padding-bottom:env(safe-area-inset-bottom);}
 .bottom-nav.show{display:flex;}
 .bnav-item{display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;padding:5px 10px;border-radius:10px;background:none;border:none;font-family:'DM Sans',sans-serif;min-width:52px;}
@@ -35,18 +34,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:var(--card);backd
 .bnav-item .label{font-size:0.56rem;color:var(--cinza-med);font-weight:500;}
 .bnav-item.active .label{color:var(--preto);font-weight:700;}
 .bnav-item.active .icon{transform:scale(1.1);}
-
-/* TELAS */
 .tela{display:none;padding-top:var(--nav-h);min-height:100vh;}
 .tela.ativa{display:block;}
 #tela-hero{display:none;flex-direction:column;min-height:100vh;padding-top:var(--nav-h);}
 #tela-hero.ativa{display:flex;}
-
-/* HERO */
 .hero-bg{background:var(--preto);color:var(--card);padding:2rem 1.2rem 2.5rem;text-align:center;position:relative;overflow:hidden;}
 .hero-bg::after{content:'';position:absolute;bottom:-20px;left:0;right:0;height:40px;background:var(--bg);border-radius:50% 50% 0 0;}
-.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);border-radius:50px;padding:5px 14px;font-size:0.7rem;font-weight:500;margin-bottom:1.2rem;color:rgba(255,255,255,0.9);}
-.hero-badge span{width:6px;height:6px;border-radius:50%;background:#fff;display:inline-block;}
 .hero-h1{font-family:'Playfair Display',serif;font-size:clamp(1.7rem,6vw,2.6rem);font-weight:700;line-height:1.2;margin-bottom:0.8rem;color:#fff;}
 .hero-h1 em{font-style:normal;border-bottom:2px solid rgba(255,255,255,0.5);}
 .hero-sub{font-size:0.85rem;color:rgba(255,255,255,0.65);line-height:1.6;margin-bottom:1.5rem;}
@@ -60,115 +53,21 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:var(--card);backd
 .stat-label{font-size:0.62rem;color:var(--cinza-med);margin-top:2px;}
 #btn-instalar{display:none;width:calc(100% - 2rem);margin:1rem auto;background:var(--preto);color:var(--card);border:none;border-radius:var(--radius);padding:13px;font-family:'DM Sans',sans-serif;font-size:0.86rem;font-weight:600;cursor:pointer;align-items:center;justify-content:center;gap:8px;}
 #btn-instalar.show{display:flex;}
-
-/* PERFIL */
-#tela-perfil{background:var(--bg);}
-.perfil-hero{background:var(--card);border-bottom:1px solid var(--cinza-cla);padding:1.5rem 1rem 1rem;}
-.perfil-top{display:flex;align-items:center;gap:1rem;margin-bottom:1rem;}
-.perfil-avatar{width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid var(--preto);cursor:pointer;background:var(--cinza-bg);display:flex;align-items:center;justify-content:center;font-size:2rem;flex-shrink:0;}
-.perfil-avatar img{width:100%;height:100%;border-radius:50%;object-fit:cover;}
-.perfil-info{flex:1;}
-.perfil-nome{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:var(--preto);}
-.perfil-modo{font-size:0.72rem;color:var(--cinza-med);margin-top:2px;}
-.perfil-stats{display:flex;gap:1.5rem;margin-top:0.5rem;}
-.pstat{text-align:center;}
-.pstat-num{font-size:1rem;font-weight:700;color:var(--preto);}
-.pstat-label{font-size:0.62rem;color:var(--cinza-med);}
-.perfil-bio{font-size:0.82rem;color:var(--cinza-med);margin-bottom:0.8rem;line-height:1.5;}
-.perfil-cred-pill{display:inline-flex;align-items:center;gap:5px;background:var(--cinza-bg);border:1px solid var(--cinza-cla);border-radius:50px;padding:4px 12px;font-size:0.72rem;color:var(--cinza-med);}
-.btn-editar-perfil{background:var(--cinza-bg);color:var(--preto);border:1px solid var(--cinza-cla);border-radius:50px;padding:7px 18px;font-size:0.78rem;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;width:100%;margin-bottom:0.8rem;}
-
-/* GRÁFICO */
-.grafico-card{background:var(--card);border-radius:var(--radius);padding:1.1rem;margin:0.8rem 1rem;box-shadow:var(--sombra);}
-.grafico-card h3{font-family:'Playfair Display',serif;font-size:0.92rem;color:var(--preto);margin-bottom:0.8rem;}
-.grafico-wrap{position:relative;height:120px;}
-canvas#grafico-peso{width:100%;height:100%;}
-.grafico-empty{text-align:center;padding:2rem 0;font-size:0.78rem;color:var(--cinza-med);}
-
-/* GRID DE POSTS */
-.posts-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin:0 1rem;}
-.post-thumb{aspect-ratio:1;background:var(--cinza-bg);border-radius:4px;overflow:hidden;cursor:pointer;position:relative;}
-.post-thumb img{width:100%;height:100%;object-fit:cover;}
-.post-thumb-empty{display:flex;align-items:center;justify-content:center;font-size:1.5rem;}
-.post-thumb-info{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,0.7));padding:4px 6px;font-size:0.6rem;color:#fff;font-weight:600;}
-
-/* FEED */
-#tela-feed{background:var(--bg);}
-.feed-header{background:var(--card);padding:1rem;border-bottom:1px solid var(--cinza-cla);display:flex;align-items:center;justify-content:space-between;}
-.feed-header h2{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--preto);}
-.feed-post{background:var(--card);margin-bottom:0.6rem;box-shadow:var(--sombra);}
-.feed-post-header{display:flex;align-items:center;gap:0.7rem;padding:0.8rem 1rem 0.6rem;}
-.feed-post-avatar{width:36px;height:36px;border-radius:50%;background:var(--cinza-bg);overflow:hidden;flex-shrink:0;}
-.feed-post-avatar img{width:100%;height:100%;object-fit:cover;}
-.feed-post-user{font-weight:700;font-size:0.82rem;color:var(--preto);}
-.feed-post-data{font-size:0.64rem;color:var(--cinza-med);}
-.feed-post-img{width:100%;aspect-ratio:1;object-fit:cover;display:block;}
-.feed-post-img-placeholder{width:100%;aspect-ratio:1;background:var(--cinza-bg);display:flex;align-items:center;justify-content:center;font-size:3rem;}
-.feed-post-body{padding:0.8rem 1rem;}
-.feed-post-peso{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--preto);margin-bottom:0.3rem;}
-.feed-post-nota{font-size:0.82rem;color:var(--texto);line-height:1.5;margin-bottom:0.5rem;}
-.feed-post-tags{display:flex;gap:5px;flex-wrap:wrap;}
-.feed-tag{font-size:0.68rem;color:var(--cinza-med);background:var(--cinza-bg);border-radius:50px;padding:2px 8px;}
-.feed-post-actions{display:flex;gap:1rem;padding:0 1rem 0.8rem;}
-.feed-action-btn{background:none;border:none;font-size:0.82rem;color:var(--cinza-med);cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:4px;}
-
-/* ANTES/DEPOIS */
-.antes-depois-card{background:var(--card);border-radius:var(--radius);margin:0.8rem 1rem;box-shadow:var(--sombra);overflow:hidden;}
-.ad-header{padding:0.8rem 1rem;display:flex;align-items:center;justify-content:space-between;}
-.ad-header h3{font-family:'Playfair Display',serif;font-size:0.9rem;color:var(--preto);}
-.ad-comparador{position:relative;aspect-ratio:1;overflow:hidden;user-select:none;}
-.ad-img-antes{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
-.ad-img-depois{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;clip-path:inset(0 50% 0 0);}
-.ad-slider{position:absolute;top:0;bottom:0;left:50%;width:3px;background:#fff;cursor:ew-resize;z-index:10;}
-.ad-slider::after{content:'⟺';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:0.7rem;box-shadow:0 2px 8px rgba(0,0,0,0.3);}
-.ad-labels{display:flex;justify-content:space-between;padding:0.5rem 1rem;font-size:0.7rem;color:var(--cinza-med);}
-.ad-selecionar{display:flex;gap:0.5rem;padding:0 1rem 1rem;}
-.ad-sel-btn{flex:1;background:var(--cinza-bg);border:1px solid var(--cinza-cla);border-radius:var(--radius-sm);padding:0.5rem;font-size:0.74rem;cursor:pointer;font-family:'DM Sans',sans-serif;color:var(--texto);text-align:center;}
-.ad-sel-btn.tem-foto{border-color:var(--preto);}
-
-/* PROGRESSO */
-#tela-progresso{background:var(--bg);}
-.prog-header{background:var(--card);padding:1rem;border-bottom:1px solid var(--cinza-cla);}
-.prog-header h2{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--preto);margin-bottom:0.8rem;}
-.prog-form-card{background:var(--card);margin:0.8rem 1rem;border-radius:var(--radius);padding:1.2rem;box-shadow:var(--sombra);}
-.prog-form-card h3{font-family:'Playfair Display',serif;font-size:0.9rem;color:var(--preto);margin-bottom:0.8rem;}
-.foto-upload-area{border:2px dashed var(--cinza-cla);border-radius:var(--radius-sm);padding:1.5rem;text-align:center;cursor:pointer;transition:all 0.2s;margin-bottom:0.8rem;position:relative;overflow:hidden;}
-.foto-upload-area:hover{border-color:var(--preto);}
-.foto-upload-area.tem-foto{border-color:var(--preto);padding:0;}
-.foto-upload-area img{width:100%;border-radius:var(--radius-sm);display:block;}
-.foto-upload-area input{position:absolute;inset:0;opacity:0;cursor:pointer;}
-.foto-upload-icon{font-size:2rem;margin-bottom:0.4rem;}
-.foto-upload-txt{font-size:0.78rem;color:var(--cinza-med);}
-.pub-toggle{display:flex;align-items:center;gap:8px;font-size:0.76rem;color:var(--cinza-med);margin-bottom:0.8rem;}
-.pub-toggle input{width:auto;accent-color:var(--preto);}
-.frase-input{font-style:italic;}
-
-/* PLANO */
-#tela-plano{background:var(--bg);}
-.plano-ativo-grande{background:var(--card);margin:0.8rem 1rem;border-radius:var(--radius);overflow:hidden;box-shadow:var(--sombra);}
-.plano-ativo-topo{background:var(--preto);color:#fff;padding:1rem;}
-.plano-ativo-topo h2{font-family:'Playfair Display',serif;font-size:1.1rem;}
-.plano-expirado-msg{text-align:center;padding:3rem 1.5rem;background:var(--card);margin:0.8rem 1rem;border-radius:var(--radius);box-shadow:var(--sombra);}
-
-/* MODO */
-#tela-modo{background:var(--bg);}
-.modo-header{padding:1.2rem 1rem 0.8rem;text-align:center;}
-.modo-title{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:var(--preto);margin-bottom:0.3rem;}
-.modo-sub{font-size:0.82rem;color:var(--cinza-med);}
-.modos-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;padding:0 1rem 1rem;}
-@media(max-width:360px){.modos-grid{grid-template-columns:1fr;}}
-.modo-card{position:relative;border-radius:var(--radius);overflow:hidden;cursor:pointer;aspect-ratio:3/4;transition:transform 0.2s;border:3px solid transparent;}
-.modo-card:active{transform:scale(0.97);}
-.modo-card.selected{border-color:#fff;box-shadow:0 0 0 3px var(--preto);}
-.modo-card img{width:100%;height:100%;object-fit:cover;display:block;}
-.modo-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.8) 0%,transparent 60%);display:flex;flex-direction:column;justify-content:flex-end;padding:0.9rem;}
-.modo-tag{font-size:0.58rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.6);margin-bottom:3px;}
-.modo-nome{font-family:'Barlow Condensed',sans-serif;font-size:1.15rem;font-weight:900;color:#fff;line-height:1.1;text-transform:uppercase;}
-.modo-desc{font-size:0.67rem;color:rgba(255,255,255,0.72);margin-top:3px;line-height:1.4;}
-.modo-check{position:absolute;top:10px;right:10px;width:24px;height:24px;border-radius:50%;background:var(--preto);color:#fff;display:none;align-items:center;justify-content:center;font-size:0.72rem;font-weight:700;border:2px solid #fff;}
-.modo-card.selected .modo-check{display:flex;}
-.modo-footer{padding:0 1rem 1.5rem;}
-
+.fg{display:flex;flex-direction:column;gap:5px;margin-bottom:0.8rem;}
+label{font-size:0.75rem;font-weight:600;color:var(--preto);}
+input,select,textarea{border:1.5px solid var(--cinza-cla);border-radius:var(--radius-sm);padding:11px 13px;font-size:0.9rem;font-family:'DM Sans',sans-serif;color:var(--texto);background:var(--bg);outline:none;width:100%;-webkit-appearance:none;}
+input:focus,select:focus,textarea:focus{border-color:var(--preto);background:var(--card);}
+textarea{resize:vertical;min-height:68px;}
+.btn-full{width:100%;background:var(--preto);color:var(--card);border:none;border-radius:50px;padding:13px;font-size:0.93rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:4px;}
+.btn-full2{width:100%;background:transparent;color:var(--preto);border:1.5px solid var(--cinza-cla);border-radius:50px;padding:12px;font-size:0.88rem;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:6px;}
+.btn-p{background:var(--preto);color:var(--card);border:none;border-radius:50px;padding:12px 24px;font-size:0.88rem;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.btn-o{background:transparent;color:var(--preto);border:1.5px solid var(--cinza-cla);border-radius:50px;padding:11px 24px;font-size:0.88rem;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.divider{text-align:center;font-size:0.7rem;color:var(--cinza-med);margin:0.7rem 0;position:relative;}
+.divider::before,.divider::after{content:'';position:absolute;top:50%;width:40%;height:1px;background:var(--cinza-cla);}
+.divider::before{left:0;}.divider::after{right:0;}
+.cupom-row{display:flex;gap:6px;}
+.cupom-row input{flex:1;}
+.btn-cupom{background:var(--preto);color:var(--card);border:none;border-radius:var(--radius-sm);padding:11px 13px;font-size:0.78rem;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap;}
 /* AUTH */
 #tela-auth{background:var(--bg);}
 .auth-card{background:var(--card);border-radius:var(--radius);padding:2rem 1.4rem;margin:1rem;box-shadow:var(--sombra);}
@@ -178,26 +77,97 @@ canvas#grafico-peso{width:100%;height:100%;}
 .auth-tabs{display:flex;background:var(--cinza-bg);border-radius:50px;padding:3px;margin-bottom:1.2rem;}
 .auth-tab{flex:1;background:transparent;border:none;padding:8px;font-size:0.82rem;font-family:'DM Sans',sans-serif;cursor:pointer;color:var(--cinza-med);border-radius:50px;font-weight:500;}
 .auth-tab.active{background:var(--preto);color:var(--card);font-weight:600;}
-.fg{display:flex;flex-direction:column;gap:5px;margin-bottom:0.8rem;}
-label{font-size:0.75rem;font-weight:600;color:var(--preto);}
-input,select,textarea{border:1.5px solid var(--cinza-cla);border-radius:var(--radius-sm);padding:11px 13px;font-size:0.9rem;font-family:'DM Sans',sans-serif;color:var(--texto);background:var(--bg);outline:none;width:100%;-webkit-appearance:none;}
-input:focus,select:focus,textarea:focus{border-color:var(--preto);background:var(--card);}
-textarea{resize:vertical;min-height:68px;}
-.btn-full{width:100%;background:var(--preto);color:var(--card);border:none;border-radius:50px;padding:13px;font-size:0.93rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:4px;}
-.btn-full2{width:100%;background:transparent;color:var(--preto);border:1.5px solid var(--cinza-cla);border-radius:50px;padding:12px;font-size:0.88rem;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:6px;}
-.divider{text-align:center;font-size:0.7rem;color:var(--cinza-med);margin:0.7rem 0;position:relative;}
-.divider::before,.divider::after{content:'';position:absolute;top:50%;width:40%;height:1px;background:var(--cinza-cla);}
-.divider::before{left:0;}.divider::after{right:0;}
-.cupom-row{display:flex;gap:6px;}
-.cupom-row input{flex:1;}
-.btn-cupom{background:var(--preto);color:var(--card);border:none;border-radius:var(--radius-sm);padding:11px 13px;font-size:0.78rem;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap;}
-
-/* PLANOS PAG */
+/* PERFIL */
+#tela-perfil{background:var(--bg);}
+.perfil-hero{background:var(--card);border-bottom:1px solid var(--cinza-cla);padding:1.5rem 1rem 1rem;}
+.perfil-top{display:flex;align-items:center;gap:1rem;margin-bottom:1rem;}
+.perfil-avatar{width:72px;height:72px;border-radius:50%;border:3px solid var(--preto);cursor:pointer;background:var(--cinza-bg);display:flex;align-items:center;justify-content:center;font-size:2rem;flex-shrink:0;overflow:hidden;}
+.perfil-avatar img{width:100%;height:100%;object-fit:cover;}
+.perfil-nome{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:var(--preto);}
+.perfil-modo{font-size:0.72rem;color:var(--cinza-med);margin-top:2px;}
+.perfil-stats{display:flex;gap:1.5rem;margin-top:0.5rem;}
+.pstat-num{font-size:1rem;font-weight:700;color:var(--preto);}
+.pstat-label{font-size:0.62rem;color:var(--cinza-med);}
+.perfil-bio{font-size:0.82rem;color:var(--cinza-med);margin-bottom:0.8rem;line-height:1.5;}
+.perfil-cred-pill{display:inline-flex;align-items:center;gap:5px;background:var(--cinza-bg);border:1px solid var(--cinza-cla);border-radius:50px;padding:4px 12px;font-size:0.72rem;color:var(--cinza-med);}
+.btn-editar-perfil{background:var(--cinza-bg);color:var(--preto);border:1px solid var(--cinza-cla);border-radius:50px;padding:7px 18px;font-size:0.78rem;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;width:100%;margin-top:0.8rem;}
+.grafico-card{background:var(--card);border-radius:var(--radius);padding:1.1rem;margin:0.8rem 1rem;box-shadow:var(--sombra);}
+.grafico-card h3{font-family:'Playfair Display',serif;font-size:0.92rem;color:var(--preto);margin-bottom:0.8rem;}
+.grafico-wrap{position:relative;height:120px;}
+.grafico-empty{text-align:center;padding:2rem 0;font-size:0.78rem;color:var(--cinza-med);}
+.posts-section{padding:0.8rem 1rem 0.5rem;display:flex;align-items:center;justify-content:space-between;}
+.posts-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin:0 1rem;}
+.post-thumb{aspect-ratio:1;background:var(--cinza-bg);border-radius:4px;overflow:hidden;cursor:pointer;position:relative;}
+.post-thumb img{width:100%;height:100%;object-fit:cover;}
+.post-thumb-empty{display:flex;align-items:center;justify-content:center;font-size:1.5rem;}
+.post-thumb-info{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,0.7));padding:4px 6px;font-size:0.6rem;color:#fff;font-weight:600;}
+.post-thumb-del{position:absolute;top:4px;right:4px;background:rgba(220,38,38,0.85);color:#fff;border:none;border-radius:50%;width:22px;height:22px;font-size:0.7rem;cursor:pointer;display:none;align-items:center;justify-content:center;}
+.post-thumb:hover .post-thumb-del{display:flex;}
+/* PRIVADOS */
+.privados-section{padding:0.8rem 1rem 0.5rem;}
+.privados-section h4{font-size:0.8rem;font-weight:600;color:var(--cinza-med);margin-bottom:0.5rem;}
+/* FEED */
+#tela-feed{background:var(--bg);}
+.feed-header{background:var(--card);padding:1rem;border-bottom:1px solid var(--cinza-cla);display:flex;align-items:center;justify-content:space-between;}
+.feed-header h2{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--preto);}
+.feed-post{background:var(--card);margin-bottom:0.6rem;}
+.feed-post-header{display:flex;align-items:center;gap:0.7rem;padding:0.8rem 1rem 0.6rem;}
+.feed-post-avatar{width:36px;height:36px;border-radius:50%;background:var(--cinza-bg);overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.9rem;color:var(--preto);}
+.feed-post-avatar img{width:100%;height:100%;object-fit:cover;}
+.feed-post-user{font-weight:700;font-size:0.82rem;color:var(--preto);}
+.feed-post-data{font-size:0.64rem;color:var(--cinza-med);}
+.feed-post-img{width:100%;aspect-ratio:1;object-fit:cover;display:block;}
+.feed-post-img-placeholder{width:100%;aspect-ratio:1;background:var(--cinza-bg);display:flex;align-items:center;justify-content:center;font-size:3rem;}
+.feed-post-body{padding:0.8rem 1rem;}
+.feed-post-peso{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--preto);margin-bottom:0.3rem;}
+.feed-post-nota{font-size:0.82rem;color:var(--texto);line-height:1.5;margin-bottom:0.5rem;}
+.feed-post-actions{display:flex;gap:1rem;padding:0 1rem 0.5rem;border-top:1px solid var(--cinza-bg);padding-top:0.5rem;}
+.feed-action-btn{background:none;border:none;font-size:0.82rem;color:var(--cinza-med);cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:4px;}
+.feed-action-btn.ativo{color:var(--preto);font-weight:600;}
+/* COMENTÁRIOS */
+.comentarios-section{padding:0 1rem 0.8rem;}
+.comentario-item{display:flex;gap:0.5rem;margin-bottom:0.5rem;align-items:flex-start;}
+.comentario-avatar{width:28px;height:28px;border-radius:50%;background:var(--cinza-bg);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;color:var(--preto);}
+.comentario-body{flex:1;background:var(--cinza-bg);border-radius:var(--radius-sm);padding:0.4rem 0.7rem;}
+.comentario-user{font-size:0.72rem;font-weight:700;color:var(--preto);}
+.comentario-txt{font-size:0.78rem;color:var(--texto);line-height:1.4;}
+.comentario-del{background:none;border:none;color:var(--cinza-med);font-size:0.7rem;cursor:pointer;margin-left:auto;}
+.add-comentario{display:flex;gap:6px;padding:0 1rem 0.8rem;}
+.add-comentario input{flex:1;padding:8px 12px;font-size:0.82rem;}
+.add-comentario button{background:var(--preto);color:var(--card);border:none;border-radius:var(--radius-sm);padding:8px 14px;font-size:0.78rem;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap;}
+/* PROGRESSO */
+#tela-progresso{background:var(--bg);}
+.prog-form-card{background:var(--card);margin:0.8rem 1rem;border-radius:var(--radius);padding:1.2rem;box-shadow:var(--sombra);}
+.prog-form-card h3{font-family:'Playfair Display',serif;font-size:0.9rem;color:var(--preto);margin-bottom:0.8rem;}
+.foto-upload-area{border:2px dashed var(--cinza-cla);border-radius:var(--radius-sm);padding:1.5rem;text-align:center;cursor:pointer;margin-bottom:0.8rem;position:relative;overflow:hidden;}
+.foto-upload-area.tem-foto{border-color:var(--preto);padding:0;}
+.foto-upload-area img{width:100%;border-radius:var(--radius-sm);display:block;}
+.foto-upload-icon{font-size:2rem;margin-bottom:0.4rem;}
+.foto-upload-txt{font-size:0.78rem;color:var(--cinza-med);}
+.pub-toggle{display:flex;align-items:center;gap:8px;font-size:0.76rem;color:var(--cinza-med);margin-bottom:0.8rem;}
+.pub-toggle input{width:auto;accent-color:var(--preto);}
+/* MODO */
+#tela-modo{background:var(--bg);}
+.modo-header{padding:1.2rem 1rem 0.8rem;text-align:center;}
+.modo-title{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:var(--preto);margin-bottom:0.3rem;}
+.modo-sub{font-size:0.82rem;color:var(--cinza-med);}
+.modos-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;padding:0 1rem 1rem;}
+.modo-card{position:relative;border-radius:var(--radius);overflow:hidden;cursor:pointer;aspect-ratio:3/4;border:3px solid transparent;}
+.modo-card.selected{border-color:#fff;box-shadow:0 0 0 3px var(--preto);}
+.modo-card img{width:100%;height:100%;object-fit:cover;display:block;}
+.modo-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.8) 0%,transparent 60%);display:flex;flex-direction:column;justify-content:flex-end;padding:0.9rem;}
+.modo-tag{font-size:0.58rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.6);margin-bottom:3px;}
+.modo-nome{font-family:'Barlow Condensed',sans-serif;font-size:1.15rem;font-weight:900;color:#fff;line-height:1.1;text-transform:uppercase;}
+.modo-desc{font-size:0.67rem;color:rgba(255,255,255,0.72);margin-top:3px;line-height:1.4;}
+.modo-check{position:absolute;top:10px;right:10px;width:24px;height:24px;border-radius:50%;background:var(--preto);color:#fff;display:none;align-items:center;justify-content:center;font-size:0.72rem;font-weight:700;border:2px solid #fff;}
+.modo-card.selected .modo-check{display:flex;}
+.modo-footer{padding:0 1rem 1.5rem;display:flex;gap:0.8rem;}
+/* PLANOS */
 #tela-planos{background:var(--bg);}
-.planos-lista{padding:0 1rem;}
 .sec-header{padding:1.2rem 1rem 0.8rem;text-align:center;}
 .sec-title{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:var(--preto);margin-bottom:0.2rem;}
 .sec-sub{font-size:0.8rem;color:var(--cinza-med);}
+.planos-lista{padding:0 1rem;}
 .plano-card{background:var(--card);border:2px solid var(--cinza-cla);border-radius:var(--radius);padding:1.3rem;margin-bottom:0.8rem;cursor:pointer;position:relative;}
 .plano-card.selected{border-color:var(--preto);}
 .plano-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:0.7rem;}
@@ -213,9 +183,6 @@ textarea{resize:vertical;min-height:68px;}
 .destaque-chip{position:absolute;top:-9px;left:50%;transform:translateX(-50%);background:var(--preto);color:var(--card);border-radius:50px;padding:2px 12px;font-size:0.6rem;font-weight:700;white-space:nowrap;}
 .cred-info-box{background:var(--card);border-radius:var(--radius-sm);padding:0.8rem 1rem;margin:0 1rem 0.8rem;font-size:0.8rem;color:var(--cinza-med);display:none;border:1px solid var(--cinza-cla);}
 .planos-footer{padding:0.8rem 1rem 1.5rem;display:flex;justify-content:space-between;gap:0.8rem;}
-.btn-p{background:var(--preto);color:var(--card);border:none;border-radius:50px;padding:12px 24px;font-size:0.88rem;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;}
-.btn-o{background:transparent;color:var(--preto);border:1.5px solid var(--cinza-cla);border-radius:50px;padding:11px 24px;font-size:0.88rem;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;}
-
 /* FORM */
 #tela-form{background:var(--bg);}
 .form-card{background:var(--card);border-radius:var(--radius);padding:1.4rem 1.1rem;margin:1rem;box-shadow:var(--sombra);}
@@ -238,7 +205,6 @@ input[type=range]{flex:1;accent-color:var(--preto);}
 .ps.active .psl{color:var(--preto);font-weight:600;}
 .pline{height:2px;width:28px;background:var(--cinza-cla);margin:0 2px 14px;flex-shrink:0;}
 .pline.done{background:var(--preto);}
-
 /* PAG */
 #tela-pag{background:var(--bg);}
 .pag-card{background:var(--card);border-radius:var(--radius);padding:1.6rem 1.3rem;margin:1rem;box-shadow:var(--sombra);}
@@ -248,16 +214,18 @@ input[type=range]{flex:1;accent-color:var(--preto);}
 .btn-pagar{width:100%;background:var(--preto);color:var(--card);border:none;border-radius:50px;padding:14px;font-size:0.9rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;margin-bottom:8px;display:flex;align-items:center;justify-content:center;gap:7px;}
 .btn-pagar-sec{background:var(--cinza-bg);color:var(--preto);border:1.5px solid var(--cinza-cla);}
 #cartao-form{display:none;margin-top:0.7rem;}
-
+/* PLANO */
+#tela-plano{background:var(--bg);}
+.plano-expirado-msg{text-align:center;padding:3rem 1.5rem;background:var(--card);margin:0.8rem 1rem;border-radius:var(--radius);box-shadow:var(--sombra);}
 /* ADMIN */
 #tela-admin{background:var(--bg);}
-.admin-hero{background:var(--preto);color:#fff;padding:1.2rem 1rem;margin-bottom:0;}
+.admin-hero{background:var(--preto);color:#fff;padding:1.2rem 1rem;}
 .admin-hero h2{font-family:'Playfair Display',serif;font-size:1.2rem;}
 .admin-tabs-nav{display:flex;background:var(--card);border-bottom:1px solid var(--cinza-cla);overflow-x:auto;}
 .admin-tab-nav{background:none;border:none;padding:10px 16px;font-size:0.8rem;font-family:'DM Sans',sans-serif;cursor:pointer;color:var(--cinza-med);border-bottom:2px solid transparent;white-space:nowrap;font-weight:500;}
 .admin-tab-nav.active{color:var(--preto);border-bottom-color:var(--preto);font-weight:700;}
 .admin-tab-content{display:none;padding:0 1rem;}.admin-tab-content.active{display:block;}
-.admin-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:0.5rem;padding:0.8rem 0;margin-bottom:0;}
+.admin-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:0.5rem;padding:0.8rem 0;}
 .admin-card{background:var(--card);border-radius:var(--radius-sm);padding:0.9rem;box-shadow:var(--sombra);}
 .admin-card h4{font-size:0.64rem;color:var(--cinza-med);text-transform:uppercase;letter-spacing:1px;margin-bottom:0.3rem;}
 .admin-card .big{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;color:var(--preto);}
@@ -271,14 +239,10 @@ input[type=range]{flex:1;accent-color:var(--preto);}
 .adm-table{width:100%;border-collapse:collapse;font-size:0.74rem;}
 .adm-table th{background:var(--cinza-bg);padding:6px 8px;text-align:left;font-weight:600;font-size:0.64rem;text-transform:uppercase;color:var(--cinza-med);}
 .adm-table td{padding:6px 8px;border-bottom:1px solid var(--cinza-bg);color:var(--texto);}
-.badge{border-radius:50%;width:8px;height:8px;display:inline-block;}
-.b-ok{background:#16a34a;}.b-exp{background:#dc2626;}.b-none{background:var(--cinza-med);}
 .badge-txt{border-radius:50px;padding:2px 8px;font-size:0.62rem;font-weight:600;}
-.bt-ok{background:#f0fdf4;color:#16a34a;}.bt-exp{background:#fef2f2;color:#dc2626;}.bt-none{background:var(--cinza-bg);color:var(--cinza-med);}
+.bt-ok{background:#f0fdf4;color:#16a34a;}.bt-exp{background:#fef2f2;color:#dc2626;}
 .cupom-display{background:var(--cinza-bg);border:1.5px dashed var(--cinza-med);border-radius:var(--radius-sm);padding:0.7rem;font-family:monospace;font-size:0.95rem;font-weight:700;text-align:center;letter-spacing:2px;margin:0.7rem 0;display:none;color:var(--preto);}
-/* Card de usuário no admin */
-.adm-user-card{background:var(--card);border-radius:var(--radius);padding:1rem;margin-bottom:0.6rem;box-shadow:var(--sombra);cursor:pointer;transition:all 0.2s;}
-.adm-user-card:hover{transform:translateY(-2px);}
+.adm-user-card{background:var(--card);border-radius:var(--radius);padding:1rem;margin-bottom:0.6rem;box-shadow:var(--sombra);}
 .adm-user-top{display:flex;align-items:center;gap:0.8rem;margin-bottom:0.6rem;}
 .adm-user-avatar{width:42px;height:42px;border-radius:50%;background:var(--cinza-bg);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;}
 .adm-user-nome{font-weight:700;font-size:0.86rem;color:var(--preto);}
@@ -288,27 +252,17 @@ input[type=range]{flex:1;accent-color:var(--preto);}
 .adm-stat-num{font-size:0.9rem;font-weight:700;color:var(--preto);}
 .adm-stat-label{font-size:0.6rem;color:var(--cinza-med);}
 .engajamento-badge{border-radius:50px;padding:3px 10px;font-size:0.68rem;font-weight:700;}
-.eng-alto{background:#f0fdf4;color:#16a34a;}
-.eng-medio{background:#fefce8;color:#ca8a04;}
-.eng-baixo{background:#fef2f2;color:#dc2626;}
+.eng-alto{background:#f0fdf4;color:#16a34a;}.eng-medio{background:#fefce8;color:#ca8a04;}.eng-baixo{background:#fef2f2;color:#dc2626;}
 .adm-user-actions{display:flex;gap:6px;margin-top:0.6rem;}
 .adm-action-btn{background:var(--cinza-bg);border:1px solid var(--cinza-cla);border-radius:50px;padding:5px 12px;font-size:0.72rem;cursor:pointer;font-family:'DM Sans',sans-serif;color:var(--texto);}
 .adm-action-btn.primary{background:var(--preto);color:var(--card);border-color:var(--preto);}
-
 /* MODAL */
 .modal-bg{display:none;position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.6);align-items:flex-end;justify-content:center;}
 .modal-bg.show{display:flex;}
 .modal{background:var(--card);border-radius:var(--radius) var(--radius) 0 0;padding:1.3rem;width:100%;max-height:92vh;overflow-y:auto;}
 .modal-handle{width:36px;height:4px;background:var(--cinza-cla);border-radius:50px;margin:0 auto 1rem;}
 .modal h3{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--preto);margin-bottom:0.5rem;}
-.pix-code{background:var(--cinza-bg);border-radius:var(--radius-sm);padding:0.7rem;font-family:monospace;font-size:0.64rem;word-break:break-all;color:var(--cinza-med);margin-bottom:0.7rem;line-height:1.5;cursor:pointer;}
-
-/* ALERTA / TOAST */
-.alerta{border-radius:var(--radius-sm);padding:0.7rem 0.9rem;margin-bottom:0.6rem;font-size:0.78rem;display:flex;gap:7px;align-items:flex-start;}
-.alerta-w{background:#fefce8;border:1px solid #fde047;color:#713f12;}
-.alerta-i{background:var(--card);border:1px solid var(--cinza-cla);color:var(--cinza-med);box-shadow:var(--sombra);}
-.alerta-s{background:#f0fdf4;border:1px solid #bbf7d0;color:#14532d;}
-.alerta-r{background:#fef2f2;border:1px solid #fecaca;color:#991b1b;}
+.pix-code{background:var(--cinza-bg);border-radius:var(--radius-sm);padding:0.7rem;font-family:monospace;font-size:0.64rem;word-break:break-all;color:var(--cinza-med);margin-bottom:0.7rem;cursor:pointer;}
 #notif-banner{display:none;background:var(--preto);color:#fff;padding:9px 1rem;text-align:center;font-size:0.76rem;position:fixed;bottom:var(--bottom-h);left:0;right:0;z-index:150;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;}
 #notif-banner.show{display:flex;}
 #notif-banner button{background:#fff;color:#000;border:none;border-radius:50px;padding:5px 13px;font-size:0.74rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;}
@@ -321,20 +275,10 @@ input[type=range]{flex:1;accent-color:var(--preto);}
 .load-step.show{opacity:1;}
 #toast{position:fixed;bottom:calc(var(--bottom-h) + 0.8rem);left:50%;transform:translateX(-50%) translateY(80px);background:var(--preto);color:var(--card);border-radius:50px;padding:9px 20px;font-size:0.8rem;transition:transform 0.3s;z-index:500;white-space:nowrap;max-width:90vw;text-align:center;}
 #toast.show{transform:translateX(-50%) translateY(0);}
-/* CARDS GENÉRICOS */
-.card{background:var(--card);border-radius:var(--radius);padding:1.1rem;margin:0.6rem 1rem;box-shadow:var(--sombra);}
-.card h3{font-family:'Playfair Display',serif;font-size:0.92rem;color:var(--preto);margin-bottom:0.6rem;}
 footer{background:#0a0a0a;color:rgba(255,255,255,0.4);text-align:center;padding:1.3rem 1rem;font-size:0.72rem;}
 footer strong{color:#fff;}
 @keyframes spin{to{transform:rotate(360deg);}}
-/* RESPONSIVO PC */
-@media(min-width:768px){
-  body{max-width:480px;margin:0 auto;box-shadow:0 0 40px rgba(0,0,0,0.15);}
-  .bottom-nav{max-width:480px;left:50%;transform:translateX(-50%);}
-  nav{max-width:480px;left:50%;transform:translateX(-50%);}
-  #notif-banner{max-width:480px;left:50%;transform:translateX(-50%);}
-  #toast{bottom:calc(var(--bottom-h) + 1rem);}
-}
+@media(min-width:768px){body{max-width:480px;margin:0 auto;box-shadow:0 0 40px rgba(0,0,0,0.15);}.bottom-nav,.nav,#notif-banner{max-width:480px;left:50%;transform:translateX(-50%);}}
 </style>
 </head>
 <body>
@@ -346,7 +290,6 @@ footer strong{color:#fff;}
     <button class="nav-btn sec" id="nav-sair" onclick="sair()" style="display:none;">Sair</button>
   </div>
 </nav>
-
 <div class="bottom-nav" id="bottom-nav">
   <button class="bnav-item active" id="bn-perfil" onclick="bnav('perfil')"><span class="icon">👤</span><span class="label">Perfil</span></button>
   <button class="bnav-item" id="bn-plano" onclick="bnav('plano')"><span class="icon">🍽️</span><span class="label">Plano</span></button>
@@ -354,34 +297,31 @@ footer strong{color:#fff;}
   <button class="bnav-item" id="bn-feed" onclick="bnav('feed')"><span class="icon">🌍</span><span class="label">Feed</span></button>
   <button class="bnav-item" id="bn-admin" onclick="bnav('admin')" style="display:none;"><span class="icon">⚙️</span><span class="label">Admin</span></button>
 </div>
-
 <!-- HERO -->
 <div id="tela-hero" class="ativa">
   <div class="hero-bg">
-    <div class="hero-badge"><span></span> Instagram Fitness + IA</div>
-    <div class="hero-h1">Sua dieta para <em>resultados reais</em></div>
-    <p class="hero-sub">Plano alimentar com IA, acompanhamento semanal, feed de progresso e antes/depois. Tudo num só app.</p>
+    <div class="hero-h1">Seu <em>Instagram Fitness</em> com IA</div>
+    <p class="hero-sub">Plano alimentar personalizado + feed de progresso + antes/depois. Tudo num só app.</p>
     <div class="hero-btns">
-      <button class="btn-hero-p" onclick="irAuth()">Começar agora →</button>
+      <button class="btn-hero-p" onclick="irAuthCad()">Criar conta grátis →</button>
       <button class="btn-hero-o" onclick="irAuth()">Já tenho conta</button>
     </div>
   </div>
   <div class="hero-stats">
-    <div class="stat-item"><div class="stat-num">+10k</div><div class="stat-label">Planos gerados</div></div>
+    <div class="stat-item"><div class="stat-num">IA</div><div class="stat-label">Plano personalizado</div></div>
     <div class="stat-item"><div class="stat-num">📸</div><div class="stat-label">Antes/Depois</div></div>
     <div class="stat-item"><div class="stat-num">PWA</div><div class="stat-label">Como app</div></div>
   </div>
   <button id="btn-instalar" onclick="instalarApp()">📲 Instalar como aplicativo</button>
 </div>
-
 <!-- AUTH -->
 <div id="tela-auth" class="tela">
   <div class="auth-card">
     <div class="auth-logo"><div class="auth-logo-text">🥗 NutriPlan</div></div>
     <p class="auth-sub">Alta performance do MFCT Estúdio</p>
     <div class="auth-tabs">
-      <button class="auth-tab active" onclick="authTab('login',this)">Entrar</button>
-      <button class="auth-tab" onclick="authTab('cadastro',this)">Criar conta</button>
+      <button class="auth-tab active" id="tab-login" onclick="authTab('login',this)">Entrar</button>
+      <button class="auth-tab" id="tab-cad" onclick="authTab('cadastro',this)">Criar conta</button>
     </div>
     <div id="fl">
       <div class="fg"><label>E-mail</label><input type="email" id="le" placeholder="seu@email.com" autocomplete="email"></div>
@@ -402,102 +342,93 @@ footer strong{color:#fff;}
     </div>
   </div>
 </div>
-
 <!-- PERFIL -->
 <div id="tela-perfil" class="tela">
   <div class="perfil-hero">
     <div class="perfil-top">
       <div class="perfil-avatar" id="perfil-avatar" onclick="editarFotoPerfil()">👤</div>
-      <div class="perfil-info">
+      <div style="flex:1">
         <div class="perfil-nome" id="perfil-nome">—</div>
         <div class="perfil-modo" id="perfil-modo"></div>
         <div class="perfil-stats">
-          <div class="pstat"><div class="pstat-num" id="pstat-posts">0</div><div class="pstat-label">posts</div></div>
-          <div class="pstat"><div class="pstat-num" id="pstat-peso">—</div><div class="pstat-label">kg atual</div></div>
-          <div class="pstat"><div class="pstat-num" id="pstat-perda">—</div><div class="pstat-label">kg mudança</div></div>
+          <div><div class="pstat-num" id="pstat-posts">0</div><div class="pstat-label">posts</div></div>
+          <div><div class="pstat-num" id="pstat-peso">—</div><div class="pstat-label">kg atual</div></div>
+          <div><div class="pstat-num" id="pstat-perda">—</div><div class="pstat-label">variação</div></div>
         </div>
       </div>
     </div>
     <div class="perfil-bio" id="perfil-bio"></div>
     <div class="perfil-cred-pill">💳 <span id="perfil-cred">0 créditos</span></div>
-    <button class="btn-editar-perfil" style="margin-top:0.8rem;" onclick="abrirEditarPerfil()">✏️ Editar perfil</button>
+    <button class="btn-editar-perfil" onclick="abrirEditarPerfil()">✏️ Editar perfil</button>
   </div>
-
-  <!-- Gráfico de evolução -->
   <div class="grafico-card">
     <h3>📊 Evolução de peso</h3>
     <div class="grafico-wrap">
-      <canvas id="grafico-peso"></canvas>
-      <div class="grafico-empty" id="grafico-empty" style="display:none;">Registre seu peso para ver o gráfico</div>
+      <canvas id="grafico-peso" style="width:100%;height:100%;"></canvas>
+      <div class="grafico-empty" id="grafico-empty">Registre seu peso para ver o gráfico</div>
     </div>
   </div>
-
-  <!-- Antes/Depois -->
-  <div class="antes-depois-card" id="ad-card" style="display:none;">
-    <div class="ad-header"><h3>🔄 Comparar antes/depois</h3></div>
-    <div class="ad-comparador" id="ad-comparador">
-      <img class="ad-img-antes" id="ad-antes" src="" alt="Antes">
-      <img class="ad-img-depois" id="ad-depois" src="" alt="Depois">
-      <div class="ad-slider" id="ad-slider"></div>
-    </div>
-    <div class="ad-labels"><span>ANTES</span><span>DEPOIS</span></div>
-    <div class="ad-selecionar">
-      <div class="ad-sel-btn" id="ad-sel-antes" onclick="selecionarFotoAD('antes')">📷 Selecionar ANTES</div>
-      <div class="ad-sel-btn" id="ad-sel-depois" onclick="selecionarFotoAD('depois')">📷 Selecionar DEPOIS</div>
-    </div>
-    <div style="padding:0 1rem 1rem;display:flex;gap:8px;">
-      <textarea id="ad-frase" placeholder="Sua frase motivacional... 💪" style="flex:1;min-height:60px;resize:none;"></textarea>
-      <button class="btn-full" style="width:auto;padding:8px 16px;margin:0;font-size:0.78rem;" onclick="compartilharAD()">Compartilhar</button>
-    </div>
-  </div>
-
-  <!-- Posts do usuário -->
-  <div style="padding:0.8rem 1rem 0.5rem;display:flex;align-items:center;justify-content:space-between;">
-    <span style="font-size:0.82rem;font-weight:600;color:var(--preto);">Meus registros</span>
+  <!-- Posts públicos -->
+  <div class="posts-section">
+    <span style="font-size:0.82rem;font-weight:600;color:var(--preto);">📸 Públicos</span>
     <button onclick="irProgresso()" style="background:none;border:none;font-size:0.78rem;color:var(--cinza-med);cursor:pointer;">+ Adicionar</button>
   </div>
-  <div class="posts-grid" id="posts-grid">
-    <div class="post-thumb post-thumb-empty" style="cursor:default;">📷</div>
+  <div class="posts-grid" id="posts-grid-pub"></div>
+  <!-- Posts privados -->
+  <div class="privados-section" id="privados-section" style="display:none;">
+    <h4>🔒 Privados (só você vê)</h4>
+    <div class="posts-grid" id="posts-grid-priv"></div>
   </div>
   <div style="height:1rem;"></div>
 </div>
-
-<!-- PLANO -->
-<div id="tela-plano" class="tela">
-  <div id="plano-ativo-container" style="padding:0 1rem 1rem;"></div>
-  <div id="plano-expirado" style="display:none;" class="plano-expirado-msg">
-    <div style="font-size:2.5rem;margin-bottom:0.8rem;">⏰</div>
-    <div style="font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:var(--preto);margin-bottom:0.5rem;">Plano expirado</div>
-    <p style="color:var(--cinza-med);margin-bottom:1rem;font-size:0.84rem;">Gere um novo plano para continuar seu progresso.</p>
-    <button class="btn-p" onclick="irModo()">Gerar novo plano →</button>
+<!-- PROGRESSO -->
+<div id="tela-progresso" class="tela">
+  <div style="padding:0.8rem 1rem 0;display:flex;align-items:center;justify-content:space-between;">
+    <span style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--preto);">📸 Novo registro</span>
   </div>
-  <div id="plano-vazio" style="display:none;" class="plano-expirado-msg">
-    <div style="font-size:2.5rem;margin-bottom:0.8rem;">🥗</div>
-    <div style="font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:var(--preto);margin-bottom:0.5rem;">Nenhum plano ainda</div>
-    <p style="color:var(--cinza-med);margin-bottom:1rem;font-size:0.84rem;">Compre um plano para começar.</p>
-    <button class="btn-p" onclick="irModo()">Escolher plano →</button>
+  <div class="prog-form-card">
+    <div class="foto-upload-area" id="foto-area">
+      <input type="file" id="foto-input" accept="image/*" style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;" onchange="previewFoto(this)">
+      <div id="foto-placeholder"><div class="foto-upload-icon">📷</div><div class="foto-upload-txt">Toque para adicionar foto (opcional)</div></div>
+      <img id="foto-preview" style="display:none;width:100%;border-radius:var(--radius-sm);" alt="Preview">
+    </div>
+    <button id="btn-remover-foto" onclick="removerFoto()" style="display:none;background:none;border:none;color:#dc2626;font-size:0.76rem;cursor:pointer;margin-bottom:0.6rem;">✕ Remover foto</button>
+    <div class="fg"><label>⚖️ Peso atual (kg) *</label><input type="number" id="prog-peso" placeholder="74.2" step="0.1" min="30" max="300" inputmode="decimal"></div>
+    <div class="fg"><label>📝 Como você está se sentindo?</label><textarea id="prog-nota" placeholder="Ex: Me sinto mais leve, os jeans estão folgando..."></textarea></div>
+    <div class="fg"><label>💬 Legenda / frase motivacional</label><input type="text" id="prog-frase" placeholder="Ex: Cada dia é uma vitória! 💪"></div>
+    <div class="pub-toggle">
+      <input type="checkbox" id="prog-publico">
+      <label for="prog-publico" style="font-weight:400;">Compartilhar no feed público</label>
+    </div>
+    <button class="btn-full" onclick="salvarProgresso()" id="btn-salvar-prog">Salvar progresso</button>
   </div>
 </div>
-
+<!-- FEED -->
+<div id="tela-feed" class="tela">
+  <div class="feed-header"><h2>🌍 Comunidade</h2><span style="font-size:0.72rem;color:var(--cinza-med);">Inspire e seja inspirado</span></div>
+  <div id="feed-container" style="padding:0.5rem 0;"></div>
+</div>
 <!-- MODO -->
 <div id="tela-modo" class="tela">
   <div class="modo-header"><div class="modo-title">Escolha seu modo</div><p class="modo-sub">Define toda a metodologia do seu plano</p></div>
   <div class="modos-grid">
     <div class="modo-card" id="mc-hardcore" onclick="selecionarModo('hardcore')">
       <div class="modo-check">✓</div>
-      <img src="/img-hardcore.png" alt="Resultado a qualquer custo">
+      <img src="/img-hardcore.png" alt="Hardcore" onerror="this.style.display='none';this.parentElement.style.background='#1a1a1a'">
       <div class="modo-overlay"><div class="modo-tag">Modo extremo</div><div class="modo-nome">Resultado a qualquer custo</div><div class="modo-desc">Déficit agressivo, termogênicos, ciclos, manipulação hídrica.</div></div>
     </div>
     <div class="modo-card" id="mc-saudavel" onclick="selecionarModo('saudavel')">
       <div class="modo-check">✓</div>
-      <img src="/img-saudavel.png" alt="Saudável">
+      <img src="/img-saudavel.png" alt="Saudável" onerror="this.style.display='none';this.parentElement.style.background='#16a34a'">
       <div class="modo-overlay"><div class="modo-tag">Modo equilibrado</div><div class="modo-nome">Se alimente de forma saudável</div><div class="modo-desc">Plano equilibrado, vitaminas, minerais, aeróbico leve.</div></div>
     </div>
   </div>
-  <div class="modo-footer"><button class="btn-full" id="btn-cont-modo" onclick="continuarDoModo()" disabled>Continuar →</button></div>
+  <div class="modo-footer">
+    <button class="btn-o" onclick="irPerfil()">← Voltar</button>
+    <button class="btn-full" id="btn-cont-modo" onclick="continuarDoModo()" disabled style="flex:1;">Continuar →</button>
+  </div>
 </div>
-
-<!-- PLANOS PAG -->
+<!-- PLANOS -->
 <div id="tela-planos" class="tela">
   <div class="sec-header"><div class="sec-title">Escolha seu plano</div><p class="sec-sub">Ambos aplicam o modo selecionado</p></div>
   <div class="planos-lista">
@@ -505,20 +436,19 @@ footer strong{color:#fff;}
       <div class="plano-card-top"><div class="plano-chip">Econômico</div><div class="plano-sel" id="sei-eco">✓</div></div>
       <div class="plano-nome">Plano Base</div>
       <div class="plano-preco">R$ 9,90 <span>/ plano</span></div>
-      <ul class="plano-features"><li>Alimentos simples e baratos</li><li>7 dias de cardápio completo</li><li>Rastreamento semanal de peso</li><li>Notificações 30min antes de comer</li><li>Feed de progresso</li></ul>
+      <ul class="plano-features"><li>Alimentos simples e baratos</li><li>7 dias de cardápio completo</li><li>Rastreamento semanal de peso</li><li>Feed de progresso</li></ul>
     </div>
     <div class="plano-card" id="pc-pre" onclick="selecionarPlano('premium')" style="margin-top:1.3rem;">
       <div class="destaque-chip">⭐ Máximo resultado</div>
       <div class="plano-card-top"><div class="plano-chip">Premium</div><div class="plano-sel" id="sei-pre">✓</div></div>
       <div class="plano-nome">Plano Performance</div>
       <div class="plano-preco">R$ 19,90 <span>/ plano</span></div>
-      <ul class="plano-features"><li>Salmão, quinoa, whey, ovos caipiras</li><li>14 dias + protocolo peri-treino</li><li>Ajuste automático com IA</li><li>Ciclos e termogênicos</li><li>Antes/depois comparador</li></ul>
+      <ul class="plano-features"><li>Salmão, quinoa, whey, ovos caipiras</li><li>14 dias + protocolo peri-treino</li><li>Ajuste automático com IA</li><li>Ciclos e termogênicos</li></ul>
     </div>
   </div>
   <div class="cred-info-box" id="cred-info">💳 Você tem <strong id="cred-count">0</strong> crédito(s). Sem pagamento!</div>
-  <div class="planos-footer"><button class="btn-o" onclick="irPerfil()">← Voltar</button><button class="btn-p" id="btn-cont-plano" onclick="continuarPlano()" disabled>Continuar →</button></div>
+  <div class="planos-footer"><button class="btn-o" onclick="irModo()">← Voltar</button><button class="btn-p" id="btn-cont-plano" onclick="continuarPlano()" disabled>Continuar →</button></div>
 </div>
-
 <!-- FORM -->
 <div id="tela-form" class="tela">
   <div class="form-card">
@@ -565,13 +495,18 @@ footer strong{color:#fff;}
     </div>
   </div>
 </div>
-
 <!-- PAG -->
 <div id="tela-pag" class="tela">
   <div class="pag-card">
     <h2 style="font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--preto);margin-bottom:0.9rem;">Pagamento</h2>
     <div class="pag-resumo"><div><div style="font-weight:700;color:var(--preto);" id="pag-nome">Plano Base</div><div style="font-size:0.7rem;color:var(--cinza-med);">Pagamento único</div></div><div class="pag-preco" id="pag-preco">R$ 9,90</div></div>
     <div class="pag-info">🔒 Pagamento seguro via <strong>Mercado Pago</strong>. Crédito liberado automaticamente.</div>
+    <!-- CUPOM NA TELA DE PAGAMENTO -->
+    <div style="margin-bottom:1rem;">
+      <div class="divider">tem cupom?</div>
+      <div class="cupom-row"><input type="text" id="cupom-pag" placeholder="Código do cupom" style="text-transform:uppercase;"><button class="btn-cupom" onclick="aplicarCupomPag()">Usar</button></div>
+      <div id="cupom-pag-st" style="font-size:0.74rem;margin-top:4px;height:16px;"></div>
+    </div>
     <button class="btn-pagar" onclick="pagarPix()">⚡ Pagar com Pix</button>
     <button class="btn-pagar btn-pagar-sec" onclick="toggleCartao()">💳 Cartão de crédito</button>
     <div id="cartao-form">
@@ -581,36 +516,25 @@ footer strong{color:#fff;}
       <div class="fg"><label>CPF do titular</label><input type="text" id="cc-cpf" placeholder="000.000.000-00" maxlength="14" oninput="formatCpf(this)" inputmode="numeric"></div>
       <button class="btn-full" onclick="pagarCartao()" style="margin-top:0.4rem;">Pagar com cartão</button>
     </div>
-    <div style="text-align:center;margin-top:0.7rem;"><button onclick="irPerfil()" style="background:none;border:none;color:var(--cinza-med);cursor:pointer;font-size:0.78rem;">← Voltar</button></div>
+    <div style="text-align:center;margin-top:0.7rem;"><button onclick="irPlanos()" style="background:none;border:none;color:var(--cinza-med);cursor:pointer;font-size:0.78rem;">← Voltar</button></div>
   </div>
 </div>
-
-<!-- PROGRESSO -->
-<div id="tela-progresso" class="tela">
-  <div class="prog-header"><h2>📸 Registrar progresso</h2></div>
-  <div class="prog-form-card">
-    <h3>Novo registro</h3>
-    <div class="foto-upload-area" id="foto-area" onclick="document.getElementById('foto-input').click()">
-      <input type="file" id="foto-input" accept="image/*" style="display:none;" onchange="previewFoto(this)">
-      <div id="foto-placeholder"><div class="foto-upload-icon">📷</div><div class="foto-upload-txt">Toque para adicionar foto (opcional)</div></div>
-      <img id="foto-preview" style="display:none;width:100%;border-radius:var(--radius-sm);" alt="Preview">
-    </div>
-    <div class="fg"><label>⚖️ Peso atual (kg) *</label><input type="number" id="prog-peso" placeholder="74.2" step="0.1" min="30" max="300" inputmode="decimal"></div>
-    <div class="fg"><label>📝 Anotação / como você está se sentindo</label><textarea id="prog-nota" placeholder="Ex: Me sinto mais leve, os jeans estão folgando..."></textarea></div>
-    <div class="fg"><label>💬 Frase motivacional (para o feed)</label><input type="text" id="prog-frase" class="frase-input" placeholder="Ex: Cada dia é uma nova oportunidade! 💪"></div>
-    <div class="pub-toggle"><input type="checkbox" id="prog-publico"><label for="prog-publico" style="font-weight:400;">Compartilhar no feed público</label></div>
-    <button class="btn-full" onclick="salvarProgresso()" id="btn-salvar-prog">Salvar progresso</button>
+<!-- PLANO -->
+<div id="tela-plano" class="tela">
+  <div id="plano-ativo-container"></div>
+  <div id="plano-expirado" style="display:none;" class="plano-expirado-msg">
+    <div style="font-size:2.5rem;margin-bottom:0.8rem;">⏰</div>
+    <div style="font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:var(--preto);margin-bottom:0.5rem;">Plano expirado</div>
+    <p style="color:var(--cinza-med);margin-bottom:1rem;font-size:0.84rem;">Gere um novo plano para continuar.</p>
+    <button class="btn-p" onclick="irModo()">Gerar novo plano →</button>
+  </div>
+  <div id="plano-vazio" style="display:none;" class="plano-expirado-msg">
+    <div style="font-size:2.5rem;margin-bottom:0.8rem;">🥗</div>
+    <div style="font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:var(--preto);margin-bottom:0.5rem;">Nenhum plano ainda</div>
+    <p style="color:var(--cinza-med);margin-bottom:1rem;font-size:0.84rem;">Compre um plano para começar.</p>
+    <button class="btn-p" onclick="irModo()">Escolher plano →</button>
   </div>
 </div>
-
-<!-- FEED -->
-<div id="tela-feed" class="tela">
-  <div class="feed-header"><h2>🌍 Feed da Comunidade</h2><span style="font-size:0.72rem;color:var(--cinza-med);">Inspire e seja inspirado</span></div>
-  <div id="feed-container" style="padding:0.5rem 0;">
-    <div style="text-align:center;padding:2rem;color:var(--cinza-med);font-size:0.82rem;">Carregando...</div>
-  </div>
-</div>
-
 <!-- ADMIN -->
 <div id="tela-admin" class="tela">
   <div class="admin-hero"><div style="display:flex;align-items:center;justify-content:space-between;"><h2>⚙️ Admin</h2><button class="nav-btn sec" onclick="irPerfil()" style="color:#fff;border-color:rgba(255,255,255,0.3);">← Sair</button></div></div>
@@ -620,8 +544,6 @@ footer strong{color:#fff;}
     <button class="admin-tab-nav" onclick="adminTab('cupons',this)">🎟️ Cupons</button>
     <button class="admin-tab-nav" onclick="adminTab('config',this)">⚙️ Config</button>
   </div>
-
-  <!-- DASHBOARD ADMIN -->
   <div class="admin-tab-content active" id="atc-dashboard">
     <div class="admin-grid">
       <div class="admin-card"><h4>Usuários</h4><div class="big" id="adm-nu">0</div></div>
@@ -629,25 +551,12 @@ footer strong{color:#fff;}
       <div class="admin-card"><h4>Cupons ativos</h4><div class="big" id="adm-nc">0</div></div>
       <div class="admin-card"><h4>Planos ativos</h4><div class="big" id="adm-planos">0</div></div>
     </div>
-    <div class="panel">
-      <h3>🔥 Usuários mais engajados</h3>
-      <div id="adm-engajados"></div>
-    </div>
-    <div class="panel">
-      <h3>⚠️ Usuários inativos (sem post há 7+ dias)</h3>
-      <div id="adm-inativos"></div>
-    </div>
+    <div class="panel"><h3>🔥 Mais engajados</h3><div id="adm-engajados"></div></div>
+    <div class="panel"><h3>⚠️ Inativos (7+ dias)</h3><div id="adm-inativos"></div></div>
   </div>
-
-  <!-- USUÁRIOS ADMIN -->
   <div class="admin-tab-content" id="atc-usuarios">
-    <div class="panel" style="margin-top:0.8rem;">
-      <input type="text" id="adm-busca" placeholder="🔍 Buscar usuário..." oninput="filtrarUsuarios(this.value)" style="margin-bottom:0.8rem;">
-      <div id="adm-users-lista"></div>
-    </div>
+    <div class="panel" style="margin-top:0.8rem;"><input type="text" id="adm-busca" placeholder="🔍 Buscar usuário..." oninput="filtrarUsuarios(this.value)" style="margin-bottom:0.8rem;"><div id="adm-users-lista"></div></div>
   </div>
-
-  <!-- CUPONS ADMIN -->
   <div class="admin-tab-content" id="atc-cupons">
     <div class="panel" style="margin-top:0.8rem;">
       <h3>🎟️ Gerar Cupom</h3>
@@ -661,18 +570,12 @@ footer strong{color:#fff;}
       <div class="cupom-display" id="cupom-disp"></div>
       <button id="btn-copia-cupom" onclick="copiarCupom()" style="display:none;" class="btn-full2">Copiar código</button>
     </div>
-    <div class="panel">
-      <h3>Lista de cupons</h3>
-      <div style="overflow-x:auto;"><table class="adm-table"><thead><tr><th>Código</th><th>Cred.</th><th>Usos</th><th>Status</th></tr></thead><tbody id="adm-tc"></tbody></table></div>
-    </div>
+    <div class="panel"><h3>Lista de cupons</h3><div style="overflow-x:auto;"><table class="adm-table"><thead><tr><th>Código</th><th>Cred.</th><th>Usos</th><th>Status</th></tr></thead><tbody id="adm-tc"></tbody></table></div></div>
   </div>
-
-  <!-- CONFIG ADMIN -->
   <div class="admin-tab-content" id="atc-config">
     <div class="panel" style="margin-top:0.8rem;">
-      <h3>🔑 APIs e Pagamento</h3>
-      <div class="cfg-row"><label>Mercado Pago — Public Key</label><input type="text" id="cfg-mp-pub" placeholder="APP_USR-xxxxx"><div class="cfg-hint"><a href="https://www.mercadopago.com.br/developers/panel/app" target="_blank">→ Painel Mercado Pago</a></div></div>
-      <div class="cfg-row"><label>MP Access Token (salve também na Vercel)</label><input type="password" id="cfg-mp-tok" placeholder="APP_USR-xxxxx-TOKEN"></div>
+      <h3>🔑 APIs</h3>
+      <div class="cfg-row"><label>Mercado Pago — Public Key</label><input type="text" id="cfg-mp-pub" placeholder="APP_USR-xxxxx"><div class="cfg-hint"><a href="https://www.mercadopago.com.br/developers/panel/app" target="_blank">→ Painel MP</a></div></div>
       <div class="cfg-row"><label>URL do site</label><input type="text" id="cfg-url" placeholder="https://nutriplan-sable-five.vercel.app"></div>
       <button class="cfg-save" onclick="salvarCfg()">💾 Salvar</button>
     </div>
@@ -687,8 +590,7 @@ footer strong{color:#fff;}
     </div>
   </div>
 </div>
-
-<!-- MODAL PIX -->
+<!-- MODAIS -->
 <div class="modal-bg" id="modal-pix">
   <div class="modal">
     <div class="modal-handle"></div>
@@ -702,12 +604,10 @@ footer strong{color:#fff;}
       <div id="pix-aguardando" style="background:var(--cinza-bg);border-radius:var(--radius-sm);padding:0.7rem;text-align:center;font-size:0.76rem;color:var(--cinza-med);"><div class="spin" style="width:16px;height:16px;border-width:2px;margin:0 auto 4px;"></div>Verificando automaticamente...</div>
       <div id="pix-pago" style="display:none;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:var(--radius-sm);padding:0.8rem;text-align:center;font-size:0.84rem;color:#14532d;font-weight:700;">✅ Pago! Crédito liberado.</div>
     </div>
-    <div id="pix-erro" style="display:none;text-align:center;padding:0.8rem;"><div style="font-size:0.78rem;color:#dc2626;margin-bottom:0.6rem;">Erro ao gerar Pix.</div><button class="btn-full2" onclick="fecharModalPix()" style="margin:0;">Fechar</button></div>
+    <div id="pix-erro" style="display:none;text-align:center;padding:0.8rem;"><div style="font-size:0.78rem;color:#dc2626;margin-bottom:0.6rem;">Erro ao gerar Pix. Verifique as configurações no Admin.</div><button class="btn-full2" onclick="fecharModalPix()" style="margin:0;">Fechar</button></div>
     <div style="text-align:center;margin-top:0.7rem;"><button onclick="fecharModalPix()" style="background:none;border:none;color:var(--cinza-med);cursor:pointer;font-size:0.78rem;">Cancelar</button></div>
   </div>
 </div>
-
-<!-- MODAL EDITAR PERFIL -->
 <div class="modal-bg" id="modal-perfil">
   <div class="modal">
     <div class="modal-handle"></div>
@@ -719,8 +619,6 @@ footer strong{color:#fff;}
     <button class="btn-full2" onclick="document.getElementById('modal-perfil').classList.remove('show')">Cancelar</button>
   </div>
 </div>
-
-<!-- MODAL PERFIL USUÁRIO (ADMIN) -->
 <div class="modal-bg" id="modal-adm-user">
   <div class="modal">
     <div class="modal-handle"></div>
@@ -729,37 +627,33 @@ footer strong{color:#fff;}
     <button class="btn-full2" onclick="document.getElementById('modal-adm-user').classList.remove('show')" style="margin-top:0.8rem;">Fechar</button>
   </div>
 </div>
-
-<div id="notif-banner">🔔 Ativar lembretes de refeição?<button onclick="ativarNotificacoes()">Ativar</button><button onclick="document.getElementById('notif-banner').classList.remove('show')" style="background:transparent;color:rgba(255,255,255,0.6);border:1px solid rgba(255,255,255,0.3);">Não</button></div>
-<div id="loader"><div class="spin"></div><div class="load-txt">Gerando seu plano...</div><div class="load-steps"><div class="load-step" id="ls1">⚙️ Calculando metabolismo...</div><div class="load-step" id="ls2">🧬 Aplicando metodologia...</div><div class="load-step" id="ls3">🍽️ Distribuindo macros...</div><div class="load-step" id="ls4">📊 Montando cardápio...</div><div class="load-step" id="ls5">✅ Finalizando...</div></div></div>
+<div id="notif-banner">🔔 Ativar lembretes de refeição?<button onclick="ativarNotif()">Ativar</button><button onclick="document.getElementById('notif-banner').classList.remove('show')" style="background:transparent;color:rgba(255,255,255,0.6);border:1px solid rgba(255,255,255,0.3);">Não</button></div>
+<div id="loader"><div class="spin"></div><div class="load-txt" id="load-txt">Gerando seu plano com IA...</div><div class="load-steps"><div class="load-step" id="ls1">⚙️ Calculando seu metabolismo...</div><div class="load-step" id="ls2">🧬 Aplicando metodologia...</div><div class="load-step" id="ls3">🍽️ Distribuindo macronutrientes...</div><div class="load-step" id="ls4">📊 Montando cardápio personalizado...</div><div class="load-step" id="ls5">✅ Finalizando seu plano...</div></div></div>
 <div id="toast"></div>
 <footer><p>© 2025 <strong id="footer-nome">NutriPlan</strong> — <strong id="footer-studio">MFCT Estúdio</strong></p></footer>
 <script>
-// ═══════════════════ CONFIG ═══════════════════
-const DEFAULTS={ADMIN_EMAIL:'admin@mfctstudio.com.br',ADMIN_SENHA:'mfct@2025',DIAS_VALIDADE:8,PRECO_ECO:9.90,PRECO_PRE:19.90};
-const CLOUDINARY_CLOUD='dwdvblexb';
+// ═══════════ CONFIG ═══════════
+const ADMIN_EMAIL='admin@mfctstudio.com.br';
+const ADMIN_SENHA='mfct@2025';
+const DEFAULTS={DIAS_VALIDADE:8,PRECO_ECO:9.90,PRECO_PRE:19.90};
 const ls={get:k=>{try{return JSON.parse(localStorage.getItem('np_'+k));}catch(e){return null;}},set:(k,v)=>localStorage.setItem('np_'+k,JSON.stringify(v))};
 function getCfg(k){const c=ls.get('cfg')||{};return c[k]!==undefined?c[k]:DEFAULTS[k];}
-
 // TEMA
 function toggleTema(){const t=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',t);ls.set('tema',t);document.getElementById('btn-tema').textContent=t==='dark'?'☀️':'🌙';}
 (function(){const t=ls.get('tema')||'light';document.documentElement.setAttribute('data-theme',t);document.getElementById('btn-tema').textContent=t==='dark'?'☀️':'🌙';const cfg=ls.get('cfg')||{};if(cfg.NOME_SITE){document.getElementById('footer-nome').textContent=cfg.NOME_SITE;document.title=cfg.NOME_SITE+' — '+(cfg.NOME_STUDIO||'MFCT Estúdio');}if(cfg.NOME_STUDIO)document.getElementById('footer-studio').textContent=cfg.NOME_STUDIO;})();
-
-let USER=null,PLANO_SEL=null,MODO_SEL=null,FORM_DATA={},WPP_MSG='',CUPOM_CAD_INFO=null,deferredPrompt=null,PAGAMENTO_ID=null,VERIFICAR_INTERVAL=null,PLANO_ATUAL=null,FOTO_BASE64=null,AD_FOTOS={antes:null,depois:null},TODOS_USUARIOS=[];
-
-// ═══════════════════ PWA ═══════════════════
-if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js').catch(e=>console.warn(e));}
+let USER=null,PLANO_SEL=null,MODO_SEL=null,FORM_DATA={},WPP_MSG='',CUPOM_CAD_INFO=null,deferredPrompt=null,PAGAMENTO_ID=null,VERIFICAR_INTERVAL=null,PLANO_ATUAL=null,FOTO_BASE64=null,FOTO_TIPO=null,TODOS_USUARIOS=[];
+// PWA
+if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(e=>console.warn(e));
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;document.getElementById('btn-instalar').classList.add('show');});
-function instalarApp(){if(!deferredPrompt){toast('Use o menu do navegador → "Adicionar à tela inicial"');return;}deferredPrompt.prompt();deferredPrompt.userChoice.then(r=>{if(r.outcome==='accepted')document.getElementById('btn-instalar').classList.remove('show');});}
-async function ativarNotificacoes(){document.getElementById('notif-banner').classList.remove('show');if(!('Notification' in window))return;const p=await Notification.requestPermission();if(p==='granted'){toast('✅ Notificações ativadas!');ls.set('notif_ok',true);}}
-
-// ═══════════════════ API ═══════════════════
+function instalarApp(){if(!deferredPrompt){toast('Menu do navegador → "Adicionar à tela inicial"');return;}deferredPrompt.prompt();}
+async function ativarNotif(){document.getElementById('notif-banner').classList.remove('show');if(!('Notification' in window))return;const p=await Notification.requestPermission();if(p==='granted'){toast('✅ Notificações ativadas!');ls.set('notif_ok',true);}}
+// API
 async function api(path,method='GET',body=null){const opts={method,headers:{'Content-Type':'application/json'}};if(body)opts.body=JSON.stringify(body);const r=await fetch(path,opts);return r.json();}
-
-// ═══════════════════ NAVEGAÇÃO ═══════════════════
+// NAV
 function ir(id){document.querySelectorAll('[id^="tela-"]').forEach(t=>t.classList.remove('ativa'));const el=document.getElementById('tela-'+id);if(el)el.classList.add('ativa');window.scrollTo(0,0);}
 function irHero(){ir('hero');escBN();}
-function irAuth(){ir('auth');escBN();}
+function irAuth(){ir('auth');authTab('login',document.getElementById('tab-login'));escBN();}
+function irAuthCad(){ir('auth');authTab('cadastro',document.getElementById('tab-cad'));escBN();}
 function irPerfil(){ir('perfil');carregarPerfil();mosBN();setABN('perfil');}
 function irPlano(){ir('plano');carregarPlanoAtivo();mosBN();setABN('plano');}
 function irModo(){ir('modo');escBN();}
@@ -773,174 +667,88 @@ function mosBN(){document.getElementById('bottom-nav').classList.add('show');}
 function escBN(){document.getElementById('bottom-nav').classList.remove('show');}
 function setABN(t){document.querySelectorAll('.bnav-item').forEach(b=>b.classList.remove('active'));document.getElementById('bn-'+t)?.classList.add('active');}
 function bnav(t){setABN(t);if(t==='perfil')irPerfil();else if(t==='plano')irPlano();else if(t==='progresso')irProgresso();else if(t==='feed')irFeed();else if(t==='admin')irAdmin();}
-function atualizaNav(){document.getElementById('nav-cta').style.display=USER?'none':'block';document.getElementById('nav-sair').style.display=USER?'block':'none';const ab=document.getElementById('bn-admin');if(ab)ab.style.display=(USER?.is_admin)?'flex':'none';}
+function atualizaNav(){document.getElementById('nav-cta').style.display=USER?'none':'block';document.getElementById('nav-sair').style.display=USER?'block':'none';const ab=document.getElementById('bn-admin');if(ab)ab.style.display=USER?.is_admin?'flex':'none';}
 function sair(){USER=null;PLANO_ATUAL=null;ls.set('session',null);atualizaNav();irHero();toast('Até logo!');}
-
-// RESTAURAR SESSÃO
-(function(){const email=ls.get('session');if(email){if(email===DEFAULTS.ADMIN_EMAIL){USER={nome:'Admin MFCT',email:DEFAULTS.ADMIN_EMAIL,is_admin:true,creditos:999999,id:'admin'};atualizaNav();irAdmin();return;}api('/api/usuarios?action=buscar&email='+encodeURIComponent(email)).then(u=>{if(u&&!u.error){USER=u;atualizaNav();irPerfil();}}).catch(()=>{});}})();
-
-// ═══════════════════ AUTH ═══════════════════
-function authTab(tab,el){document.querySelectorAll('.auth-tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');document.getElementById('fl').style.display=tab==='login'?'':'none';document.getElementById('fc').style.display=tab==='cadastro'?'':'none';}
-async function fazerLogin(){const email=document.getElementById('le').value.trim().toLowerCase();const senha=document.getElementById('ls').value;if(!email||!senha){toast('Preencha e-mail e senha');return;}if(email===DEFAULTS.ADMIN_EMAIL&&senha===DEFAULTS.ADMIN_SENHA){USER={nome:'Admin MFCT',email:DEFAULTS.ADMIN_EMAIL,is_admin:true,creditos:999999,id:'admin'};ls.set('session',email);atualizaNav();toast('Bem-vindo, Admin!');setTimeout(()=>irAdmin(),300);return;}try{const u=await api('/api/usuarios?action=login','POST',{email,senha});if(u.error){toast(u.error);return;}USER=u;ls.set('session',email);atualizaNav();toast('Bem-vindo, '+u.nome.split(' ')[0]+'! 👋');setTimeout(()=>irPerfil(),300);}catch(e){toast('Erro ao conectar.');}}
-async function fazerCadastro(){const nome=document.getElementById('cn').value.trim();const email=document.getElementById('ce').value.trim().toLowerCase();const senha=document.getElementById('cs').value;const wpp=document.getElementById('cw').value.trim();if(!nome||!email||!senha){toast('Preencha todos os campos');return;}if(senha.length<6){toast('Senha mínimo 6 caracteres');return;}try{const u=await api('/api/usuarios?action=cadastrar','POST',{nome,email,senha,wpp});if(u.error){toast(u.error);return;}USER=u;if(CUPOM_CAD_INFO){try{await api('/api/cupons?action=validar','POST',{codigo:CUPOM_CAD_INFO.codigo,usuario_id:u.id});}catch(e){}}ls.set('session',email);atualizaNav();toast('Conta criada! 🎉');setTimeout(()=>irPerfil(),300);}catch(e){toast('Erro ao criar conta.');}}
+// SESSÃO
+(function(){const email=ls.get('session');if(!email)return;if(email===ADMIN_EMAIL){USER={nome:'Admin MFCT',email:ADMIN_EMAIL,is_admin:true,creditos:999999,id:'admin'};atualizaNav();irAdmin();return;}api('/api/usuarios?action=buscar&email='+encodeURIComponent(email)).then(u=>{if(u&&!u.error){USER=u;atualizaNav();irPerfil();}}).catch(()=>{});})();
+// AUTH
+function authTab(tab,el){document.querySelectorAll('.auth-tab').forEach(t=>t.classList.remove('active'));el?.classList.add('active');document.getElementById('fl').style.display=tab==='login'?'':'none';document.getElementById('fc').style.display=tab==='cadastro'?'':'none';}
+async function fazerLogin(){const email=document.getElementById('le').value.trim().toLowerCase();const senha=document.getElementById('ls').value;if(!email||!senha){toast('Preencha e-mail e senha');return;}if(email===ADMIN_EMAIL&&senha===ADMIN_SENHA){USER={nome:'Admin MFCT',email:ADMIN_EMAIL,is_admin:true,creditos:999999,id:'admin'};ls.set('session',email);atualizaNav();toast('Bem-vindo, Admin!');setTimeout(()=>irAdmin(),300);return;}try{const u=await api('/api/usuarios?action=login','POST',{email,senha});if(u.error){toast(u.error);return;}USER=u;ls.set('session',email);atualizaNav();toast('Bem-vindo, '+u.nome.split(' ')[0]+'! 👋');setTimeout(()=>irPerfil(),300);}catch(e){toast('Erro ao conectar. Tente novamente.');}}
+async function fazerCadastro(){const nome=document.getElementById('cn').value.trim();const email=document.getElementById('ce').value.trim().toLowerCase();const senha=document.getElementById('cs').value;const wpp=document.getElementById('cw').value.trim();if(!nome||!email||!senha){toast('Preencha todos os campos');return;}if(senha.length<6){toast('Senha mínimo 6 caracteres');return;}if(!email.includes('@')){toast('E-mail inválido');return;}try{const u=await api('/api/usuarios?action=cadastrar','POST',{nome,email,senha,wpp});if(u.error){toast(u.error);return;}USER=u;if(CUPOM_CAD_INFO){try{await api('/api/cupons?action=validar','POST',{codigo:CUPOM_CAD_INFO.codigo,usuario_id:u.id});}catch(e){}}ls.set('session',email);atualizaNav();toast('Conta criada! Vamos lá 🎉');setTimeout(()=>irModo(),300);}catch(e){toast('Erro ao criar conta.');}}
 async function aplicarCupomLogin(){const cod=document.getElementById('cupom-login').value.trim().toUpperCase();if(!USER){toast('Faça login primeiro');return;}try{const r=await api('/api/cupons?action=validar','POST',{codigo:cod,usuario_id:USER.id});if(r.error){toast(r.error);return;}USER.creditos=(USER.creditos||0)+(r.creditos===999?999:r.creditos);toast('✅ +'+(r.creditos===999?'∞':r.creditos)+' crédito(s)');irPerfil();}catch(e){toast('Erro ao aplicar cupom.');}}
+async function aplicarCupomPag(){const cod=document.getElementById('cupom-pag').value.trim().toUpperCase();const el=document.getElementById('cupom-pag-st');if(!USER){toast('Faça login primeiro');return;}try{const r=await api('/api/cupons?action=validar','POST',{codigo:cod,usuario_id:USER.id});if(r.error){el.textContent='❌ '+r.error;el.style.color='#dc2626';return;}USER.creditos=(USER.creditos||0)+(r.creditos===999?999:r.creditos);el.textContent='✅ Crédito liberado! Gerando plano...';el.style.color='#16a34a';setTimeout(()=>irForm(),1500);}catch(e){el.textContent='❌ Erro ao aplicar';el.style.color='#dc2626';}}
 async function verifCupomCad(){const cod=document.getElementById('cc').value.trim().toUpperCase();const el=document.getElementById('cupom-st');try{const r=await api('/api/cupons?action=validar','POST',{codigo:cod,usuario_id:'check_only'});if(r.error==='Usuário não encontrado'){CUPOM_CAD_INFO={codigo:cod,creditos:3};el.textContent='✅ Cupom válido!';el.style.color='#16a34a';}else if(r.error){el.textContent='❌ '+r.error;el.style.color='#dc2626';CUPOM_CAD_INFO=null;}else{CUPOM_CAD_INFO={codigo:cod};el.textContent='✅ Cupom válido!';el.style.color='#16a34a';}}catch(e){el.textContent='❌ Erro';el.style.color='#dc2626';}}
-
-// ═══════════════════ PERFIL ═══════════════════
+// PERFIL
 async function carregarPerfil(){
   if(!USER)return;
   document.getElementById('perfil-nome').textContent=USER.nome||'—';
   document.getElementById('perfil-modo').textContent=USER.modo==='hardcore'?'💀 Hardcore':'🥗 Saudável';
   const c=USER.creditos>=999||USER.id==='admin'?'∞':(USER.creditos||0);
   document.getElementById('perfil-cred').textContent=c+(c===1?' crédito':' créditos');
-  // Buscar progresso do usuário
-  if(USER.id!=='admin'){
-    try{
-      const progs=await api('/api/progresso?action=meu&usuario_id='+USER.id);
-      document.getElementById('pstat-posts').textContent=progs.length;
-      // Peso atual e variação
-      const comPeso=progs.filter(p=>p.peso).sort((a,b)=>new Date(b.criado_em)-new Date(a.criado_em));
-      if(comPeso.length>0){
-        document.getElementById('pstat-peso').textContent=parseFloat(comPeso[0].peso).toFixed(1)+'kg';
-        if(comPeso.length>1){const diff=comPeso[0].peso-comPeso[comPeso.length-1].peso;document.getElementById('pstat-perda').textContent=(diff>0?'+':'')+diff.toFixed(1)+'kg';}
-      }
-      // Gráfico
-      const pesos=comPeso.reverse().slice(-10);
-      if(pesos.length>1){desenharGrafico(pesos);document.getElementById('grafico-empty').style.display='none';}
-      else{document.getElementById('grafico-empty').style.display='block';}
-      // Grid de posts
-      renderPostsGrid(progs.slice(0,9));
-      // Antes/depois
-      const comFoto=progs.filter(p=>p.foto_url);
-      if(comFoto.length>=2){document.getElementById('ad-card').style.display='block';popularSelectsAD(comFoto);}
-    }catch(e){console.error(e);}
-  }
-  // Perfil salvo
+  const perfil=ls.get('perfil_'+USER.id)||{};
+  if(perfil.bio)document.getElementById('perfil-bio').textContent=perfil.bio;
+  if(perfil.foto_url){const av=document.getElementById('perfil-avatar');av.innerHTML=`<img src="${perfil.foto_url}" alt="Avatar">`;}
+  if(USER.id==='admin')return;
   try{
-    const perfil=ls.get('perfil_'+USER.id)||{};
-    if(perfil.bio)document.getElementById('perfil-bio').textContent=perfil.bio;
-    if(perfil.foto_url){const av=document.getElementById('perfil-avatar');av.innerHTML=`<img src="${perfil.foto_url}" alt="Avatar">`;}
-  }catch(e){}
+    const progs=await api('/api/progresso?action=meu&usuario_id='+USER.id);
+    const pub=progs.filter(p=>p.publico);
+    const priv=progs.filter(p=>!p.publico);
+    document.getElementById('pstat-posts').textContent=progs.length;
+    const comPeso=progs.filter(p=>p.peso).sort((a,b)=>new Date(b.criado_em)-new Date(a.criado_em));
+    if(comPeso.length>0){
+      document.getElementById('pstat-peso').textContent=parseFloat(comPeso[0].peso).toFixed(1)+'kg';
+      if(comPeso.length>1){const diff=comPeso[0].peso-comPeso[comPeso.length-1].peso;document.getElementById('pstat-perda').textContent=(diff>0?'+':'')+diff.toFixed(1)+'kg';}
+    }
+    const pesos=comPeso.slice(0,10).reverse();
+    if(pesos.length>1)desenharGrafico(pesos);
+    else document.getElementById('grafico-empty').style.display='block';
+    renderGrid('posts-grid-pub',pub);
+    if(priv.length>0){document.getElementById('privados-section').style.display='block';renderGrid('posts-grid-priv',priv);}
+  }catch(e){console.error(e);}
 }
-
-function renderPostsGrid(progs){
-  const grid=document.getElementById('posts-grid');
-  if(!progs.length){grid.innerHTML='<div class="post-thumb post-thumb-empty" style="cursor:default;grid-column:1/-1;aspect-ratio:3/1;font-size:1rem;color:var(--cinza-med);">Nenhum progresso ainda</div>';return;}
-  grid.innerHTML=progs.map(p=>{
-    if(p.foto_url)return`<div class="post-thumb" onclick="verPost('${p.id}')"><img src="${p.foto_url}" alt=""><div class="post-thumb-info">${p.peso?p.peso+'kg':''}</div></div>`;
-    return`<div class="post-thumb post-thumb-empty" onclick="verPost('${p.id}')"><span>⚖️</span><div class="post-thumb-info">${p.peso?p.peso+'kg':new Date(p.criado_em).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'})}</div></div>`;
-  }).join('');
+function renderGrid(id,progs){
+  const grid=document.getElementById(id);
+  if(!progs.length){grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:1.5rem;font-size:0.78rem;color:var(--cinza-med);">Nenhum post ainda</div>';return;}
+  grid.innerHTML=progs.map(p=>`<div class="post-thumb" onclick="verPost('${p.id}')">
+    ${p.foto_url?`<img src="${p.foto_url}" alt="" loading="lazy">`:'<div class="post-thumb-empty">⚖️</div>'}
+    <div class="post-thumb-info">${p.peso?p.peso+'kg':new Date(p.criado_em).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'})}</div>
+    <button class="post-thumb-del" onclick="event.stopPropagation();deletarPost('${p.id}')">✕</button>
+  </div>`).join('');
 }
-
 function desenharGrafico(pesos){
   const canvas=document.getElementById('grafico-peso');
   const ctx=canvas.getContext('2d');
-  canvas.width=canvas.offsetWidth*2;canvas.height=canvas.offsetHeight*2;
-  ctx.scale(2,2);
-  const W=canvas.width/2,H=canvas.height/2;
+  const W=canvas.offsetWidth||300,H=canvas.offsetHeight||120;
+  canvas.width=W*2;canvas.height=H*2;ctx.scale(2,2);
   const vals=pesos.map(p=>p.peso);
   const min=Math.min(...vals)-2,max=Math.max(...vals)+2;
   const xStep=W/(pesos.length-1);
   const yScale=H/(max-min);
-  // Linha
-  ctx.beginPath();ctx.strokeStyle=getComputedStyle(document.documentElement).getPropertyValue('--preto').trim()||'#000';ctx.lineWidth=2;ctx.lineJoin='round';
+  const isDark=document.documentElement.getAttribute('data-theme')==='dark';
+  const cor=isDark?'#fff':'#0a0a0a';
+  ctx.clearRect(0,0,W,H);
+  // Área
+  ctx.beginPath();
   pesos.forEach((p,i)=>{const x=i*xStep;const y=H-(p.peso-min)*yScale;if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);});
-  ctx.stroke();
-  // Pontos
-  ctx.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--preto').trim()||'#000';
-  pesos.forEach((p,i)=>{const x=i*xStep;const y=H-(p.peso-min)*yScale;ctx.beginPath();ctx.arc(x,y,4,0,Math.PI*2);ctx.fill();});
+  ctx.lineTo((pesos.length-1)*xStep,H);ctx.lineTo(0,H);ctx.closePath();
+  ctx.fillStyle=isDark?'rgba(255,255,255,0.05)':'rgba(0,0,0,0.05)';ctx.fill();
+  // Linha
+  ctx.beginPath();ctx.strokeStyle=cor;ctx.lineWidth=2;ctx.lineJoin='round';
+  pesos.forEach((p,i)=>{const x=i*xStep;const y=H-(p.peso-min)*yScale;if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);});ctx.stroke();
+  // Pontos + labels
+  ctx.fillStyle=cor;
+  pesos.forEach((p,i)=>{const x=i*xStep;const y=H-(p.peso-min)*yScale;ctx.beginPath();ctx.arc(x,y,3,0,Math.PI*2);ctx.fill();ctx.font='10px DM Sans';ctx.fillStyle=isDark?'rgba(255,255,255,0.6)':'rgba(0,0,0,0.5)';ctx.textAlign='center';ctx.fillText(p.peso.toFixed(1),x,y-8);ctx.fillStyle=cor;});
+  document.getElementById('grafico-empty').style.display='none';
 }
-
-function abrirEditarPerfil(){
-  const perfil=ls.get('perfil_'+USER?.id)||{};
-  document.getElementById('edit-nome').value=USER?.nome||'';
-  document.getElementById('edit-bio').value=perfil.bio||'';
-  document.getElementById('edit-instagram').value=perfil.instagram||'';
-  document.getElementById('modal-perfil').classList.add('show');
-}
-async function salvarPerfil(){
-  const nome=document.getElementById('edit-nome').value.trim();
-  const bio=document.getElementById('edit-bio').value.trim();
-  const instagram=document.getElementById('edit-instagram').value.trim();
-  const perfil={bio,instagram,foto_url:(ls.get('perfil_'+USER?.id)||{}).foto_url};
-  ls.set('perfil_'+USER?.id,perfil);
-  if(nome&&USER)USER.nome=nome;
-  document.getElementById('modal-perfil').classList.remove('show');
-  toast('Perfil atualizado!');carregarPerfil();
-}
-function editarFotoPerfil(){
-  const input=document.createElement('input');input.type='file';input.accept='image/*';
-  input.onchange=async(e)=>{
-    const file=e.target.files[0];if(!file)return;
-    const b64=await toBase64(file);
-    toast('Enviando foto...');
-    try{
-      const r=await api('/api/upload-foto','POST',{image:'data:'+file.type+';base64,'+b64,usuario_id:USER.id,tipo:'perfil'});
-      if(r.url){const perfil=ls.get('perfil_'+USER.id)||{};perfil.foto_url=r.url;ls.set('perfil_'+USER.id,perfil);const av=document.getElementById('perfil-avatar');av.innerHTML=`<img src="${r.url}" alt="Avatar">`;toast('Foto atualizada!');}
-      else toast('Erro ao enviar foto.');
-    }catch(e){toast('Erro ao enviar foto.');}
-  };input.click();
-}
-
-// ═══════════════════ ANTES/DEPOIS ═══════════════════
-let _adProgs=[];
-function popularSelectsAD(progs){_adProgs=progs;}
-function selecionarFotoAD(lado){
-  if(!_adProgs.length){toast('Adicione fotos no progresso primeiro');return;}
-  // Criar lista de fotos para selecionar
-  const opcoes=_adProgs.map((p,i)=>`<div style="display:flex;align-items:center;gap:8px;padding:0.5rem;cursor:pointer;border-bottom:1px solid var(--cinza-cla);" onclick="escolherFotoAD('${lado}','${p.foto_url}',${i})"><img src="${p.foto_url}" style="width:50px;height:50px;border-radius:8px;object-fit:cover;"><div><div style="font-size:0.8rem;font-weight:600;color:var(--preto);">${new Date(p.criado_em).toLocaleDateString('pt-BR')}</div><div style="font-size:0.72rem;color:var(--cinza-med);">${p.peso?p.peso+'kg':''}</div></div></div>`).join('');
-  const modal=document.createElement('div');modal.className='modal-bg show';modal.id='modal-ad-sel';
-  modal.innerHTML=`<div class="modal"><div class="modal-handle"></div><h3>Selecionar foto — ${lado.toUpperCase()}</h3><div>${opcoes}</div><button class="btn-full2" onclick="document.getElementById('modal-ad-sel').remove()" style="margin-top:0.8rem;">Cancelar</button></div>`;
-  document.body.appendChild(modal);
-}
-function escolherFotoAD(lado,url,idx){
-  AD_FOTOS[lado]=url;
-  document.getElementById('modal-ad-sel')?.remove();
-  const btn=document.getElementById('ad-sel-'+lado);
-  btn.innerHTML=`<img src="${url}" style="width:100%;height:60px;object-fit:cover;border-radius:var(--radius-sm);">`;
-  btn.classList.add('tem-foto');
-  // Atualizar comparador
-  if(AD_FOTOS.antes&&AD_FOTOS.depois){
-    document.getElementById('ad-antes').src=AD_FOTOS.antes;
-    document.getElementById('ad-depois').src=AD_FOTOS.depois;
-    iniciarSlider();
-  }
-}
-function iniciarSlider(){
-  const comp=document.getElementById('ad-comparador');
-  const slider=document.getElementById('ad-slider');
-  const depois=document.getElementById('ad-depois');
-  let drag=false;
-  const move=(x)=>{const rect=comp.getBoundingClientRect();const pct=Math.max(5,Math.min(95,((x-rect.left)/rect.width)*100));slider.style.left=pct+'%';depois.style.clipPath=`inset(0 ${100-pct}% 0 0)`;};
-  slider.addEventListener('mousedown',()=>{drag=true;});
-  slider.addEventListener('touchstart',()=>{drag=true;},{passive:true});
-  document.addEventListener('mousemove',e=>{if(drag)move(e.clientX);});
-  document.addEventListener('touchmove',e=>{if(drag)move(e.touches[0].clientX);},{passive:true});
-  document.addEventListener('mouseup',()=>{drag=false;});
-  document.addEventListener('touchend',()=>{drag=false;});
-}
-async function compartilharAD(){
-  if(!AD_FOTOS.antes||!AD_FOTOS.depois){toast('Selecione as duas fotos');return;}
-  const frase=document.getElementById('ad-frase').value.trim()||'Meu progresso! 💪';
-  try{
-    await api('/api/progresso?action=salvar','POST',{usuario_id:USER.id,tipo:'antes_depois',conteudo:frase,foto_url:AD_FOTOS.depois,foto_antes:AD_FOTOS.antes,publico:true,peso:null});
-    toast('✅ Antes/depois compartilhado no feed!');irFeed();
-  }catch(e){toast('Erro ao compartilhar.');}
-}
-
-// ═══════════════════ PROGRESSO ═══════════════════
-function toBase64(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(',')[1]);r.onerror=rej;r.readAsDataURL(file);});}
-function previewFoto(input){
-  const file=input.files[0];if(!file)return;
-  const reader=new FileReader();
-  reader.onload=e=>{
-    FOTO_BASE64=e.target.result.split(',')[1];
-    document.getElementById('foto-preview').src=e.target.result;
-    document.getElementById('foto-preview').style.display='block';
-    document.getElementById('foto-placeholder').style.display='none';
-    document.getElementById('foto-area').classList.add('tem-foto');
-  };reader.readAsDataURL(file);
-}
+function abrirEditarPerfil(){const perfil=ls.get('perfil_'+USER?.id)||{};document.getElementById('edit-nome').value=USER?.nome||'';document.getElementById('edit-bio').value=perfil.bio||'';document.getElementById('edit-instagram').value=perfil.instagram||'';document.getElementById('modal-perfil').classList.add('show');}
+function salvarPerfil(){const nome=document.getElementById('edit-nome').value.trim();const bio=document.getElementById('edit-bio').value.trim();const instagram=document.getElementById('edit-instagram').value.trim();const perfil={...ls.get('perfil_'+USER?.id)||{},bio,instagram};ls.set('perfil_'+USER?.id,perfil);if(nome&&USER)USER.nome=nome;document.getElementById('modal-perfil').classList.remove('show');toast('Perfil atualizado!');carregarPerfil();}
+function editarFotoPerfil(){const input=document.createElement('input');input.type='file';input.accept='image/*';input.onchange=async(e)=>{const file=e.target.files[0];if(!file)return;const b64=await toBase64(file);toast('Enviando foto...');try{const r=await api('/api/upload-foto','POST',{image:'data:'+file.type+';base64,'+b64,usuario_id:USER.id,tipo:'perfil'});if(r.url){const perfil=ls.get('perfil_'+USER.id)||{};perfil.foto_url=r.url;ls.set('perfil_'+USER.id,perfil);document.getElementById('perfil-avatar').innerHTML=`<img src="${r.url}" alt="Avatar">`;toast('Foto atualizada!');}}catch(e){toast('Erro ao enviar foto.');}};input.click();}
+async function deletarPost(id){if(!confirm('Apagar este post?'))return;try{await api('/api/progresso?action=deletar','DELETE',{id,usuario_id:USER.id});toast('Post apagado!');carregarPerfil();}catch(e){toast('Erro ao apagar post.');}}
+function verPost(id){toast('Post '+id.substring(0,8)+'...');}
+// PROGRESSO
+function toBase64(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>{res(r.result.split(',')[1]);};r.onerror=rej;r.readAsDataURL(file);});}
+function previewFoto(input){const file=input.files[0];if(!file)return;FOTO_TIPO=file.type;const reader=new FileReader();reader.onload=e=>{FOTO_BASE64=e.target.result.split(',')[1];document.getElementById('foto-preview').src=e.target.result;document.getElementById('foto-preview').style.display='block';document.getElementById('foto-placeholder').style.display='none';document.getElementById('foto-area').classList.add('tem-foto');document.getElementById('btn-remover-foto').style.display='block';};reader.readAsDataURL(file);}
+function removerFoto(){FOTO_BASE64=null;FOTO_TIPO=null;document.getElementById('foto-preview').style.display='none';document.getElementById('foto-placeholder').style.display='block';document.getElementById('foto-area').classList.remove('tem-foto');document.getElementById('btn-remover-foto').style.display='none';document.getElementById('foto-input').value='';}
 async function salvarProgresso(){
   const peso=parseFloat(document.getElementById('prog-peso').value);
   const nota=document.getElementById('prog-nota').value.trim();
@@ -950,57 +758,140 @@ async function salvarProgresso(){
   const btn=document.getElementById('btn-salvar-prog');btn.disabled=true;btn.textContent='Salvando...';
   try{
     let foto_url=null;
-    if(FOTO_BASE64){
-      const file_input=document.getElementById('foto-input');
-      const tipo=file_input.files[0]?.type||'image/jpeg';
-      const r=await api('/api/upload-foto','POST',{image:'data:'+tipo+';base64,'+FOTO_BASE64,usuario_id:USER.id,tipo:'progresso'});
-      if(r.url)foto_url=r.url;
+    if(FOTO_BASE64&&FOTO_TIPO){
+      try{const r=await api('/api/upload-foto','POST',{image:'data:'+FOTO_TIPO+';base64,'+FOTO_BASE64,usuario_id:USER.id,tipo:'progresso'});if(r.url)foto_url=r.url;else toast('⚠️ Foto não enviada, mas registro salvo.');}catch(e){toast('⚠️ Erro no upload da foto, mas registro salvo.');}
     }
-    const conteudo=nota||(frase?frase:'Registro de peso: '+peso+'kg');
-    await api('/api/progresso?action=salvar','POST',{usuario_id:USER.id,tipo:'progresso',conteudo,foto_url,peso,nota,publico,frase_motivacional:frase});
-    // Resetar formulário
-    FOTO_BASE64=null;
-    document.getElementById('foto-preview').style.display='none';
-    document.getElementById('foto-placeholder').style.display='block';
-    document.getElementById('foto-area').classList.remove('tem-foto');
-    document.getElementById('foto-input').value='';
+    const conteudo=frase||nota||('Registro de peso: '+peso+'kg');
+    await api('/api/progresso?action=salvar','POST',{usuario_id:USER.id,tipo:'progresso',conteudo,foto_url,peso,nota,publico});
+    removerFoto();
     document.getElementById('prog-peso').value='';
     document.getElementById('prog-nota').value='';
     document.getElementById('prog-frase').value='';
     document.getElementById('prog-publico').checked=false;
-    toast('✅ Progresso salvo!');
-    irPerfil();
-  }catch(e){toast('Erro ao salvar.');}
+    toast('✅ Progresso salvo!');irPerfil();
+  }catch(e){toast('Erro ao salvar. Tente novamente.');}
   finally{btn.disabled=false;btn.textContent='Salvar progresso';}
 }
-
-// ═══════════════════ FEED ═══════════════════
+// FEED
 async function carregarFeed(){
   const container=document.getElementById('feed-container');
+  container.innerHTML='<div style="text-align:center;padding:2rem;color:var(--cinza-med);"><div class="spin" style="margin:0 auto 0.5rem;width:28px;height:28px;border-width:2px;"></div></div>';
   try{
     const feed=await api('/api/progresso?action=feed');
     if(!feed.length){container.innerHTML='<div style="text-align:center;padding:3rem 1rem;color:var(--cinza-med);font-size:0.82rem;">Nenhuma postagem ainda. Seja o primeiro! 💪</div>';return;}
     container.innerHTML=feed.map(p=>{
-      const isAD=p.tipo==='antes_depois';
-      const temFoto=p.foto_url;
-      const variacao=p.peso?`<div style="font-family:\'Playfair Display\',serif;font-size:1.1rem;font-weight:700;color:var(--preto);margin-bottom:0.3rem;">⚖️ ${p.peso}kg</div>`:'';
-      return`<div class="feed-post">
+      const inicial=p.usuarios?.nome?p.usuarios.nome[0].toUpperCase():'?';
+      return`<div class="feed-post" id="post-${p.id}">
         <div class="feed-post-header">
-          <div class="feed-post-avatar">${p.usuarios?.nome?p.usuarios.nome[0].toUpperCase():'?'}</div>
-          <div><div class="feed-post-user">${p.usuarios?.nome||'Usuário'}</div><div class="feed-post-data">${isAD?'🔄 Antes/Depois · ':''}${new Date(p.criado_em).toLocaleDateString('pt-BR',{day:'2-digit',month:'short'})}</div></div>
+          <div class="feed-post-avatar">${inicial}</div>
+          <div><div class="feed-post-user">${p.usuarios?.nome||'Usuário'}</div><div class="feed-post-data">${new Date(p.criado_em).toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'})}</div></div>
         </div>
-        ${temFoto?`<img class="feed-post-img" src="${p.foto_url}" alt="Progresso" loading="lazy">`:'<div class="feed-post-img-placeholder">💪</div>'}
+        ${p.foto_url?`<img class="feed-post-img" src="${p.foto_url}" alt="Progresso" loading="lazy">`:'<div class="feed-post-img-placeholder">💪</div>'}
         <div class="feed-post-body">
-          ${variacao}
-          <div class="feed-post-nota">${p.conteudo||''}</div>
-          <div class="feed-post-tags"><span class="feed-tag">#nutriplan</span><span class="feed-tag">#resultado</span></div>
+          ${p.peso?`<div class="feed-post-peso">⚖️ ${p.peso}kg</div>`:''}
+          ${p.conteudo?`<div class="feed-post-nota">${p.conteudo}</div>`:''}
+        </div>
+        <div class="feed-post-actions">
+          <button class="feed-action-btn" onclick="curtir('${p.id}',this)">❤️ ${p.curtidas||0}</button>
+          <button class="feed-action-btn" onclick="toggleComentarios('${p.id}')">💬 Comentar</button>
+          ${USER&&p.usuario_id===USER.id?`<button class="feed-action-btn" onclick="deletarPost('${p.id}');document.getElementById('post-${p.id}').remove();" style="margin-left:auto;color:#dc2626;">🗑️ Apagar</button>`:''}
+        </div>
+        <div class="comentarios-section" id="coms-${p.id}" style="display:none;"></div>
+        <div class="add-comentario" id="add-com-${p.id}" style="display:none;">
+          <input type="text" placeholder="Escreva um comentário..." id="com-input-${p.id}" onkeydown="if(event.key==='Enter')enviarComentario('${p.id}')">
+          <button onclick="enviarComentario('${p.id}')">Enviar</button>
         </div>
       </div>`;
     }).join('');
-  }catch(e){container.innerHTML='<div style="text-align:center;padding:2rem;color:var(--cinza-med);font-size:0.82rem;">Erro ao carregar feed.</div>';}
+  }catch(e){container.innerHTML='<div style="text-align:center;padding:2rem;color:var(--cinza-med);">Erro ao carregar feed.</div>';}
 }
-
-// ═══════════════════ PLANO ATIVO ═══════════════════
+async function curtir(id,btn){
+  try{const r=await api('/api/curtidas','POST',{progresso_id:id});btn.textContent='❤️ '+r.curtidas;btn.classList.add('ativo');}catch(e){toast('Erro ao curtir.');}
+}
+async function toggleComentarios(id){
+  const sec=document.getElementById('coms-'+id);
+  const add=document.getElementById('add-com-'+id);
+  const aberto=sec.style.display!=='none';
+  if(aberto){sec.style.display='none';add.style.display='none';return;}
+  sec.style.display='block';add.style.display='flex';
+  sec.innerHTML='<div style="padding:0.5rem 1rem;font-size:0.76rem;color:var(--cinza-med);">Carregando...</div>';
+  try{
+    const coms=await api('/api/comentarios?action=listar&progresso_id='+id);
+    if(!coms.length){sec.innerHTML='<div style="padding:0.5rem 1rem;font-size:0.76rem;color:var(--cinza-med);">Nenhum comentário ainda. Seja o primeiro!</div>';return;}
+    sec.innerHTML=coms.map(c=>`<div class="comentario-item">
+      <div class="comentario-avatar">${c.usuarios?.nome?c.usuarios.nome[0].toUpperCase():'?'}</div>
+      <div class="comentario-body">
+        <div class="comentario-user">${c.usuarios?.nome||'Usuário'}</div>
+        <div class="comentario-txt">${c.texto}</div>
+      </div>
+      ${USER&&c.usuario_id===USER.id?`<button class="comentario-del" onclick="deletarComentario('${c.id}','${id}')">✕</button>`:''}
+    </div>`).join('');
+  }catch(e){sec.innerHTML='<div style="padding:0.5rem 1rem;font-size:0.76rem;color:var(--cinza-med);">Erro ao carregar.</div>';}
+}
+async function enviarComentario(postId){
+  if(!USER){toast('Faça login para comentar');return;}
+  const input=document.getElementById('com-input-'+postId);
+  const texto=input.value.trim();
+  if(!texto)return;
+  try{
+    await api('/api/comentarios?action=adicionar','POST',{progresso_id:postId,usuario_id:USER.id,texto});
+    input.value='';
+    await toggleComentarios(postId);
+    await toggleComentarios(postId);
+  }catch(e){toast('Erro ao comentar.');}
+}
+async function deletarComentario(comId,postId){
+  try{await api('/api/comentarios?action=deletar','DELETE',{id:comId,usuario_id:USER.id});await toggleComentarios(postId);await toggleComentarios(postId);}catch(e){toast('Erro ao deletar.');}
+}
+// MODO/PLANOS
+function selecionarModo(modo){MODO_SEL=modo;['hardcore','saudavel'].forEach(m=>document.getElementById('mc-'+m).classList.toggle('selected',m===modo));document.getElementById('btn-cont-modo').disabled=false;}
+function continuarDoModo(){if(!MODO_SEL){toast('Selecione um modo');return;}if(!USER)irAuth();else irPlanos();}
+function selecionarPlano(tipo){PLANO_SEL=tipo;['eco','pre'].forEach(id=>{const sel=tipo==='economico'?id==='eco':id==='pre';document.getElementById('pc-'+id).classList.toggle('selected',sel);document.getElementById('sei-'+id).style.color=sel?'#fff':'transparent';document.getElementById('sei-'+id).style.background=sel?'var(--preto)':'var(--cinza-bg)';document.getElementById('sei-'+id).style.borderColor=sel?'var(--preto)':'var(--cinza-cla)';});document.getElementById('btn-cont-plano').disabled=false;document.getElementById('pag-nome').textContent=tipo==='economico'?'Plano Base':'Plano Performance';const preco=tipo==='economico'?getCfg('PRECO_ECO'):getCfg('PRECO_PRE');document.getElementById('pag-preco').textContent='R$ '+parseFloat(preco).toFixed(2).replace('.',',');}
+function atualizaCreds(){if(!USER)return;const el=document.getElementById('cred-info');const cred=USER.creditos;if(cred>0){el.style.display='';document.getElementById('cred-count').textContent=cred>=999?'∞':cred;}else el.style.display='none';}
+function continuarPlano(){if(!PLANO_SEL){toast('Selecione um plano');return;}if((USER.creditos||0)>0||USER.id==='admin')irForm();else irPag();}
+// FORM
+function s1(el,g){document.querySelectorAll('#'+g+' .cb').forEach(b=>b.classList.remove('active'));el.classList.add('active');}
+function tm(el){el.classList.toggle('active');}
+function goFS(n){if(n===2&&!validFS1())return;[1,2,3].forEach(i=>{const e=document.getElementById('fs'+i);if(e)e.style.display=i===n?'':'none';});for(let i=1;i<=3;i++){const ps=document.getElementById('ps'+i);if(!ps)continue;ps.classList.remove('active','done');if(i<n)ps.classList.add('done');else if(i===n)ps.classList.add('active');const pl=document.getElementById('pl'+i);if(pl)pl.classList.toggle('done',i<n);}}
+function validFS1(){if(!document.getElementById('fidade').value){toast('Informe sua idade');return false;}if(!document.getElementById('fsexo').value){toast('Selecione seu sexo');return false;}return true;}
+function confirmarEGerar(){coletarForm();gerarPlano();}
+function coletarForm(){FORM_DATA={nome:USER.nome,wpp:USER.wpp,modo:MODO_SEL,idade:parseInt(document.getElementById('fidade').value),sexo:document.getElementById('fsexo').value,peso:parseFloat(document.getElementById('fpeso').value),altura:parseInt(document.getElementById('faltura').value),gordura:document.querySelector('#gord-g .cb.active')?.textContent||'Não sei',objetivo:document.querySelector('#obj-g .cb.active')?.textContent||'Secar',atividade:document.querySelector('#atv-g .cb.active')?.textContent||'Levemente ativo',treinos:[...document.querySelectorAll('#tren-g .cb.active')].map(b=>b.textContent),restricoes:[...document.querySelectorAll('#rest-g .cb.active')].map(b=>b.textContent),naoGosta:document.getElementById('fng').value,saude:document.getElementById('fsaude').value,acorda:document.getElementById('facorda').value,dorme:document.getElementById('fdorme').value,numRef:parseInt(document.querySelector('#ref-g .cb.active')?.textContent||'4'),horTreino:document.querySelector('#htren-g .cb.active')?.textContent||'Não treino',tempoPreparo:document.querySelector('#tempo-g .cb.active')?.textContent||'~30min',plano:PLANO_SEL};}
+// GERAR PLANO — Via backend seguro
+async function gerarPlano(){
+  document.querySelectorAll('[id^="tela-"]').forEach(t=>t.classList.remove('ativa'));
+  document.getElementById('loader').style.display='flex';
+  ['ls1','ls2','ls3','ls4','ls5'].forEach((id,i)=>setTimeout(()=>{const e=document.getElementById(id);if(e)e.classList.add('show');},i*1200));
+  try{
+    const resp=await fetch('/api/gerar-plano',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(FORM_DATA)});
+    const plano=await resp.json();
+    if(plano.error)throw new Error(plano.error);
+    await salvarExibir(plano);
+  }catch(e){
+    console.error('Erro IA:',e);
+    toast('⚠️ Usando plano padrão (IA indisponível)');
+    await salvarExibir(fallback());
+  }
+}
+function fallback(){const d=FORM_DATA;const hc=d.modo==='hardcore';const prem=d.plano==='premium';const secar=(d.objetivo||'').toLowerCase().includes('secar');let tmb=d.sexo==='feminino'?655+(9.6*d.peso)+(1.8*d.altura)-(4.7*d.idade):66+(13.7*d.peso)+(5*d.altura)-(6.8*d.idade);const fat={'Sed':1.2,'Lev':1.375,'Mod':1.55,'Mui':1.725,'Atl':1.9};const k=Object.keys(fat).find(k=>d.atividade&&d.atividade.startsWith(k))||'Lev';tmb*=fat[k];if(secar)tmb-=400;else tmb+=300;tmb=Math.round(tmb);const prot=Math.round(d.peso*(hc?2.6:2.0));const agua=parseFloat((d.peso*0.040).toFixed(1));return{calorias:tmb,proteinas:prot,carboidratos:Math.round(tmb*(hc?0.30:0.40)/4),gorduras:Math.round(tmb*0.25/9),agua_litros:agua,estrategia:hc?'Déficit agressivo com termogênicos':'Déficit moderado equilibrado',modo:d.modo,refeicoes:[{nome:'Café da manhã',hora:d.acorda||'07:00',funcao:'Ativação metabólica',calorias_estimadas:Math.round(tmb*0.25),itens:[{alimento:prem?'Omelete de claras':'Ovo mexido',quantidade:'3 ovos',funcao:'Proteína'},{alimento:prem?'Aveia':'Pão integral',quantidade:prem?'50g':'2 fatias',funcao:'Carbo'}]},{nome:'Almoço',hora:'12:30',funcao:'Refeição principal',calorias_estimadas:Math.round(tmb*0.35),itens:[{alimento:prem?'Salmão grelhado':'Frango grelhado',quantidade:'180g',funcao:'Proteína'},{alimento:prem?'Quinoa':'Arroz integral',quantidade:secar?'3 col.':'5 col.',funcao:'Carbo'},{alimento:'Salada verde',quantidade:'à vontade',funcao:'Fibra'}]},{nome:'Lanche',hora:'16:00',funcao:'Manutenção proteica',calorias_estimadas:Math.round(tmb*0.15),itens:[{alimento:prem?'Iogurte grego':'Atum em lata',quantidade:prem?'170g':'1 lata',funcao:'Proteína'}]},{nome:'Jantar',hora:'19:30',funcao:'Recuperação noturna',calorias_estimadas:Math.round(tmb*0.25),itens:[{alimento:prem?'Frango grelhado':'Ovo cozido',quantidade:prem?'200g':'3 ovos',funcao:'Proteína'},{alimento:prem?'Batata-doce':'Macarrão integral',quantidade:secar?'70g':'120g',funcao:'Carbo'}]}],suplementos:prem?['Whey protein pós-treino','Creatina 5g/dia','Ômega-3 2g/dia']:[],termogenicos:hc?['Chá verde 400ml em jejum','Café preto pré-treino']:[], ciclos:hc?['5 semanas on / 1 semana off']:[], multivitaminico:true,aerobico:hc?'HIIT 20min em jejum 5x/sem':'Aeróbico moderado 30-40min 3-4x/sem',principios:['Proteína alta ('+prot+'g/dia)','Carbo '+(hc?'apenas peri-treino':'distribuído ao longo do dia'),'Hidratação: '+agua+'L/dia','Refeições a cada 3-4 horas','Multivitamínico diário obrigatório'],dicas_performance:['Pese-se toda semana no mesmo horário, em jejum','Durma 7-9h por noite — fundamental para resultados','Consistência supera intensidade sempre'],ajuste_semanal:'Sem resultado em 2 semanas: reduza 150-200kcal. Perda acima de 1.5kg/sem: adicione 150kcal.'};}
+async function salvarExibir(plano){
+  document.getElementById('loader').style.display='none';
+  document.querySelectorAll('.load-step').forEach(e=>e.classList.remove('show'));
+  const dias=parseInt(getCfg('DIAS_VALIDADE'))||8;
+  const expiraEm=new Date(Date.now()+dias*86400000).toISOString();
+  try{
+    if(USER.id!=='admin'){
+      const p=await api('/api/planos?action=salvar','POST',{usuario_id:USER.id,tipo:PLANO_SEL,modo:MODO_SEL,dados_form:FORM_DATA,plano_gerado:plano,expira_em:expiraEm});
+      PLANO_ATUAL=p;
+      if(USER.creditos<999999)USER.creditos=Math.max(0,USER.creditos-1);
+    }else{
+      PLANO_ATUAL={id:'admin-'+Date.now(),plano_gerado:plano,dados_form:FORM_DATA,modo:MODO_SEL,tipo:PLANO_SEL,pesos:[],refeicoes_puladas:[],expira_em:expiraEm};
+    }
+  }catch(e){
+    PLANO_ATUAL={id:'local-'+Date.now(),plano_gerado:plano,dados_form:FORM_DATA,modo:MODO_SEL,tipo:PLANO_SEL,pesos:[],refeicoes_puladas:[],expira_em:expiraEm};
+  }
+  irPlano();
+}
+// PLANO ATIVO
 async function carregarPlanoAtivo(){
   document.getElementById('plano-ativo-container').innerHTML='';
   document.getElementById('plano-expirado').style.display='none';
@@ -1010,128 +901,106 @@ async function carregarPlanoAtivo(){
   try{
     if(!PLANO_ATUAL){const ps=await api('/api/planos?action=buscar&usuario_id='+USER.id);if(ps.length>0)PLANO_ATUAL=ps[0];}
     if(!PLANO_ATUAL){document.getElementById('plano-vazio').style.display='block';return;}
-    const exp=new Date(PLANO_ATUAL.expira_em)<new Date();
-    if(exp){document.getElementById('plano-expirado').style.display='block';PLANO_ATUAL=null;return;}
+    if(new Date(PLANO_ATUAL.expira_em)<new Date()){document.getElementById('plano-expirado').style.display='block';PLANO_ATUAL=null;return;}
     renderPlano(PLANO_ATUAL);
   }catch(e){document.getElementById('plano-vazio').style.display='block';}
 }
-
 function renderPlano(entrada){
   const plano=entrada.plano_gerado,df=entrada.dados_form;
   const dias=Math.ceil((new Date(entrada.expira_em)-new Date())/86400000);
   const hc=entrada.modo==='hardcore';
-  const container=document.getElementById('plano-ativo-container');
   const puladas=entrada.refeicoes_puladas||[];
   let refs='';
   (plano.refeicoes||[]).forEach((r,idx)=>{
     const pulada=puladas.includes(idx);
-    refs+=`<div style="background:var(--card);border-radius:var(--radius-sm);overflow:hidden;margin-bottom:0.5rem;box-shadow:var(--sombra);${pulada?'opacity:0.4;filter:grayscale(1)':''}">
+    refs+=`<div style="background:var(--card);border-radius:var(--radius-sm);overflow:hidden;margin-bottom:0.5rem;box-shadow:var(--sombra);${pulada?'opacity:0.35;filter:grayscale(1)':''}">
       <div style="padding:8px 12px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--cinza-bg);">
-        <div><div style="font-weight:700;font-size:0.82rem;color:var(--preto);">${r.nome}${pulada?' <span style="font-size:0.66rem;color:#dc2626;">(pulada)</span>':''}</div><div style="font-size:0.64rem;color:var(--cinza-med);">${r.funcao||''}</div></div>
-        <div style="display:flex;align-items:center;gap:5px;">
-          <span style="font-size:0.7rem;color:var(--cinza-med);">⏰ ${r.hora}${r.calorias_estimadas?' · '+r.calorias_estimadas+'kcal':''}</span>
-          ${!pulada?`<button onclick="pularRef(${idx})" style="font-size:0.66rem;color:var(--cinza-med);cursor:pointer;background:none;border:1px solid var(--cinza-cla);border-radius:50px;padding:2px 8px;font-family:'DM Sans',sans-serif;">Pular</button>`:`<button onclick="restaurarRef(${idx})" style="font-size:0.66rem;color:var(--cinza-med);cursor:pointer;background:none;border:1px solid var(--cinza-cla);border-radius:50px;padding:2px 8px;font-family:'DM Sans',sans-serif;">↩</button>`}
+        <div><div style="font-weight:700;font-size:0.82rem;color:var(--preto);">${r.nome}${pulada?' <span style="font-size:0.64rem;color:#dc2626;">(pulada)</span>':''}</div><div style="font-size:0.64rem;color:var(--cinza-med);">${r.funcao||''}</div></div>
+        <div style="display:flex;align-items:center;gap:5px;"><span style="font-size:0.7rem;color:var(--cinza-med);">⏰ ${r.hora}${r.calorias_estimadas?' · '+r.calorias_estimadas+'kcal':''}</span>
+        ${!pulada?`<button onclick="pularRef(${idx})" style="font-size:0.66rem;color:var(--cinza-med);cursor:pointer;background:none;border:1px solid var(--cinza-cla);border-radius:50px;padding:2px 8px;font-family:'DM Sans',sans-serif;">Pular</button>`:`<button onclick="restaurarRef(${idx})" style="font-size:0.66rem;cursor:pointer;background:none;border:1px solid var(--cinza-cla);border-radius:50px;padding:2px 8px;font-family:'DM Sans',sans-serif;color:var(--cinza-med);">↩</button>`}
         </div>
       </div>
       <div style="padding:8px 12px;">${(r.itens||[]).map(i=>`<div style="font-size:0.78rem;padding:3px 0;border-bottom:1px dashed var(--cinza-bg);display:flex;justify-content:space-between;gap:6px;"><strong style="color:var(--preto);flex:1;font-weight:500;">${i.alimento}</strong><span style="font-size:0.7rem;color:var(--cinza-med);white-space:nowrap;">${i.quantidade}</span></div>`).join('')}</div>
     </div>`;
   });
-  const modoLabel=hc?'<span style="background:var(--preto);color:#fff;border-radius:50px;padding:3px 10px;font-size:0.7rem;font-weight:600;">💀 Hardcore</span>':'<span style="background:var(--card);color:var(--preto);border:1px solid var(--cinza-cla);border-radius:50px;padding:3px 10px;font-size:0.7rem;font-weight:600;">🥗 Saudável</span>';
-  container.innerHTML=`
-    <div style="background:var(--preto);color:#fff;border-radius:var(--radius) var(--radius) 0 0;padding:1rem;margin-top:0.8rem;">
+  const modoLabel=hc?'<span style="background:var(--preto);color:#fff;border-radius:50px;padding:3px 10px;font-size:0.7rem;font-weight:600;display:inline-block;margin-bottom:0.8rem;">💀 Hardcore</span>':'<span style="background:var(--card);color:var(--preto);border:1px solid var(--cinza-cla);border-radius:50px;padding:3px 10px;font-size:0.7rem;font-weight:600;display:inline-block;margin-bottom:0.8rem;">🥗 Saudável</span>';
+  document.getElementById('plano-ativo-container').innerHTML=`
+    <div style="background:var(--preto);color:#fff;border-radius:var(--radius) var(--radius) 0 0;padding:1rem;margin:0.8rem 1rem 0;">
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;">
         <div><div style="font-family:'Playfair Display',serif;font-size:1.1rem;">${entrada.tipo==='premium'?'⭐ Plano Performance':'🌿 Plano Base'}</div><div style="font-size:0.72rem;opacity:0.7;">✅ Válido por mais ${dias} dia(s)</div></div>
         <button onclick="enviarWpp()" style="background:#25D366;color:#fff;border:none;border-radius:50px;padding:7px 14px;font-size:0.75rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">💬 WPP</button>
       </div>
     </div>
-    <div style="background:var(--card);border-radius:0 0 var(--radius) var(--radius);padding:1rem;box-shadow:var(--sombra);">
+    <div style="background:var(--card);border-radius:0 0 var(--radius) var(--radius);padding:1rem;margin:0 1rem 1rem;box-shadow:var(--sombra);">
       ${modoLabel}
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.5rem;margin:0.8rem 0;">
-        <div style="background:var(--cinza-bg);border-radius:var(--radius-sm);padding:0.7rem;text-align:center;"><div style="font-size:1.1rem;font-weight:700;color:var(--preto);">${plano.calorias||0}</div><div style="font-size:0.62rem;color:var(--cinza-med);">kcal</div></div>
-        <div style="background:var(--cinza-bg);border-radius:var(--radius-sm);padding:0.7rem;text-align:center;"><div style="font-size:1.1rem;font-weight:700;color:var(--preto);">${plano.proteinas||0}g</div><div style="font-size:0.62rem;color:var(--cinza-med);">proteína</div></div>
-        <div style="background:var(--cinza-bg);border-radius:var(--radius-sm);padding:0.7rem;text-align:center;"><div style="font-size:1.1rem;font-weight:700;color:var(--preto);">${plano.agua_litros||0}L</div><div style="font-size:0.62rem;color:var(--cinza-med);">água</div></div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.5rem;margin-bottom:0.8rem;">
+        <div style="background:var(--cinza-bg);border-radius:var(--radius-sm);padding:0.7rem;text-align:center;"><div style="font-size:1rem;font-weight:700;color:var(--preto);">${plano.calorias||0}</div><div style="font-size:0.6rem;color:var(--cinza-med);">kcal</div></div>
+        <div style="background:var(--cinza-bg);border-radius:var(--radius-sm);padding:0.7rem;text-align:center;"><div style="font-size:1rem;font-weight:700;color:var(--preto);">${plano.proteinas||0}g</div><div style="font-size:0.6rem;color:var(--cinza-med);">proteína</div></div>
+        <div style="background:var(--cinza-bg);border-radius:var(--radius-sm);padding:0.7rem;text-align:center;"><div style="font-size:1rem;font-weight:700;color:var(--preto);">${plano.agua_litros||0}L</div><div style="font-size:0.6rem;color:var(--cinza-med);">água</div></div>
       </div>
       ${plano.estrategia?`<div style="background:var(--cinza-bg);border-radius:var(--radius-sm);padding:0.7rem;font-size:0.78rem;color:var(--cinza-med);margin-bottom:0.8rem;">🎯 ${plano.estrategia}</div>`:''}
       ${plano.aerobico?`<div style="background:var(--cinza-bg);border-radius:var(--radius-sm);padding:0.7rem;font-size:0.78rem;color:var(--cinza-med);margin-bottom:0.8rem;">🏃 ${plano.aerobico}</div>`:''}
+      ${plano.multivitaminico?`<div style="background:#fefce8;border:1px solid #fde047;border-radius:var(--radius-sm);padding:0.7rem;font-size:0.78rem;color:#713f12;margin-bottom:0.8rem;">💊 Multivitamínico obrigatório — use diariamente</div>`:''}
+      ${hc&&plano.termogenicos?.length?`<div style="background:#fef2f2;border:1px solid #fecaca;border-radius:var(--radius-sm);padding:0.7rem;font-size:0.78rem;color:#991b1b;margin-bottom:0.8rem;">🔥 ${plano.termogenicos.join(' · ')}</div>`:''}
       <div style="font-size:0.8rem;font-weight:600;color:var(--preto);margin-bottom:0.5rem;">🍽️ Cardápio do dia</div>
       ${refs}
-      <button onclick="irModo()" style="width:100%;background:transparent;color:var(--cinza-med);border:1.5px solid var(--cinza-cla);border-radius:50px;padding:10px;font-size:0.8rem;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:0.5rem;">+ Gerar novo plano</button>
+      ${plano.suplementos?.length?`<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:var(--radius-sm);padding:0.7rem;font-size:0.78rem;color:#14532d;margin-top:0.5rem;">💊 Suplementação: ${plano.suplementos.join(' · ')}</div>`:''}
+      <button onclick="irModo()" style="width:100%;background:transparent;color:var(--cinza-med);border:1.5px solid var(--cinza-cla);border-radius:50px;padding:10px;font-size:0.8rem;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:0.8rem;">+ Gerar novo plano</button>
     </div>
   `;
   WPP_MSG=montarWpp(plano,df,entrada.tipo,entrada.modo);
 }
 async function pularRef(idx){if(!PLANO_ATUAL)return;const p=PLANO_ATUAL.refeicoes_puladas||[];if(!p.includes(idx)){p.push(idx);PLANO_ATUAL.refeicoes_puladas=p;if(USER.id!=='admin'){try{await api('/api/planos?action=puladas','PATCH',{id:PLANO_ATUAL.id,refeicoes_puladas:p});}catch(e){}}toast('Refeição pulada.');carregarPlanoAtivo();}}
 async function restaurarRef(idx){if(!PLANO_ATUAL)return;PLANO_ATUAL.refeicoes_puladas=(PLANO_ATUAL.refeicoes_puladas||[]).filter(i=>i!==idx);if(USER.id!=='admin'){try{await api('/api/planos?action=puladas','PATCH',{id:PLANO_ATUAL.id,refeicoes_puladas:PLANO_ATUAL.refeicoes_puladas});}catch(e){}}toast('Restaurada.');carregarPlanoAtivo();}
-
-// ═══════════════════ MODO / PLANOS ═══════════════════
-function selecionarModo(modo){MODO_SEL=modo;['hardcore','saudavel'].forEach(m=>document.getElementById('mc-'+m).classList.toggle('selected',m===modo));document.getElementById('btn-cont-modo').disabled=false;}
-function continuarDoModo(){if(!MODO_SEL){toast('Selecione um modo');return;}if(!USER)irAuth();else irPlanos();}
-function selecionarPlano(tipo){PLANO_SEL=tipo;['eco','pre'].forEach(id=>{const sel=tipo==='economico'?id==='eco':id==='pre';document.getElementById('pc-'+id).classList.toggle('selected',sel);document.getElementById('sei-'+id).style.color=sel?'#fff':'transparent';document.getElementById('sei-'+id).style.background=sel?'var(--preto)':'var(--cinza-bg)';document.getElementById('sei-'+id).style.borderColor=sel?'var(--preto)':'var(--cinza-cla)';});document.getElementById('btn-cont-plano').disabled=false;document.getElementById('pag-nome').textContent=tipo==='economico'?'Plano Base':'Plano Performance';const preco=tipo==='economico'?getCfg('PRECO_ECO'):getCfg('PRECO_PRE');document.getElementById('pag-preco').textContent='R$ '+parseFloat(preco).toFixed(2).replace('.',',');}
-function atualizaCreds(){if(!USER)return;const el=document.getElementById('cred-info');const cred=USER.creditos;if(cred>0){el.style.display='';document.getElementById('cred-count').textContent=cred>=999?'∞':cred;}else el.style.display='none';}
-function continuarPlano(){if(!PLANO_SEL){toast('Selecione um plano');return;}if((USER.creditos||0)>0||USER.id==='admin')irForm();else irPag();}
-
-// ═══════════════════ FORM / GERAR PLANO ═══════════════════
-function s1(el,g){document.querySelectorAll('#'+g+' .cb').forEach(b=>b.classList.remove('active'));el.classList.add('active');}
-function tm(el){el.classList.toggle('active');}
-function goFS(n){if(n===2&&!validFS1())return;[1,2,3].forEach(i=>{const e=document.getElementById('fs'+i);if(e)e.style.display=i===n?'':'none';});for(let i=1;i<=3;i++){const ps=document.getElementById('ps'+i);if(!ps)continue;ps.classList.remove('active','done');if(i<n)ps.classList.add('done');else if(i===n)ps.classList.add('active');const pl=document.getElementById('pl'+i);if(pl)pl.classList.toggle('done',i<n);}}
-function validFS1(){if(!document.getElementById('fidade').value){toast('Informe sua idade');return false;}if(!document.getElementById('fsexo').value){toast('Selecione seu sexo');return false;}return true;}
-function confirmarEGerar(){coletarForm();gerarPlano();}
-function coletarForm(){FORM_DATA={nome:USER.nome,wpp:USER.wpp,modo:MODO_SEL,idade:parseInt(document.getElementById('fidade').value),sexo:document.getElementById('fsexo').value,peso:parseFloat(document.getElementById('fpeso').value),altura:parseInt(document.getElementById('faltura').value),gordura:document.querySelector('#gord-g .cb.active')?.textContent||'Não sei',objetivo:document.querySelector('#obj-g .cb.active')?.textContent||'Secar',atividade:document.querySelector('#atv-g .cb.active')?.textContent||'Levemente ativo',treinos:[...document.querySelectorAll('#tren-g .cb.active')].map(b=>b.textContent),restricoes:[...document.querySelectorAll('#rest-g .cb.active')].map(b=>b.textContent),naoGosta:document.getElementById('fng').value,saude:document.getElementById('fsaude').value,acorda:document.getElementById('facorda').value,dorme:document.getElementById('fdorme').value,numRef:parseInt(document.querySelector('#ref-g .cb.active')?.textContent||'4'),horTreino:document.querySelector('#htren-g .cb.active')?.textContent||'Não treino',tempoPreparo:document.querySelector('#tempo-g .cb.active')?.textContent||'~30min',plano:PLANO_SEL};}
-async function gerarPlano(){document.querySelectorAll('[id^="tela-"]').forEach(t=>t.classList.remove('ativa'));document.getElementById('loader').style.display='flex';['ls1','ls2','ls3','ls4','ls5'].forEach((id,i)=>setTimeout(()=>{const e=document.getElementById(id);if(e)e.classList.add('show');},i*900));try{const resp=await fetch('/api/gerar-plano',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:montarPrompt()}]})});const data=await resp.json();const txt=data.content?.[0]?.text||'';const plano=JSON.parse(txt.replace(/```json|```/g,'').trim());await salvarExibir(plano);}catch(e){console.error(e);await salvarExibir(fallback());}}
-function calcTMB(){const d=FORM_DATA;let tmb=d.sexo==='feminino'?655+(9.6*d.peso)+(1.8*d.altura)-(4.7*d.idade):66+(13.7*d.peso)+(5*d.altura)-(6.8*d.idade);const fat={'Sedentário':1.2,'Levemente ativo':1.375,'Moderado':1.55,'Muito ativo':1.725,'Atleta':1.9};const k=Object.keys(fat).find(k=>d.atividade&&d.atividade.startsWith(k))||'Levemente ativo';tmb*=fat[k];const obj=(d.objetivo||'').toLowerCase();if(obj.includes('secar'))tmb-=400;else if(obj.includes('músculo')||obj.includes('ganhar'))tmb+=300;return Math.round(tmb);}
-function montarPrompt(){const d=FORM_DATA,tmb=calcTMB(),prem=d.plano==='premium',hc=d.modo==='hardcore';return `Especialista em composição corporal. Plano 100% focado em RESULTADO.\nPACIENTE: ${d.nome}|${d.sexo}|${d.idade}a|${d.peso}kg|${d.altura}cm|gordura:${d.gordura}\nOBJETIVO: ${d.objetivo}|atividade:${d.atividade}|treinos:${d.treinos.join(',')}|horTreino:${d.horTreino}\nRESTRIÇÕES: ${d.restricoes.join(',')}|naoGosta:${d.naoGosta||'nada'}|saude:${d.saude||'nenhuma'}\nROTINA: ${d.acorda}→${d.dorme}|${d.numRef} refeições|preparo:${d.tempoPreparo}\nMODO: ${hc?'HARDCORE':'SAUDÁVEL'} | PLANO: ${prem?'PREMIUM(salmão,quinoa,whey,ovos caipiras)':'ECONÔMICO(arroz,feijão,frango,ovos,atum)'}\nTDEE: ~${tmb}kcal\n${hc?`HARDCORE: Déficit 500-700kcal. Proteína 2.4-3.0g/kg. Carbo SOMENTE peri-treino. Termogênicos em jejum. Multivitamínico OBRIGATÓRIO.`:`SAUDÁVEL: Déficit 300-400kcal. Proteína 1.6-2.0g/kg. Carbo distribuído. Aeróbico 3-4x/sem.`}\nResponda APENAS JSON: {"calorias":n,"proteinas":n,"carboidratos":n,"gorduras":n,"agua_litros":n,"estrategia":"str","modo":"str","refeicoes":[{"nome":"str","hora":"HH:MM","funcao":"str","calorias_estimadas":n,"itens":[{"alimento":"str","quantidade":"str","funcao":"str"}]}],"suplementos":[""],"termogenicos":[""],"ciclos":[""],"multivitaminico":bool,"aerobico":"str","principios":["x5"],"dicas_performance":["x3"],"ajuste_semanal":"str"}\nGERE EXATAMENTE ${d.numRef} refeições entre ${d.acorda} e ${d.dorme}.`;}
-function fallback(){const d=FORM_DATA,tmb=calcTMB(),prem=d.plano==='premium',hc=d.modo==='hardcore';const secar=(d.objetivo||'').toLowerCase().includes('secar');const prot=Math.round(d.peso*(hc?2.6:2.0));const agua=parseFloat((d.peso*0.040).toFixed(1));return{calorias:tmb,proteinas:prot,carboidratos:Math.round(tmb*(hc?0.30:0.40)/4),gorduras:Math.round(tmb*0.25/9),agua_litros:agua,estrategia:hc?'Déficit agressivo':'Déficit moderado',modo:hc?'hardcore':'saudavel',refeicoes:[{nome:'Café da manhã',hora:d.acorda||'07:00',funcao:'Ativação metabólica',calorias_estimadas:Math.round(tmb*0.25),itens:[{alimento:prem?'Omelete de claras':'Ovo mexido',quantidade:'3 ovos',funcao:'Proteína'},{alimento:prem?'Aveia':'Pão integral',quantidade:prem?'50g':'2 fatias',funcao:'Carbo'}]},{nome:'Almoço',hora:'12:30',funcao:'Refeição principal',calorias_estimadas:Math.round(tmb*0.35),itens:[{alimento:prem?'Salmão':'Frango',quantidade:'180g',funcao:'Proteína'},{alimento:prem?'Quinoa':'Arroz',quantidade:secar?'3 col.':'5 col.',funcao:'Carbo'}]},{nome:'Lanche',hora:'16:00',funcao:'Manutenção',calorias_estimadas:Math.round(tmb*0.15),itens:[{alimento:prem?'Iogurte grego':'Atum',quantidade:prem?'170g':'1 lata',funcao:'Proteína'}]},{nome:'Jantar',hora:'19:30',funcao:'Recuperação',calorias_estimadas:Math.round(tmb*0.25),itens:[{alimento:prem?'Frango':'Ovo cozido',quantidade:prem?'200g':'3 ovos',funcao:'Proteína'},{alimento:prem?'Batata-doce':'Macarrão',quantidade:secar?'70g':'120g',funcao:'Carbo'}]}],suplementos:prem?['Whey protein','Creatina 5g/dia','Ômega-3 2g/dia']:[],termogenicos:hc?['Chá verde em jejum','Café pré-treino']:[], ciclos:hc?['5 semanas on / 1 off']:[], multivitaminico:true,aerobico:hc?'Aeróbico em jejum 20-30min 5x/sem':'Aeróbico 30-40min 3-4x/sem',principios:['Proteína alta ('+prot+'g/dia)','Hidratação: '+agua+'L/dia','Refeições a cada 3-4h','Consistência acima de tudo','Multivitamínico diário'],dicas_performance:['Pese-se toda semana em jejum','Durma 7-8h','Consistência bate intensidade'],ajuste_semanal:'Sem resultado em 2 semanas: ajuste de 150-200kcal.'};}
-async function salvarExibir(plano){document.getElementById('loader').style.display='none';document.querySelectorAll('.load-step').forEach(e=>e.classList.remove('show'));const dias=parseInt(getCfg('DIAS_VALIDADE'))||8;const expiraEm=new Date(Date.now()+dias*86400000).toISOString();try{if(USER.id!=='admin'){const p=await api('/api/planos?action=salvar','POST',{usuario_id:USER.id,tipo:PLANO_SEL,modo:MODO_SEL,dados_form:FORM_DATA,plano_gerado:plano,expira_em:expiraEm});PLANO_ATUAL=p;if(USER.creditos<999999)USER.creditos=Math.max(0,USER.creditos-1);}else PLANO_ATUAL={id:'admin-'+Date.now(),plano_gerado:plano,dados_form:FORM_DATA,modo:MODO_SEL,tipo:PLANO_SEL,pesos:[],refeicoes_puladas:[],expira_em:expiraEm};}catch(e){PLANO_ATUAL={id:'local-'+Date.now(),plano_gerado:plano,dados_form:FORM_DATA,modo:MODO_SEL,tipo:PLANO_SEL,pesos:[],refeicoes_puladas:[],expira_em:expiraEm};}irPlano();}
-
-// WHATSAPP
-function montarWpp(plano,d,tipo,modo){let m=`🥗 *NUTRIPLAN — MFCT ESTÚDIO*\n━━━━━━━━━━━━━━━━━━━━\n👤 *${d?.nome||''}* | ${tipo==='premium'?'⭐ Performance':'🌿 Base'} | ${modo==='hardcore'?'💀 Hardcore':'🥗 Saudável'}\n🎯 ${d?.objetivo||''}\n💡 ${plano.estrategia||''}\n\n📊 *METAS*\n🔥 ${plano.calorias}kcal | 💪 ${plano.proteinas}g | 💧 ${plano.agua_litros}L\n\n🍽️ *CARDÁPIO*\n━━━━━━━━━━━━━━━━━━━━\n`;(plano.refeicoes||[]).forEach(r=>{m+=`\n⏰ *${r.nome} — ${r.hora}*\n`;(r.itens||[]).forEach(i=>{m+=`• ${i.alimento}: ${i.quantidade}\n`;});});m+=`\n━━━━━━━━━━━━━━━━━━━━\n_NutriPlan by MFCT Estúdio_`;return m;}
-function enviarWpp(){const wpp=(USER.wpp||'').replace(/\D/g,'');if(!wpp||wpp.length<10){toast('WhatsApp não cadastrado');return;}const num=wpp.startsWith('55')?wpp:'55'+wpp;window.open('https://wa.me/'+num+'?text='+encodeURIComponent(WPP_MSG),'_blank');}
-
+function montarWpp(plano,d,tipo,modo){let m=`🥗 *NUTRIPLAN — MFCT ESTÚDIO*\n━━━━━━━━━━━━━━━━━━━━\n👤 *${d?.nome||''}* | ${tipo==='premium'?'⭐ Performance':'🌿 Base'} | ${modo==='hardcore'?'💀 Hardcore':'🥗 Saudável'}\n🎯 ${d?.objetivo||''}\n💡 ${plano.estrategia||''}\n\n📊 *METAS DIÁRIAS*\n🔥 ${plano.calorias}kcal | 💪 ${plano.proteinas}g prot | 💧 ${plano.agua_litros}L água\n\n🍽️ *CARDÁPIO*\n━━━━━━━━━━━━━━━━━━━━\n`;(plano.refeicoes||[]).forEach(r=>{m+=`\n⏰ *${r.nome} — ${r.hora}*\n_${r.funcao||''}_\n`;(r.itens||[]).forEach(i=>{m+=`• ${i.alimento}: ${i.quantidade}\n`;});});if(plano.suplementos?.length)m+=`\n💊 *SUPLEMENTAÇÃO*\n${plano.suplementos.map(s=>'• '+s).join('\n')}\n`;if(plano.principios?.length){m+=`\n🧬 *PRINCÍPIOS*\n`;plano.principios.forEach(p=>{m+=`→ ${p}\n`;});}m+=`\n━━━━━━━━━━━━━━━━━━━━\n_NutriPlan by MFCT Estúdio_`;return m;}
+function enviarWpp(){const wpp=(USER.wpp||'').replace(/\D/g,'');if(!wpp||wpp.length<10){toast('WhatsApp não cadastrado no perfil');return;}const num=wpp.startsWith('55')?wpp:'55'+wpp;window.open('https://wa.me/'+num+'?text='+encodeURIComponent(WPP_MSG),'_blank');}
 // PAGAMENTO
-async function pagarPix(){if(!USER||!PLANO_SEL){toast('Selecione um plano');return;}document.getElementById('modal-pix').classList.add('show');document.getElementById('pix-loading').style.display='';document.getElementById('pix-pronto').style.display='none';document.getElementById('pix-erro').style.display='none';document.getElementById('pix-pago').style.display='none';document.getElementById('pix-aguardando').style.display='';try{const resp=await fetch('/api/criar-pix',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:USER.email,nome:USER.nome,plano:PLANO_SEL})});const data=await resp.json();if(!resp.ok||!data.pixCopiaECola)throw new Error(data.error);PAGAMENTO_ID=data.pagamentoId;document.getElementById('pix-loading').style.display='none';document.getElementById('pix-pronto').style.display='';document.getElementById('pix-code-txt').textContent=data.pixCopiaECola;if(data.qrCodeBase64)document.getElementById('pix-qr-img').src='data:image/png;base64,'+data.qrCodeBase64;iniciarVerificacao();}catch(e){document.getElementById('pix-loading').style.display='none';document.getElementById('pix-erro').style.display='';}}
+async function pagarPix(){if(!USER||!PLANO_SEL){toast('Selecione um plano');return;}document.getElementById('modal-pix').classList.add('show');document.getElementById('pix-loading').style.display='';document.getElementById('pix-pronto').style.display='none';document.getElementById('pix-erro').style.display='none';document.getElementById('pix-pago').style.display='none';document.getElementById('pix-aguardando').style.display='';try{const resp=await fetch('/api/criar-pix',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:USER.email,nome:USER.nome,plano:PLANO_SEL})});const data=await resp.json();if(!resp.ok||!data.pixCopiaECola)throw new Error(data.error||'Erro');PAGAMENTO_ID=data.pagamentoId;document.getElementById('pix-loading').style.display='none';document.getElementById('pix-pronto').style.display='';document.getElementById('pix-code-txt').textContent=data.pixCopiaECola;if(data.qrCodeBase64)document.getElementById('pix-qr-img').src='data:image/png;base64,'+data.qrCodeBase64;iniciarVerificacao();}catch(e){document.getElementById('pix-loading').style.display='none';document.getElementById('pix-erro').style.display='';}}
 function iniciarVerificacao(){if(VERIFICAR_INTERVAL)clearInterval(VERIFICAR_INTERVAL);VERIFICAR_INTERVAL=setInterval(async()=>{if(!PAGAMENTO_ID)return;try{const resp=await fetch('/api/verificar-pix?id='+PAGAMENTO_ID);const data=await resp.json();if(data.aprovado){clearInterval(VERIFICAR_INTERVAL);VERIFICAR_INTERVAL=null;USER.creditos=(USER.creditos||0)+1;document.getElementById('pix-aguardando').style.display='none';document.getElementById('pix-pago').style.display='';setTimeout(()=>{fecharModalPix();irForm();},2000);}}catch(e){}},4000);}
 function fecharModalPix(){document.getElementById('modal-pix').classList.remove('show');if(VERIFICAR_INTERVAL){clearInterval(VERIFICAR_INTERVAL);VERIFICAR_INTERVAL=null;}}
-function copiarPix(){navigator.clipboard.writeText(document.getElementById('pix-code-txt').textContent).then(()=>toast('Pix copiado!'));}
+function copiarPix(){navigator.clipboard.writeText(document.getElementById('pix-code-txt').textContent||'').then(()=>toast('Pix copiado!'));}
 function toggleCartao(){const f=document.getElementById('cartao-form');f.style.display=f.style.display==='none'?'block':'none';}
 function formatCard(el){let v=el.value.replace(/\D/g,'').substring(0,16);el.value=v.replace(/(\d{4})(?=\d)/g,'$1 ');}
 function formatExp(el){let v=el.value.replace(/\D/g,'');if(v.length>=2)v=v.substring(0,2)+'/'+v.substring(2,4);el.value=v;}
 function formatCpf(el){let v=el.value.replace(/\D/g,'').substring(0,11);v=v.replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d{1,2})$/,'$1-$2');el.value=v;}
-async function pagarCartao(){const num=document.getElementById('cc-num').value.replace(/\s/g,'');const val=document.getElementById('cc-val').value;const cvv=document.getElementById('cc-cvv').value;const nome=document.getElementById('cc-nome').value.trim();const cpf=document.getElementById('cc-cpf').value.replace(/\D/g,'');if(!num||!val||!cvv||!nome||!cpf){toast('Preencha todos os campos');return;}let pubKey=getCfg('MP_PUBLIC_KEY');if(!pubKey||pubKey.includes('xxxxx')){try{const cfg=await fetch('/api/config').then(r=>r.json());pubKey=cfg.MP_PUBLIC_KEY||'';}catch(e){}}if(!pubKey){toast('Erro: Public Key não configurada');return;}toast('Processando...');try{const mp=new MercadoPago(pubKey);const[mes,ano]=val.split('/');const ct=await mp.createCardToken({cardNumber:num,cardholderName:nome,cardExpirationMonth:mes,cardExpirationYear:'20'+ano,securityCode:cvv,identificationType:'CPF',identificationNumber:cpf});const preco=PLANO_SEL==='economico'?getCfg('PRECO_ECO'):getCfg('PRECO_PRE');const resp=await fetch('/api/criar-cartao',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:ct.id,email:USER.email,nome:USER.nome,plano:PLANO_SEL,valor:parseFloat(preco),parcelas:1,cpf})});const data=await resp.json();if(data.status==='approved'){USER.creditos=(USER.creditos||0)+1;toast('✅ Pago!');setTimeout(()=>irForm(),1500);}else{toast('❌ Recusado. Tente o Pix.');}}catch(e){toast('Erro. Tente o Pix.');}}
-
-// ═══════════════════ ADMIN ═══════════════════
+async function pagarCartao(){const num=document.getElementById('cc-num').value.replace(/\s/g,'');const val=document.getElementById('cc-val').value;const cvv=document.getElementById('cc-cvv').value;const nome=document.getElementById('cc-nome').value.trim();const cpf=document.getElementById('cc-cpf').value.replace(/\D/g,'');if(!num||!val||!cvv||!nome||!cpf){toast('Preencha todos os campos do cartão');return;}const pubKey=getCfg('MP_PUBLIC_KEY');if(!pubKey||pubKey.includes('xxxxx')){toast('Configure a Public Key do MP no Admin');return;}toast('Processando pagamento...');try{const mp=new MercadoPago(pubKey,{locale:'pt-BR'});const[mes,ano]=val.split('/');const ct=await mp.fields.createCardToken({cardNumber:num.replace(/\s/g,''),cardholderName:nome,cardExpirationMonth:mes,cardExpirationYear:'20'+ano,securityCode:cvv,identificationType:'CPF',identificationNumber:cpf});const preco=PLANO_SEL==='economico'?getCfg('PRECO_ECO'):getCfg('PRECO_PRE');const resp=await fetch('/api/criar-cartao',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:ct.id,email:USER.email,nome:USER.nome,plano:PLANO_SEL,valor:parseFloat(preco),parcelas:1,cpf})});const data=await resp.json();if(data.status==='approved'){USER.creditos=(USER.creditos||0)+1;toast('✅ Pagamento aprovado! Crédito liberado.');setTimeout(()=>irForm(),1500);}else if(data.status==='in_process'){toast('⏳ Em análise. Aguarde o e-mail de confirmação.');}else{toast('❌ Pagamento recusado. Verifique os dados ou use o Pix.');}}catch(e){console.error(e);toast('Erro ao processar cartão. Use o Pix.');}}
+// ADMIN
 function adminTab(tab,el){document.querySelectorAll('.admin-tab-nav').forEach(t=>t.classList.remove('active'));el.classList.add('active');document.querySelectorAll('.admin-tab-content').forEach(t=>t.classList.remove('active'));document.getElementById('atc-'+tab).classList.add('active');}
-
 async function carregaAdmin(){
   try{
-    const users=await api('/api/usuarios?action=listar');
-    const cupons=await api('/api/cupons?action=listar');
+    const [users,cupons]=await Promise.all([api('/api/usuarios?action=listar'),api('/api/cupons?action=listar')]);
     TODOS_USUARIOS=users;
     document.getElementById('adm-nu').textContent=users.length;
     document.getElementById('adm-nc').textContent=cupons.filter(c=>!c.expira_em||new Date(c.expira_em)>new Date()).length;
-    // Buscar progresso de todos para engajamento
     let totalPosts=0,plAtivos=0;
-    const usersComProg=await Promise.all(users.slice(0,20).map(async u=>{
-      try{const p=await api('/api/progresso?action=meu&usuario_id='+u.id);totalPosts+=p.length;const pl=await api('/api/planos?action=buscar&usuario_id='+u.id);const temPlano=pl.length>0&&new Date(pl[0].expira_em)>new Date();if(temPlano)plAtivos++;const ultimoPost=p.length>0?new Date(p[0].criado_em):null;const diasSemPost=ultimoPost?Math.floor((new Date()-ultimoPost)/86400000):999;const score=p.length>=5&&diasSemPost<7?'alto':p.length>=2&&diasSemPost<14?'medio':'baixo';return{...u,posts:p.length,diasSemPost,score,planoAtivo:temPlano};}catch(e){return{...u,posts:0,diasSemPost:999,score:'baixo',planoAtivo:false};}
+    const usersComDados=await Promise.all(users.slice(0,15).map(async u=>{
+      try{
+        const [progs,planos]=await Promise.all([api('/api/progresso?action=meu&usuario_id='+u.id),api('/api/planos?action=buscar&usuario_id='+u.id)]);
+        totalPosts+=progs.length;
+        const temPlano=planos.length>0&&new Date(planos[0].expira_em)>new Date();
+        if(temPlano)plAtivos++;
+        const ultimo=progs.length>0?new Date(progs[0].criado_em):null;
+        const dias=ultimo?Math.floor((new Date()-ultimo)/86400000):999;
+        const score=progs.length>=5&&dias<7?'alto':progs.length>=2&&dias<14?'medio':'baixo';
+        return{...u,posts:progs.length,diasSemPost:dias,score,planoAtivo:temPlano};
+      }catch(e){return{...u,posts:0,diasSemPost:999,score:'baixo',planoAtivo:false};}
     }));
     document.getElementById('adm-posts').textContent=totalPosts;
     document.getElementById('adm-planos').textContent=plAtivos;
-    // Engajados
-    const engajados=usersComProg.filter(u=>u.score==='alto').sort((a,b)=>b.posts-a.posts).slice(0,5);
-    document.getElementById('adm-engajados').innerHTML=engajados.length?engajados.map(u=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:0.5rem 0;border-bottom:1px solid var(--cinza-cla);"><div><div style="font-weight:600;font-size:0.82rem;color:var(--preto);">${u.nome}</div><div style="font-size:0.68rem;color:var(--cinza-med);">${u.posts} posts · ${u.diasSemPost<1?'hoje':u.diasSemPost+'d atrás'}</div></div><span class="engajamento-badge eng-alto">🔥 Alto</span></div>`).join(''):'<div style="font-size:0.78rem;color:var(--cinza-med);">Nenhum ainda</div>';
-    // Inativos
-    const inativos=usersComProg.filter(u=>u.diasSemPost>=7).sort((a,b)=>b.diasSemPost-a.diasSemPost).slice(0,5);
+    const engajados=usersComDados.filter(u=>u.score==='alto').sort((a,b)=>b.posts-a.posts).slice(0,5);
+    document.getElementById('adm-engajados').innerHTML=engajados.length?engajados.map(u=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:0.5rem 0;border-bottom:1px solid var(--cinza-cla);">
+      <div><div style="font-weight:600;font-size:0.82rem;color:var(--preto);">${u.nome}</div><div style="font-size:0.68rem;color:var(--cinza-med);">${u.posts} posts · ${u.diasSemPost===0?'hoje':u.diasSemPost+'d atrás'}</div></div>
+      <span class="engajamento-badge eng-alto">🔥 Alto</span></div>`).join(''):'<div style="font-size:0.78rem;color:var(--cinza-med);">Nenhum ainda</div>';
+    const inativos=usersComDados.filter(u=>u.diasSemPost>=7).sort((a,b)=>b.diasSemPost-a.diasSemPost).slice(0,5);
     document.getElementById('adm-inativos').innerHTML=inativos.length?inativos.map(u=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:0.5rem 0;border-bottom:1px solid var(--cinza-cla);">
       <div><div style="font-weight:600;font-size:0.82rem;color:var(--preto);">${u.nome}</div><div style="font-size:0.68rem;color:var(--cinza-med);">${u.diasSemPost===999?'Nunca postou':u.diasSemPost+'d sem postar'}</div></div>
       <button onclick="darCreditoRapido('${u.email}','${u.nome}')" style="background:var(--preto);color:var(--card);border:none;border-radius:50px;padding:4px 12px;font-size:0.7rem;cursor:pointer;font-family:'DM Sans',sans-serif;">🎁 Dar crédito</button>
     </div>`).join(''):'<div style="font-size:0.78rem;color:var(--cinza-med);">Todos ativos! 🎉</div>';
-    // Lista de usuários
-    renderListaUsuarios(usersComProg);
-    // Cupons
+    renderListaUsuarios(usersComDados);
     let tc='';cupons.forEach(c=>{const ok=!c.expira_em||new Date(c.expira_em)>new Date();tc+=`<tr><td style="font-family:monospace;font-size:0.7rem;">${c.codigo}</td><td>${c.creditos===999?'∞':c.creditos}</td><td>${c.usos_restantes===null?'∞':c.usos_restantes}</td><td><span class="badge-txt ${ok?'bt-ok':'bt-exp'}">${ok?'Ativo':'Exp.'}</span></td></tr>`;});
     document.getElementById('adm-tc').innerHTML=tc||'<tr><td colspan="4" style="color:var(--cinza-med);text-align:center;padding:0.8rem;">Nenhum cupom</td></tr>';
   }catch(e){console.error('Admin:',e);}
 }
-
 function renderListaUsuarios(users){
   const container=document.getElementById('adm-users-lista');
   if(!users.length){container.innerHTML='<div style="font-size:0.78rem;color:var(--cinza-med);">Nenhum usuário</div>';return;}
@@ -1146,7 +1015,7 @@ function renderListaUsuarios(users){
       </div>
       <div class="adm-user-stats">
         <div class="adm-stat"><div class="adm-stat-num">${u.creditos>=999?'∞':u.creditos}</div><div class="adm-stat-label">créditos</div></div>
-        <div class="adm-stat"><div class="adm-stat-num">${u.posts}</div><div class="adm-stat-label">posts</div></div>
+        <div class="adm-stat"><div class="adm-stat-num">${u.posts||0}</div><div class="adm-stat-label">posts</div></div>
         <div class="adm-stat"><div class="adm-stat-num">${u.planoAtivo?'✅':'❌'}</div><div class="adm-stat-label">plano</div></div>
         <div class="adm-stat"><div class="adm-stat-num">${u.diasSemPost===999?'—':u.diasSemPost+'d'}</div><div class="adm-stat-label">último post</div></div>
       </div>
@@ -1157,52 +1026,43 @@ function renderListaUsuarios(users){
     </div>`;
   }).join('');
 }
-
-function filtrarUsuarios(busca){
-  const filtrado=TODOS_USUARIOS.filter(u=>(u.nome||'').toLowerCase().includes(busca.toLowerCase())||(u.email||'').toLowerCase().includes(busca.toLowerCase()));
-  renderListaUsuarios(filtrado.map(u=>({...u,posts:u.posts||0,diasSemPost:u.diasSemPost||999,score:u.score||'baixo',planoAtivo:u.planoAtivo||false})));
-}
-
+function filtrarUsuarios(busca){const f=TODOS_USUARIOS.filter(u=>(u.nome||'').toLowerCase().includes(busca.toLowerCase())||(u.email||'').toLowerCase().includes(busca.toLowerCase()));renderListaUsuarios(f.map(u=>({...u,posts:u.posts||0,diasSemPost:u.diasSemPost||999,score:u.score||'baixo',planoAtivo:u.planoAtivo||false})));}
 async function verPerfilUsuario(userId,nome,email){
   document.getElementById('modal-adm-user-nome').textContent='👤 '+nome;
   document.getElementById('modal-adm-user-content').innerHTML='<div style="text-align:center;padding:1.5rem;"><div class="spin" style="margin:0 auto;"></div></div>';
   document.getElementById('modal-adm-user').classList.add('show');
   try{
-    const [progs,planos]=await Promise.all([api('/api/progresso?action=meu&usuario_id='+userId),api('/api/planos?action=buscar&usuario_id='+userId)]);
+    const[progs,planos]=await Promise.all([api('/api/progresso?action=meu&usuario_id='+userId),api('/api/planos?action=buscar&usuario_id='+userId)]);
     const comPeso=progs.filter(p=>p.peso).sort((a,b)=>new Date(a.criado_em)-new Date(b.criado_em));
     const planoAtual=planos[0];
     const planoExp=planoAtual?new Date(planoAtual.expira_em)<new Date():true;
-    const totalPostsSemana=progs.filter(p=>{const d=new Date(p.criado_em);return(new Date()-d)<7*86400000;}).length;
-    const pesoAtual=comPeso.length>0?comPeso[comPeso.length-1].peso:null;
-    const pesoInicial=comPeso.length>0?comPeso[0].peso:null;
+    const postsSemana=progs.filter(p=>(new Date()-new Date(p.criado_em))<7*86400000).length;
+    const pesoAtual=comPeso.length?comPeso[comPeso.length-1].peso:null;
+    const pesoInicial=comPeso.length?comPeso[0].peso:null;
     const variacao=pesoAtual&&pesoInicial?((pesoAtual-pesoInicial)>0?'+':'')+(pesoAtual-pesoInicial).toFixed(1)+'kg':null;
     document.getElementById('modal-adm-user-content').innerHTML=`
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.5rem;margin-bottom:1rem;">
         <div class="adm-stat"><div class="adm-stat-num">${progs.length}</div><div class="adm-stat-label">total posts</div></div>
-        <div class="adm-stat"><div class="adm-stat-num">${totalPostsSemana}</div><div class="adm-stat-label">esta semana</div></div>
+        <div class="adm-stat"><div class="adm-stat-num">${postsSemana}</div><div class="adm-stat-label">esta semana</div></div>
         <div class="adm-stat"><div class="adm-stat-num">${variacao||'—'}</div><div class="adm-stat-label">variação peso</div></div>
       </div>
-      <div style="background:var(--cinza-bg);border-radius:var(--radius-sm);padding:0.8rem;margin-bottom:1rem;font-size:0.8rem;">
-        <strong>📋 Plano atual:</strong> ${planoAtual?(planoExp?'❌ Expirado':'✅ '+planoAtual.tipo+' · '+Math.ceil((new Date(planoAtual.expira_em)-new Date())/86400000)+'d restantes'):'Nenhum plano'}
+      <div style="background:var(--cinza-bg);border-radius:var(--radius-sm);padding:0.8rem;margin-bottom:1rem;font-size:0.8rem;color:var(--texto);">
+        <strong>📋 Plano:</strong> ${planoAtual?(planoExp?'❌ Expirado':'✅ '+planoAtual.tipo+' · '+Math.ceil((new Date(planoAtual.expira_em)-new Date())/86400000)+'d'):'Nenhum plano'}
       </div>
       <div style="font-size:0.8rem;font-weight:600;color:var(--preto);margin-bottom:0.5rem;">Últimos registros:</div>
-      ${progs.slice(0,5).map(p=>`<div style="display:flex;gap:8px;align-items:center;padding:0.4rem 0;border-bottom:1px solid var(--cinza-cla);"><div style="font-size:0.72rem;color:var(--cinza-med);min-width:60px;">${new Date(p.criado_em).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'})}</div><div style="flex:1;font-size:0.78rem;color:var(--texto);">${p.peso?'⚖️ '+p.peso+'kg · ':''}${(p.conteudo||'').substring(0,40)}${(p.conteudo||'').length>40?'...':''}</div>${p.publico?'<span style="font-size:0.64rem;color:#16a34a;">público</span>':''}</div>`).join('')||'<div style="font-size:0.78rem;color:var(--cinza-med);">Nenhum registro</div>'}
-      <button class="adm-action-btn primary" style="width:100%;margin-top:1rem;text-align:center;" onclick="darCreditoRapido('${email}','${nome}')">🎁 Dar crédito a ${nome.split(' ')[0]}</button>
-    `;
+      ${progs.slice(0,5).map(p=>`<div style="display:flex;gap:8px;align-items:center;padding:0.4rem 0;border-bottom:1px solid var(--cinza-cla);">
+        ${p.foto_url?`<img src="${p.foto_url}" style="width:36px;height:36px;border-radius:6px;object-fit:cover;" loading="lazy">`:'<div style="width:36px;height:36px;background:var(--cinza-bg);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:1rem;">⚖️</div>'}
+        <div style="flex:1"><div style="font-size:0.72rem;color:var(--cinza-med);">${new Date(p.criado_em).toLocaleDateString('pt-BR')}</div><div style="font-size:0.78rem;color:var(--texto);">${p.peso?'⚖️ '+p.peso+'kg · ':''}${(p.conteudo||'').substring(0,40)}</div></div>
+        ${p.publico?'<span style="font-size:0.64rem;color:#16a34a;">público</span>':'<span style="font-size:0.64rem;color:var(--cinza-med);">privado</span>'}
+      </div>`).join('')||'<div style="font-size:0.78rem;color:var(--cinza-med);">Nenhum registro</div>'}
+      <button class="adm-action-btn primary" style="width:100%;margin-top:1rem;text-align:center;" onclick="darCreditoRapido('${email}','${nome}')">🎁 Dar crédito a ${nome.split(' ')[0]}</button>`;
   }catch(e){document.getElementById('modal-adm-user-content').innerHTML='<div style="color:var(--cinza-med);font-size:0.78rem;">Erro ao carregar perfil.</div>';}
 }
-
-async function darCreditoRapido(email,nome){
-  const qtd=prompt('Quantos créditos dar para '+nome.split(' ')[0]+'?','1');
-  if(!qtd||isNaN(qtd))return;
-  try{const u=await api('/api/usuarios?action=buscar&email='+encodeURIComponent(email));await api('/api/usuarios?action=creditos','PATCH',{id:u.id,creditos:(u.creditos||0)+parseInt(qtd)});toast('✅ '+qtd+' crédito(s) para '+nome.split(' ')[0]);carregaAdmin();}catch(e){toast('Erro ao dar créditos.');}
-}
-
-async function gerarCupom(){const prefix=(document.getElementById('ap').value.trim().toUpperCase()||'MFCT').substring(0,8);const creditos=parseInt(document.getElementById('ac').value);const expDias=parseInt(document.getElementById('ae').value);const usos=parseInt(document.getElementById('au').value);const codigo=prefix+'-'+Math.random().toString(36).substring(2,7).toUpperCase();const expiraEm=expDias>0?new Date(Date.now()+expDias*86400000).toISOString():null;try{await api('/api/cupons?action=criar','POST',{codigo,creditos,expira_em:expiraEm,usos_restantes:usos===999?null:usos});document.getElementById('cupom-disp').textContent=codigo;document.getElementById('cupom-disp').style.display='block';document.getElementById('btn-copia-cupom').style.display='block';carregaAdmin();toast('Cupom: '+codigo);}catch(e){toast('Erro ao criar cupom.');}}
+async function darCreditoRapido(email,nome){const qtd=prompt('Quantos créditos dar para '+nome.split(' ')[0]+'?','1');if(!qtd||isNaN(qtd)||parseInt(qtd)<=0)return;try{const u=await api('/api/usuarios?action=buscar&email='+encodeURIComponent(email));await api('/api/usuarios?action=creditos','PATCH',{id:u.id,creditos:(u.creditos||0)+parseInt(qtd)});toast('✅ '+qtd+' crédito(s) para '+nome.split(' ')[0]);document.getElementById('modal-adm-user').classList.remove('show');carregaAdmin();}catch(e){toast('Erro ao dar créditos.');}}
+async function gerarCupom(){const prefix=(document.getElementById('ap').value.trim().toUpperCase()||'MFCT').substring(0,8);const creditos=parseInt(document.getElementById('ac').value);const expDias=parseInt(document.getElementById('ae').value);const usos=parseInt(document.getElementById('au').value);const codigo=prefix+'-'+Math.random().toString(36).substring(2,7).toUpperCase();const expiraEm=expDias>0?new Date(Date.now()+expDias*86400000).toISOString():null;try{await api('/api/cupons?action=criar','POST',{codigo,creditos,expira_em:expiraEm,usos_restantes:usos===999?null:usos});document.getElementById('cupom-disp').textContent=codigo;document.getElementById('cupom-disp').style.display='block';document.getElementById('btn-copia-cupom').style.display='block';carregaAdmin();toast('Cupom criado: '+codigo);}catch(e){toast('Erro ao criar cupom.');}}
 function copiarCupom(){navigator.clipboard.writeText(document.getElementById('cupom-disp').textContent).then(()=>toast('Copiado!'));}
-function carregarCfgAdmin(){const cfg=ls.get('cfg')||{};const m={'cfg-mp-pub':'MP_PUBLIC_KEY','cfg-mp-tok':'MP_ACCESS_TOKEN','cfg-url':'SITE_URL','cfg-nome-site':'NOME_SITE','cfg-nome-studio':'NOME_STUDIO','cfg-preco-eco':'PRECO_ECO','cfg-preco-pre':'PRECO_PRE','cfg-dias':'DIAS_VALIDADE'};Object.entries(m).forEach(([id,k])=>{const el=document.getElementById(id);if(el&&cfg[k]!==undefined)el.value=cfg[k];});}
-function salvarCfg(){const cfg=ls.get('cfg')||{};const m={'cfg-mp-pub':'MP_PUBLIC_KEY','cfg-mp-tok':'MP_ACCESS_TOKEN','cfg-url':'SITE_URL','cfg-nome-site':'NOME_SITE','cfg-nome-studio':'NOME_STUDIO','cfg-preco-eco':'PRECO_ECO','cfg-preco-pre':'PRECO_PRE','cfg-dias':'DIAS_VALIDADE'};Object.entries(m).forEach(([id,k])=>{const el=document.getElementById(id);if(el&&el.value)cfg[k]=el.value;});ls.set('cfg',cfg);if(cfg.NOME_SITE){document.getElementById('footer-nome').textContent=cfg.NOME_SITE;document.title=cfg.NOME_SITE+' — '+(cfg.NOME_STUDIO||'MFCT Estúdio');}if(cfg.NOME_STUDIO)document.getElementById('footer-studio').textContent=cfg.NOME_STUDIO;toast('✅ Salvo!');}
-
+function carregarCfgAdmin(){const cfg=ls.get('cfg')||{};const m={'cfg-mp-pub':'MP_PUBLIC_KEY','cfg-url':'SITE_URL','cfg-nome-site':'NOME_SITE','cfg-nome-studio':'NOME_STUDIO','cfg-preco-eco':'PRECO_ECO','cfg-preco-pre':'PRECO_PRE','cfg-dias':'DIAS_VALIDADE'};Object.entries(m).forEach(([id,k])=>{const el=document.getElementById(id);if(el&&cfg[k]!==undefined)el.value=cfg[k];});}
+function salvarCfg(){const cfg=ls.get('cfg')||{};const m={'cfg-mp-pub':'MP_PUBLIC_KEY','cfg-url':'SITE_URL','cfg-nome-site':'NOME_SITE','cfg-nome-studio':'NOME_STUDIO','cfg-preco-eco':'PRECO_ECO','cfg-preco-pre':'PRECO_PRE','cfg-dias':'DIAS_VALIDADE'};Object.entries(m).forEach(([id,k])=>{const el=document.getElementById(id);if(el&&el.value)cfg[k]=el.value;});ls.set('cfg',cfg);if(cfg.NOME_SITE){document.getElementById('footer-nome').textContent=cfg.NOME_SITE;document.title=cfg.NOME_SITE+' — '+(cfg.NOME_STUDIO||'MFCT Estúdio');}if(cfg.NOME_STUDIO)document.getElementById('footer-studio').textContent=cfg.NOME_STUDIO;toast('✅ Configurações salvas!');}
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3200);}
 </script>
 <script src="https://sdk.mercadopago.com/js/v2"></script>
