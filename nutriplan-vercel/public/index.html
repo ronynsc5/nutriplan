@@ -277,15 +277,17 @@ input[type=range]{flex:1;accent-color:var(--preto);}
 #toast{position:fixed;bottom:calc(var(--bottom-h) + 0.8rem);left:50%;transform:translateX(-50%) translateY(80px);background:var(--preto);color:var(--card);border-radius:50px;padding:9px 20px;font-size:0.8rem;transition:transform 0.3s;z-index:500;white-space:nowrap;max-width:90vw;text-align:center;}
 #toast.show{transform:translateX(-50%) translateY(0);}
 
-.ad-comparador{position:relative;aspect-ratio:1;border-radius:var(–radius-sm);overflow:hidden;user-select:none;margin-bottom:0.8rem;}
+.ad-comparador{position:relative;aspect-ratio:1;border-radius:10px;overflow:hidden;user-select:none;margin-bottom:0.8rem;}
 .ad-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
 .ad-img-depois{clip-path:inset(0 50% 0 0);}
 .ad-divider{position:absolute;top:0;bottom:0;left:50%;width:3px;background:#fff;cursor:ew-resize;z-index:10;}
 .ad-divider-handle{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:0.8rem;box-shadow:0 2px 8px rgba(0,0,0,0.3);}
 .ad-label{position:absolute;bottom:8px;background:rgba(0,0,0,0.6);color:#fff;border-radius:50px;padding:2px 10px;font-size:0.64rem;font-weight:700;}
-.ad-sel-box{background:var(–cinza-bg);border-radius:var(–radius-sm);border:2px dashed var(–cinza-cla);display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;transition:border-color 0.2s;}
-.ad-sel-box:hover{border-color:var(–preto);}
+.ad-sel-box{background:#f4f4f5;border-radius:10px;border:2px dashed #e5e7eb;display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;transition:border-color 0.2s;}
+.ad-sel-box:hover{border-color:#0a0a0a;}
 .ad-sel-box img{width:100%;height:100%;object-fit:cover;}
+[data-theme=“dark”] .ad-sel-box{background:#111;border-color:#2a2a2a;}
+[data-theme=“dark”] .ad-sel-box:hover{border-color:#fff;}
 footer{background:#0a0a0a;color:rgba(255,255,255,0.4);text-align:center;padding:1.3rem 1rem;font-size:0.72rem;}
 footer strong{color:#fff;}
 @keyframes spin{to{transform:rotate(360deg);}}
@@ -380,46 +382,51 @@ footer strong{color:#fff;}
       <div class="grafico-empty" id="grafico-empty">Registre seu peso para ver o gráfico</div>
     </div>
   </div>
-  <!-- ANTES & DEPOIS -->
+  <!-- ANTES E DEPOIS -->
   <div id="ad-perfil-card" class="grafico-card" style="display:none;">
-    <h3 style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.6rem;">🔄 Criar Antes &amp; Depois <button onclick="toggleADPerfil()" style="background:none;border:none;font-size:0.76rem;color:var(--cinza-med);cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:400;">fechar ✕</button></h3>
-    <p style="font-size:0.74rem;color:var(--cinza-med);margin-bottom:0.8rem;">Selecione duas fotos dos seus registros para criar o card.</p>
+    <h3 style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.6rem;">
+      <span>Criar Antes e Depois</span>
+      <button onclick="toggleADPerfil()" style="background:none;border:none;font-size:0.76rem;color:#6b7280;cursor:pointer;font-family:'DM Sans',sans-serif;">fechar X</button>
+    </h3>
+    <p style="font-size:0.74rem;color:#6b7280;margin-bottom:0.8rem;">Selecione duas fotos dos seus registros para criar o card.</p>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-bottom:0.8rem;">
       <div>
-        <div style="font-size:0.68rem;font-weight:700;color:var(--cinza-med);margin-bottom:0.3rem;letter-spacing:1px;">ANTES</div>
-        <div class="ad-sel-box" id="adp-sel-antes" onclick="abrirSeletorADP('antes')" style="height:110px;"><span style="font-size:1.8rem;">📷</span></div>
-        <div id="adp-data-antes" style="font-size:0.62rem;color:var(--cinza-med);text-align:center;margin-top:4px;"></div>
+        <div style="font-size:0.68rem;font-weight:700;color:#6b7280;margin-bottom:0.3rem;">ANTES</div>
+        <div class="ad-sel-box" id="adp-sel-antes" onclick="abrirSeletorADP('antes')" style="height:110px;"><span style="font-size:1.8rem;">foto</span></div>
+        <div id="adp-data-antes" style="font-size:0.62rem;color:#6b7280;text-align:center;margin-top:4px;"></div>
       </div>
       <div>
-        <div style="font-size:0.68rem;font-weight:700;color:var(--cinza-med);margin-bottom:0.3rem;letter-spacing:1px;">DEPOIS</div>
-        <div class="ad-sel-box" id="adp-sel-depois" onclick="abrirSeletorADP('depois')" style="height:110px;"><span style="font-size:1.8rem;">📷</span></div>
-        <div id="adp-data-depois" style="font-size:0.62rem;color:var(--cinza-med);text-align:center;margin-top:4px;"></div>
+        <div style="font-size:0.68rem;font-weight:700;color:#6b7280;margin-bottom:0.3rem;">DEPOIS</div>
+        <div class="ad-sel-box" id="adp-sel-depois" onclick="abrirSeletorADP('depois')" style="height:110px;"><span style="font-size:1.8rem;">foto</span></div>
+        <div id="adp-data-depois" style="font-size:0.62rem;color:#6b7280;text-align:center;margin-top:4px;"></div>
       </div>
     </div>
     <div id="adp-comparador-wrap" style="display:none;">
       <div class="ad-comparador" id="adp-comparador">
         <img class="ad-img" id="adp-foto-antes" src="" alt="Antes">
         <img class="ad-img ad-img-depois" id="adp-foto-depois" src="" alt="Depois">
-        <div class="ad-divider" id="adp-divider"><div class="ad-divider-handle">⟺</div></div>
+        <div class="ad-divider" id="adp-divider"><div class="ad-divider-handle">||</div></div>
         <span class="ad-label" style="left:8px;">ANTES</span>
         <span class="ad-label" style="right:8px;">DEPOIS</span>
       </div>
-      <p style="font-size:0.68rem;color:var(--cinza-med);text-align:center;margin-bottom:0.6rem;">← Arraste para comparar →</p>
+      <p style="font-size:0.68rem;color:#6b7280;text-align:center;margin-bottom:0.6rem;">Arraste para comparar</p>
     </div>
-    <div class="fg" style="margin-bottom:0.6rem;"><input type="text" id="adp-legenda" placeholder="Legenda do card... ex: 3 meses de dedicação! 💪"></div>
+    <div class="fg" style="margin-bottom:0.6rem;">
+      <input type="text" id="adp-legenda" placeholder="Legenda do card... ex: 3 meses de dedicacao!">
+    </div>
     <div style="display:flex;gap:0.5rem;">
-      <button onclick="publicarADP(false)" id="btn-adp-salvar" disabled class="btn-full2" style="margin-top:0;flex:1;padding:11px;font-size:0.82rem;">🔒 Salvar privado</button>
-      <button onclick="publicarADP(true)" id="btn-adp-pub" disabled class="btn-full" style="flex:1;padding:11px;font-size:0.82rem;">📤 Publicar</button>
+      <button onclick="publicarADP(false)" id="btn-adp-salvar" disabled class="btn-full2" style="margin-top:0;flex:1;padding:11px;font-size:0.82rem;">Salvar privado</button>
+      <button onclick="publicarADP(true)" id="btn-adp-pub" disabled class="btn-full" style="flex:1;padding:11px;font-size:0.82rem;">Publicar no feed</button>
     </div>
   </div>
 
-  <!-- Posts públicos -->
+  <!-- Posts publicos -->
 
   <div class="posts-section">
-    <span style="font-size:0.82rem;font-weight:600;color:var(--preto);">📸 Públicos</span>
+    <span style="font-size:0.82rem;font-weight:600;color:var(--preto);">Publicos</span>
     <div style="display:flex;gap:6px;align-items:center;">
       <button onclick="irProgresso()" style="background:none;border:none;font-size:0.78rem;color:var(--cinza-med);cursor:pointer;">+ Foto</button>
-      <button onclick="toggleADPerfil()" style="background:var(--cinza-bg);border:1px solid var(--cinza-cla);border-radius:50px;font-size:0.72rem;color:var(--preto);cursor:pointer;padding:3px 10px;font-family:'DM Sans',sans-serif;">🔄 Antes/Depois</button>
+      <button onclick="toggleADPerfil()" style="background:var(--cinza-bg);border:1px solid var(--cinza-cla);border-radius:50px;font-size:0.72rem;color:var(--preto);cursor:pointer;padding:3px 10px;font-family:'DM Sans',sans-serif;">Antes/Depois</button>
     </div>
   </div>
   <div class="posts-grid" id="posts-grid-pub"></div>
@@ -1112,157 +1119,86 @@ async function gerarCupom(){const prefix=(document.getElementById('ap').value.tr
 function copiarCupom(){navigator.clipboard.writeText(document.getElementById('cupom-disp').textContent).then(()=>toast('Copiado!'));}
 function carregarCfgAdmin(){const cfg=ls.get('cfg')||{};const m={'cfg-mp-pub':'MP_PUBLIC_KEY','cfg-url':'SITE_URL','cfg-nome-site':'NOME_SITE','cfg-nome-studio':'NOME_STUDIO','cfg-preco-eco':'PRECO_ECO','cfg-preco-pre':'PRECO_PRE','cfg-dias':'DIAS_VALIDADE'};Object.entries(m).forEach(([id,k])=>{const el=document.getElementById(id);if(el&&cfg[k]!==undefined)el.value=cfg[k];});}
 function salvarCfg(){const cfg=ls.get('cfg')||{};const m={'cfg-mp-pub':'MP_PUBLIC_KEY','cfg-url':'SITE_URL','cfg-nome-site':'NOME_SITE','cfg-nome-studio':'NOME_STUDIO','cfg-preco-eco':'PRECO_ECO','cfg-preco-pre':'PRECO_PRE','cfg-dias':'DIAS_VALIDADE'};Object.entries(m).forEach(([id,k])=>{const el=document.getElementById(id);if(el&&el.value)cfg[k]=el.value;});ls.set('cfg',cfg);if(cfg.NOME_SITE){document.getElementById('footer-nome').textContent=cfg.NOME_SITE;document.title=cfg.NOME_SITE+' — '+(cfg.NOME_STUDIO||'MFCT Estúdio');}if(cfg.NOME_STUDIO)document.getElementById('footer-studio').textContent=cfg.NOME_STUDIO;toast('✅ Configurações salvas!');}
-// ═══ ANTES/DEPOIS NO PERFIL ═══
+// ANTES/DEPOIS
 let ADP_FOTOS={antes:null,depois:null},ADP_PROGS=[];
-
-function toggleADPerfil(){
-const card=document.getElementById(‘ad-perfil-card’);
-const show=card.style.display===‘none’;
-card.style.display=show?‘block’:‘none’;
-if(show){card.scrollIntoView({behavior:‘smooth’,block:‘nearest’});carregarFotosADP();}
-}
-
-async function carregarFotosADP(){
-if(!USER||USER.id===‘admin’)return;
-try{
-const progs=await api(’/api/progresso?action=meu&usuario_id=’+USER.id);
-ADP_PROGS=progs.filter(p=>p.foto_url);
-if(!ADP_PROGS.length)toast(‘Adicione fotos nos registros de progresso primeiro!’);
-}catch(e){}
-}
-
+function toggleADPerfil(){var card=document.getElementById('ad-perfil-card');var show=card.style.display==='none';card.style.display=show?'block':'none';if(show){card.scrollIntoView({behavior:'smooth',block:'nearest'});carregarFotosADP();}}
+async function carregarFotosADP(){if(!USER||USER.id==='admin')return;try{var progs=await api('/api/progresso?action=meu&usuario_id='+USER.id);ADP_PROGS=progs.filter(function(p){return p.foto_url;});if(!ADP_PROGS.length)toast('Adicione fotos nos registros primeiro!');}catch(e){}}
 function abrirSeletorADP(lado){
-if(!ADP_PROGS.length){toast(‘Adicione fotos nos seus registros primeiro!’);return;}
-const modal=document.createElement(‘div’);
-modal.className=‘modal-bg show’;modal.id=‘modal-sel-adp’;
-const lista=ADP_PROGS.map((p,i)=>`<div onclick="escolherFotoADP('${lado}','${p.foto_url}','${new Date(p.criado_em).toLocaleDateString('pt-BR')}',${i})" style="display:flex;align-items:center;gap:0.7rem;padding:0.7rem 0;border-bottom:1px solid var(--cinza-cla);cursor:pointer;"><img src="${p.foto_url}" style="width:54px;height:54px;border-radius:8px;object-fit:cover;flex-shrink:0;"><div><div style="font-size:0.82rem;font-weight:600;color:var(--preto);">${new Date(p.criado_em).toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'})}</div>${p.peso?'<div style="font-size:0.72rem;color:var(--cinza-med);">⚖️ '+p.peso+'kg</div>':''}</div></div>`).join(’’);
-modal.innerHTML=’<div class="modal"><div class="modal-handle"></div><h3>Selecionar — ‘+lado.toUpperCase()+’</h3><div style="max-height:60vh;overflow-y:auto;">’+lista+’</div><button class="btn-full2" onclick="document.getElementById('modal-sel-adp').remove()" style="margin-top:0.8rem;">Cancelar</button></div>’;
-document.body.appendChild(modal);
+  if(!ADP_PROGS.length){toast('Adicione fotos nos registros primeiro!');return;}
+  var modal=document.createElement('div');modal.className='modal-bg show';modal.id='modal-sel-adp';
+  var lista=ADP_PROGS.map(function(p,i){return '<div onclick="escolherFotoADP(''+lado+'',''+p.foto_url+'',''+new Date(p.criado_em).toLocaleDateString('pt-BR')+'','+i+')" style="display:flex;align-items:center;gap:0.7rem;padding:0.7rem 0;border-bottom:1px solid #e5e7eb;cursor:pointer;"><img src="'+p.foto_url+'" style="width:54px;height:54px;border-radius:8px;object-fit:cover;flex-shrink:0;"><div><div style="font-size:0.82rem;font-weight:600;">'+new Date(p.criado_em).toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'})+'</div>'+(p.peso?'<div style="font-size:0.72rem;color:#6b7280;">'+p.peso+'kg</div>':'')+'</div></div>';}).join('');
+  modal.innerHTML='<div class="modal"><div class="modal-handle"></div><h3>Selecionar - '+lado.toUpperCase()+'</h3><div style="max-height:60vh;overflow-y:auto;">'+lista+'</div><button class="btn-full2" onclick="document.getElementById('modal-sel-adp').remove()" style="margin-top:0.8rem;">Cancelar</button></div>';
+  document.body.appendChild(modal);
 }
-
 function escolherFotoADP(lado,url,data,idx){
-document.getElementById(‘modal-sel-adp’)?.remove();
-ADP_FOTOS[lado]=url;
-document.getElementById(‘adp-sel-’+lado).innerHTML=’<img src="'+url+'" style="width:100%;height:100%;object-fit:cover;">’;
-document.getElementById(‘adp-data-’+lado).textContent=data;
-if(ADP_FOTOS.antes&&ADP_FOTOS.depois){
-document.getElementById(‘adp-foto-antes’).src=ADP_FOTOS.antes;
-document.getElementById(‘adp-foto-depois’).src=ADP_FOTOS.depois;
-document.getElementById(‘adp-comparador-wrap’).style.display=‘block’;
-document.getElementById(‘btn-adp-salvar’).disabled=false;
-document.getElementById(‘btn-adp-pub’).disabled=false;
-iniciarSliderADP();
+  var el=document.getElementById('modal-sel-adp');if(el)el.remove();
+  ADP_FOTOS[lado]=url;
+  document.getElementById('adp-sel-'+lado).innerHTML='<img src="'+url+'" style="width:100%;height:100%;object-fit:cover;">';
+  document.getElementById('adp-data-'+lado).textContent=data;
+  if(ADP_FOTOS.antes&&ADP_FOTOS.depois){
+    document.getElementById('adp-foto-antes').src=ADP_FOTOS.antes;
+    document.getElementById('adp-foto-depois').src=ADP_FOTOS.depois;
+    document.getElementById('adp-comparador-wrap').style.display='block';
+    document.getElementById('btn-adp-salvar').disabled=false;
+    document.getElementById('btn-adp-pub').disabled=false;
+    iniciarSliderADP();
+  }
 }
-}
-
 function iniciarSliderADP(){
-const comp=document.getElementById(‘adp-comparador’);
-const divider=document.getElementById(‘adp-divider’);
-const depois=document.getElementById(‘adp-foto-depois’);
-let drag=false;
-const move=x=>{const rect=comp.getBoundingClientRect();const pct=Math.max(5,Math.min(95,((x-rect.left)/rect.width)*100));divider.style.left=pct+’%’;depois.style.clipPath=‘inset(0 ‘+(100-pct)+’% 0 0)’;};
-divider.onmousedown=()=>{drag=true;};
-divider.ontouchstart=e=>{drag=true;e.preventDefault();};
-document.onmousemove=e=>{if(drag)move(e.clientX);};
-document.ontouchmove=e=>{if(drag)move(e.touches[0].clientX);};
-document.onmouseup=()=>{drag=false;};
-document.ontouchend=()=>{drag=false;};
+  var comp=document.getElementById('adp-comparador');
+  var divider=document.getElementById('adp-divider');
+  var depois=document.getElementById('adp-foto-depois');
+  var drag=false;
+  var move=function(x){var rect=comp.getBoundingClientRect();var pct=Math.max(5,Math.min(95,((x-rect.left)/rect.width)*100));divider.style.left=pct+'%';depois.style.clipPath='inset(0 '+(100-pct)+'% 0 0)';};
+  divider.onmousedown=function(){drag=true;};
+  divider.ontouchstart=function(e){drag=true;e.preventDefault();};
+  document.onmousemove=function(e){if(drag)move(e.clientX);};
+  document.ontouchmove=function(e){if(drag)move(e.touches[0].clientX);};
+  document.onmouseup=function(){drag=false;};
+  document.ontouchend=function(){drag=false;};
 }
-
 async function publicarADP(publico){
-if(!ADP_FOTOS.antes||!ADP_FOTOS.depois){toast(‘Selecione as duas fotos’);return;}
-const legenda=document.getElementById(‘adp-legenda’).value.trim()||‘Meu antes & depois! 💪’;
-const btnS=document.getElementById(‘btn-adp-salvar’);
-const btnP=document.getElementById(‘btn-adp-pub’);
-btnS.disabled=true;btnP.disabled=true;btnP.textContent=‘Gerando canvas…’;
-try{
-const canvasEl=document.createElement(‘canvas’);
-const sz=600;canvasEl.width=sz*2;canvasEl.height=sz;
-const cctx=canvasEl.getContext(‘2d’);
-const loadImg=src=>new Promise(res=>{const i=new Image();i.crossOrigin=‘anonymous’;i.onload=()=>res(i);i.onerror=()=>res(null);i.src=src;});
-const imgs=await Promise.all([loadImg(ADP_FOTOS.antes),loadImg(ADP_FOTOS.depois)]);
-cctx.fillStyle=’#000’;cctx.fillRect(0,0,sz*2,sz);
-if(imgs[0])cctx.drawImage(imgs[0],0,0,sz,sz);
-if(imgs[1])cctx.drawImage(imgs[1],sz,0,sz,sz);
-cctx.fillStyle=‘rgba(255,255,255,0.8)’;cctx.fillRect(sz-1,0,2,sz);
-cctx.fillStyle=‘rgba(0,0,0,0.6)’;cctx.fillRect(0,sz-48,sz,48);cctx.fillRect(sz,sz-48,sz,48);
-cctx.fillStyle=’#fff’;cctx.font=‘bold 28px Arial’;cctx.textAlign=‘center’;
-cctx.fillText(‘ANTES’,sz/2,sz-16);cctx.fillText(‘DEPOIS’,sz+sz/2,sz-16);
-if(legenda){cctx.fillStyle=‘rgba(0,0,0,0.7)’;cctx.fillRect(0,0,sz*2,50);cctx.fillStyle=’#fff’;cctx.font=‘bold 22px Arial’;cctx.fillText(legenda.substring(0,60),sz,34);}
-const b64=canvasEl.toDataURL(‘image/jpeg’,0.90).split(’,’)[1];
-btnP.textContent=‘Enviando…’;
-let canvas_url=null;
-try{const r=await api(’/api/upload-foto’,‘POST’,{image:‘data:image/jpeg;base64,’+b64,usuario_id:USER.id,tipo:‘antes_depois’});if(r.url)canvas_url=r.url;}catch(e){}
-await api(’/api/progresso?action=salvar’,‘POST’,{usuario_id:USER.id,tipo:‘antes_depois’,conteudo:legenda,foto_url:canvas_url||ADP_FOTOS.depois,foto_antes:ADP_FOTOS.antes,foto_depois:ADP_FOTOS.depois,peso:null,nota:null,publico});
-toast(publico?‘✅ Card publicado no feed!’:‘✅ Salvo no perfil!’);
-ADP_FOTOS={antes:null,depois:null};
-[‘adp-sel-antes’,‘adp-sel-depois’].forEach(id=>{document.getElementById(id).innerHTML=’<span style="font-size:1.8rem;">📷</span>’;});
-document.getElementById(‘adp-data-antes’).textContent=’’;
-document.getElementById(‘adp-data-depois’).textContent=’’;
-document.getElementById(‘adp-legenda’).value=’’;
-document.getElementById(‘adp-comparador-wrap’).style.display=‘none’;
-document.getElementById(‘btn-adp-salvar’).disabled=true;
-document.getElementById(‘btn-adp-pub’).disabled=true;
-document.getElementById(‘ad-perfil-card’).style.display=‘none’;
-carregarPerfil();
-}catch(e){console.error(e);toast(‘Erro ao publicar.’);}
-finally{btnS.disabled=false;btnP.disabled=false;btnP.textContent=‘📤 Publicar’;}
+  if(!ADP_FOTOS.antes||!ADP_FOTOS.depois){toast('Selecione as duas fotos');return;}
+  var legenda=document.getElementById('adp-legenda').value.trim()||'Meu antes e depois!';
+  var btnS=document.getElementById('btn-adp-salvar');
+  var btnP=document.getElementById('btn-adp-pub');
+  btnS.disabled=true;btnP.disabled=true;btnP.textContent='Gerando...';
+  try{
+    var canvasEl=document.createElement('canvas');
+    var sz=600;canvasEl.width=sz*2;canvasEl.height=sz;
+    var cctx=canvasEl.getContext('2d');
+    var loadImg=function(src){return new Promise(function(res){var i=new Image();i.crossOrigin='anonymous';i.onload=function(){res(i);};i.onerror=function(){res(null);};i.src=src;});};
+    var imgs=await Promise.all([loadImg(ADP_FOTOS.antes),loadImg(ADP_FOTOS.depois)]);
+    cctx.fillStyle='#000';cctx.fillRect(0,0,sz*2,sz);
+    if(imgs[0])cctx.drawImage(imgs[0],0,0,sz,sz);
+    if(imgs[1])cctx.drawImage(imgs[1],sz,0,sz,sz);
+    cctx.fillStyle='rgba(255,255,255,0.8)';cctx.fillRect(sz-1,0,2,sz);
+    cctx.fillStyle='rgba(0,0,0,0.6)';cctx.fillRect(0,sz-48,sz,48);cctx.fillRect(sz,sz-48,sz,48);
+    cctx.fillStyle='#fff';cctx.font='bold 28px Arial';cctx.textAlign='center';
+    cctx.fillText('ANTES',sz/2,sz-16);cctx.fillText('DEPOIS',sz+sz/2,sz-16);
+    if(legenda){cctx.fillStyle='rgba(0,0,0,0.7)';cctx.fillRect(0,0,sz*2,50);cctx.fillStyle='#fff';cctx.font='bold 22px Arial';cctx.fillText(legenda.substring(0,60),sz,34);}
+    var b64=canvasEl.toDataURL('image/jpeg',0.90).split(',')[1];
+    btnP.textContent='Enviando...';
+    var canvas_url=null;
+    try{var r=await api('/api/upload-foto','POST',{image:'data:image/jpeg;base64,'+b64,usuario_id:USER.id,tipo:'antes_depois'});if(r.url)canvas_url=r.url;}catch(e){}
+    await api('/api/progresso?action=salvar','POST',{usuario_id:USER.id,tipo:'antes_depois',conteudo:legenda,foto_url:canvas_url||ADP_FOTOS.depois,foto_antes:ADP_FOTOS.antes,foto_depois:ADP_FOTOS.depois,peso:null,nota:null,publico:publico});
+    toast(publico?'Card publicado no feed!':'Salvo no perfil!');
+    ADP_FOTOS={antes:null,depois:null};
+    document.getElementById('adp-sel-antes').innerHTML='<span style="font-size:1.8rem;">foto</span>';
+    document.getElementById('adp-sel-depois').innerHTML='<span style="font-size:1.8rem;">foto</span>';
+    document.getElementById('adp-data-antes').textContent='';
+    document.getElementById('adp-data-depois').textContent='';
+    document.getElementById('adp-legenda').value='';
+    document.getElementById('adp-comparador-wrap').style.display='none';
+    document.getElementById('btn-adp-salvar').disabled=true;
+    document.getElementById('btn-adp-pub').disabled=true;
+    document.getElementById('ad-perfil-card').style.display='none';
+    carregarPerfil();
+  }catch(e){console.error(e);toast('Erro ao publicar.');}
+  finally{btnS.disabled=false;btnP.disabled=false;btnP.textContent='Publicar no feed';}
 }
-
-// ═══ GRÁFICO MELHORADO ═══
-function desenharGrafico(pesos){
-const canvas=document.getElementById(‘grafico-peso’);
-const ctx=canvas.getContext(‘2d’);
-const PAD={top:28,right:14,bottom:38,left:46};
-const W=canvas.offsetWidth||300,H=canvas.offsetHeight||200;
-canvas.width=W*2;canvas.height=H*2;ctx.scale(2,2);
-const GW=W-PAD.left-PAD.right,GH=H-PAD.top-PAD.bottom;
-const vals=pesos.map(p=>p.peso);
-const minV=Math.min.apply(null,vals),maxV=Math.max.apply(null,vals);
-const range=Math.max(maxV-minV,1.5);
-const minY=minV-range*0.18,maxY=maxV+range*0.22;
-const isDark=document.documentElement.getAttribute(‘data-theme’)===‘dark’;
-const cor=isDark?’#fff’:’#0a0a0a’;
-const cinzaMed=isDark?‘rgba(255,255,255,0.35)’:‘rgba(0,0,0,0.35)’;
-const cinzaLin=isDark?‘rgba(255,255,255,0.07)’:‘rgba(0,0,0,0.06)’;
-ctx.clearRect(0,0,W,H);
-const toX=function(i){return PAD.left+i*(GW/(Math.max(pesos.length-1,1)));};
-const toY=function(v){return PAD.top+GH-(v-minY)/(maxY-minY)*GH;};
-for(let i=0;i<=4;i++){
-const v=minY+(maxY-minY)*i/4;
-const y=toY(v);
-ctx.beginPath();ctx.strokeStyle=cinzaLin;ctx.lineWidth=1;
-ctx.moveTo(PAD.left,y);ctx.lineTo(PAD.left+GW,y);ctx.stroke();
-ctx.font=‘10px DM Sans’;ctx.fillStyle=cinzaMed;ctx.textAlign=‘right’;
-ctx.fillText(v.toFixed(1),PAD.left-5,y+4);
-}
-if(pesos.length<2){document.getElementById(‘grafico-empty’).style.display=‘block’;return;}
-const grad=ctx.createLinearGradient(0,PAD.top,0,PAD.top+GH);
-grad.addColorStop(0,isDark?‘rgba(255,255,255,0.1)’:‘rgba(10,10,10,0.09)’);
-grad.addColorStop(1,‘rgba(0,0,0,0)’);
-ctx.beginPath();
-pesos.forEach(function(p,i){const x=toX(i);const y=toY(p.peso);if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);});
-ctx.lineTo(toX(pesos.length-1),PAD.top+GH);ctx.lineTo(toX(0),PAD.top+GH);ctx.closePath();
-ctx.fillStyle=grad;ctx.fill();
-ctx.beginPath();ctx.strokeStyle=cor;ctx.lineWidth=2.5;ctx.lineJoin=‘round’;ctx.lineCap=‘round’;
-pesos.forEach(function(p,i){const x=toX(i);const y=toY(p.peso);if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);});ctx.stroke();
-pesos.forEach(function(p,i){
-const x=toX(i);const y=toY(p.peso);
-ctx.beginPath();ctx.arc(x,y,4.5,0,Math.PI*2);ctx.fillStyle=cor;ctx.fill();
-ctx.beginPath();ctx.arc(x,y,2.5,0,Math.PI*2);ctx.fillStyle=isDark?’#1a1a1a’:’#fff’;ctx.fill();
-ctx.font=‘bold 10px DM Sans’;ctx.fillStyle=cor;ctx.textAlign=‘center’;
-ctx.fillText(p.peso.toFixed(1),x,y-11);
-const d=new Date(p.criado_em);
-ctx.font=‘9px DM Sans’;ctx.fillStyle=cinzaMed;
-ctx.fillText(d.toLocaleDateString(‘pt-BR’,{day:‘2-digit’,month:‘2-digit’}),x,PAD.top+GH+15);
-});
-document.getElementById(‘grafico-empty’).style.display=‘none’;
-}
-
-function toast(msg){const t=document.getElementById(‘toast’);t.textContent=msg;t.classList.add(‘show’);setTimeout(()=>t.classList.remove(‘show’),3200);}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3200);}
 </script>
-
 <script src="https://sdk.mercadopago.com/js/v2"></script>
-
 </body>
 </html>
