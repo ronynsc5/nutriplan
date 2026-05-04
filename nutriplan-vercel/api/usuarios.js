@@ -1,6 +1,5 @@
 // api/usuarios.js
 // CRUD de usuários via Supabase
-
 const SUPA_URL = process.env.SUPABASE_URL;
 const SUPA_KEY = process.env.SUPABASE_SECRET_KEY;
 
@@ -28,17 +27,14 @@ export default async function handler(req, res) {
   const { action } = req.query;
 
   try {
-    // CADASTRO
     if (action === 'cadastrar' && req.method === 'POST') {
       const { nome, email, senha, wpp } = req.body;
-      // Verifica se já existe
       const existe = await supa(`usuarios?email=eq.${encodeURIComponent(email)}&select=id`);
       if (existe.length > 0) return res.status(400).json({ error: 'Email já cadastrado' });
       const novo = await supa('usuarios', 'POST', { nome, email, senha, wpp, creditos: 0, is_admin: false });
       return res.status(200).json(novo[0]);
     }
 
-    // LOGIN
     if (action === 'login' && req.method === 'POST') {
       const { email, senha } = req.body;
       const u = await supa(`usuarios?email=eq.${encodeURIComponent(email)}&senha=eq.${encodeURIComponent(senha)}&select=*`);
@@ -46,7 +42,6 @@ export default async function handler(req, res) {
       return res.status(200).json(u[0]);
     }
 
-    // BUSCAR USUÁRIO
     if (action === 'buscar' && req.method === 'GET') {
       const { email } = req.query;
       const u = await supa(`usuarios?email=eq.${encodeURIComponent(email)}&select=*`);
@@ -54,17 +49,19 @@ export default async function handler(req, res) {
       return res.status(200).json(u[0]);
     }
 
-    // ATUALIZAR CRÉDITOS
     if (action === 'creditos' && req.method === 'PATCH') {
       const { id, creditos } = req.body;
       await supa(`usuarios?id=eq.${id}`, 'PATCH', { creditos });
       return res.status(200).json({ ok: true });
     }
 
-    // LISTAR TODOS (admin)
     if (action === 'listar' && req.method === 'GET') {
       const u = await supa('usuarios?is_admin=eq.false&select=id,nome,email,creditos,modo,criado_em');
       return res.status(200).json(u);
+    }
+
+    if (action === 'config' && req.method === 'GET') {
+      return res.status(200).json({ MP_PUBLIC_KEY: process.env.MP_PUBLIC_KEY || '' });
     }
 
     return res.status(400).json({ error: 'Ação inválida' });
