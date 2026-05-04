@@ -275,10 +275,29 @@ input[type=range]{flex:1;accent-color:var(--preto);}
 .load-step.show{opacity:1;}
 #toast{position:fixed;bottom:calc(var(--bottom-h) + 0.8rem);left:50%;transform:translateX(-50%) translateY(80px);background:var(--preto);color:var(--card);border-radius:50px;padding:9px 20px;font-size:0.8rem;transition:transform 0.3s;z-index:500;white-space:nowrap;max-width:90vw;text-align:center;}
 #toast.show{transform:translateX(-50%) translateY(0);}
+.ad-comparador{position:relative;aspect-ratio:1;border-radius:var(--radius-sm);overflow:hidden;user-select:none;margin-bottom:0.8rem;}
+.ad-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+.ad-img-depois{clip-path:inset(0 50% 0 0);}
+.ad-divider{position:absolute;top:0;bottom:0;left:50%;width:3px;background:#fff;cursor:ew-resize;z-index:10;}
+.ad-divider-handle{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:0.8rem;box-shadow:0 2px 8px rgba(0,0,0,0.3);}
+.ad-label{position:absolute;bottom:8px;background:rgba(0,0,0,0.6);color:#fff;border-radius:50px;padding:2px 10px;font-size:0.64rem;font-weight:700;}
+.ad-sel-box{aspect-ratio:1;background:var(--cinza-bg);border-radius:var(--radius-sm);border:2px dashed var(--cinza-cla);display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;transition:border-color 0.2s;}
+.ad-sel-box:hover{border-color:var(--preto);}
+.ad-sel-box img{width:100%;height:100%;object-fit:cover;}
 footer{background:#0a0a0a;color:rgba(255,255,255,0.4);text-align:center;padding:1.3rem 1rem;font-size:0.72rem;}
 footer strong{color:#fff;}
 @keyframes spin{to{transform:rotate(360deg);}}
-@media(min-width:768px){body{max-width:480px;margin:0 auto;box-shadow:0 0 40px rgba(0,0,0,0.15);}.bottom-nav,.nav,#notif-banner{max-width:480px;left:50%;transform:translateX(-50%);}}
+@media(min-width:768px){
+  body{max-width:520px;margin:0 auto;box-shadow:0 0 60px rgba(0,0,0,0.18);}
+  nav,#notif-banner,#toast{max-width:520px;left:50%;transform:translateX(-50%);}
+  .bottom-nav{max-width:520px;left:50%;transform:translateX(-50%);}
+  .grafico-wrap{height:180px;}
+  .posts-grid{grid-template-columns:repeat(3,1fr);}
+}
+@media(min-width:1024px){
+  body{max-width:600px;}
+  nav,#notif-banner,#toast,.bottom-nav{max-width:600px;}
+}
 </style>
 </head>
 <body>
@@ -295,6 +314,7 @@ footer strong{color:#fff;}
   <button class="bnav-item" id="bn-plano" onclick="bnav('plano')"><span class="icon">🍽️</span><span class="label">Plano</span></button>
   <button class="bnav-item" id="bn-progresso" onclick="bnav('progresso')"><span class="icon">📸</span><span class="label">Progresso</span></button>
   <button class="bnav-item" id="bn-feed" onclick="bnav('feed')"><span class="icon">🌍</span><span class="label">Feed</span></button>
+  <button class="bnav-item" id="bn-ad" onclick="irAD()"><span class="icon">🔄</span><span class="label">Antes/Dep.</span></button>
   <button class="bnav-item" id="bn-admin" onclick="bnav('admin')" style="display:none;"><span class="icon">⚙️</span><span class="label">Admin</span></button>
 </div>
 <!-- HERO -->
@@ -312,7 +332,13 @@ footer strong{color:#fff;}
     <div class="stat-item"><div class="stat-num">📸</div><div class="stat-label">Antes/Depois</div></div>
     <div class="stat-item"><div class="stat-num">PWA</div><div class="stat-label">Como app</div></div>
   </div>
-  <button id="btn-instalar" onclick="instalarApp()">📲 Instalar como aplicativo</button>
+  <button id="btn-instalar" onclick="instalarApp()" style="display:none;width:calc(100% - 2rem);margin:0.8rem auto;background:var(--preto);color:var(--card);border:none;border-radius:var(--radius);padding:13px;font-family:'DM Sans',sans-serif;font-size:0.86rem;font-weight:600;cursor:pointer;align-items:center;justify-content:center;gap:8px;">📲 Instalar app no celular</button>
+<div id="pwa-banner" style="display:none;background:var(--card);border:1.5px solid var(--cinza-cla);border-radius:var(--radius);margin:0.8rem 1rem;padding:1.2rem;text-align:center;box-shadow:var(--sombra);">
+  <div style="font-size:2rem;margin-bottom:0.3rem;">📲</div>
+  <div style="font-weight:700;font-size:0.95rem;color:var(--preto);margin-bottom:0.3rem;">Instale o NutriPlan no seu celular</div>
+  <div style="font-size:0.76rem;color:var(--cinza-med);margin-bottom:0.8rem;">Acesse como aplicativo — rápido e offline</div>
+  <button onclick="instalarApp()" style="background:var(--preto);color:var(--card);border:none;border-radius:50px;padding:11px 28px;font-size:0.88rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">Instalar grátis →</button>
+</div>
 </div>
 <!-- AUTH -->
 <div id="tela-auth" class="tela">
@@ -371,7 +397,10 @@ footer strong{color:#fff;}
   <!-- Posts públicos -->
   <div class="posts-section">
     <span style="font-size:0.82rem;font-weight:600;color:var(--preto);">📸 Públicos</span>
+    <div style="display:flex;gap:6px;">
     <button onclick="irProgresso()" style="background:none;border:none;font-size:0.78rem;color:var(--cinza-med);cursor:pointer;">+ Adicionar</button>
+    <button onclick="irAD()" style="background:var(--cinza-bg);border:1px solid var(--cinza-cla);border-radius:50px;font-size:0.72rem;color:var(--preto);cursor:pointer;padding:3px 10px;">🔄 Antes/Depois</button>
+  </div>
   </div>
   <div class="posts-grid" id="posts-grid-pub"></div>
   <!-- Posts privados -->
@@ -401,6 +430,40 @@ footer strong{color:#fff;}
       <label for="prog-publico" style="font-weight:400;">Compartilhar no feed público</label>
     </div>
     <button class="btn-full" onclick="salvarProgresso()" id="btn-salvar-prog">Salvar progresso</button>
+  </div>
+</div>
+<!-- ANTES/DEPOIS -->
+<div id="tela-ad" class="tela">
+  <div style="padding:0.8rem 1rem 0;display:flex;align-items:center;gap:0.5rem;">
+    <button onclick="irProgresso()" style="background:none;border:none;font-size:1.2rem;cursor:pointer;color:var(--cinza-med);">←</button>
+    <span style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--preto);">🔄 Antes & Depois</span>
+  </div>
+  <div class="prog-form-card">
+    <p style="font-size:0.78rem;color:var(--cinza-med);margin-bottom:0.8rem;">Selecione duas fotos dos seus registros para criar um card comparativo e publicar no feed.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-bottom:0.8rem;">
+      <div>
+        <div style="font-size:0.72rem;font-weight:600;color:var(--cinza-med);margin-bottom:0.3rem;">📅 ANTES</div>
+        <div class="ad-sel-box" id="ad-sel-antes" onclick="abrirSeletorAD('antes')"><span style="font-size:1.5rem;">📷</span></div>
+        <div id="ad-data-antes" style="font-size:0.66rem;color:var(--cinza-med);text-align:center;margin-top:3px;"></div>
+      </div>
+      <div>
+        <div style="font-size:0.72rem;font-weight:600;color:var(--cinza-med);margin-bottom:0.3rem;">📅 DEPOIS</div>
+        <div class="ad-sel-box" id="ad-sel-depois" onclick="abrirSeletorAD('depois')"><span style="font-size:1.5rem;">📷</span></div>
+        <div id="ad-data-depois" style="font-size:0.66rem;color:var(--cinza-med);text-align:center;margin-top:3px;"></div>
+      </div>
+    </div>
+    <div id="ad-comparador-wrap" style="display:none;">
+      <div class="ad-comparador" id="ad-comparador">
+        <img class="ad-img" id="ad-foto-antes" src="" alt="Antes">
+        <img class="ad-img ad-img-depois" id="ad-foto-depois" src="" alt="Depois">
+        <div class="ad-divider" id="ad-divider"><div class="ad-divider-handle">⟺</div></div>
+        <span class="ad-label" style="left:8px;">ANTES</span>
+        <span class="ad-label" style="right:8px;">DEPOIS</span>
+      </div>
+    </div>
+    <div class="fg"><label>💬 Legenda do card</label><input type="text" id="ad-legenda" placeholder="Ex: 3 meses de dedicação! 💪"></div>
+    <button class="btn-full" onclick="publicarAD()" id="btn-publicar-ad" disabled>📤 Publicar no feed</button>
+    <button class="btn-full2" onclick="irProgresso()">← Voltar</button>
   </div>
 </div>
 <!-- FEED -->
@@ -644,8 +707,8 @@ function toggleTema(){const t=document.documentElement.getAttribute('data-theme'
 let USER=null,PLANO_SEL=null,MODO_SEL=null,FORM_DATA={},WPP_MSG='',CUPOM_CAD_INFO=null,deferredPrompt=null,PAGAMENTO_ID=null,VERIFICAR_INTERVAL=null,PLANO_ATUAL=null,FOTO_BASE64=null,FOTO_TIPO=null,TODOS_USUARIOS=[];
 // PWA
 if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(e=>console.warn(e));
-window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;document.getElementById('btn-instalar').classList.add('show');});
-function instalarApp(){if(!deferredPrompt){toast('Menu do navegador → "Adicionar à tela inicial"');return;}deferredPrompt.prompt();}
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;const btn=document.getElementById('btn-instalar');btn.style.display='flex';const banner=document.getElementById('pwa-banner');if(banner)banner.style.display='block';});
+function instalarApp(){if(!deferredPrompt){toast('No navegador: menu (⋮) → "Adicionar à tela inicial"');return;}deferredPrompt.prompt();deferredPrompt.userChoice.then(r=>{if(r.outcome==='accepted'){document.getElementById('pwa-banner').style.display='none';document.getElementById('btn-instalar').style.display='none';}deferredPrompt=null;});}
 async function ativarNotif(){document.getElementById('notif-banner').classList.remove('show');if(!('Notification' in window))return;const p=await Notification.requestPermission();if(p==='granted'){toast('✅ Notificações ativadas!');ls.set('notif_ok',true);}}
 // API
 async function api(path,method='GET',body=null){const opts={method,headers:{'Content-Type':'application/json'}};if(body)opts.body=JSON.stringify(body);const r=await fetch(path,opts);return r.json();}
@@ -1063,6 +1126,76 @@ async function gerarCupom(){const prefix=(document.getElementById('ap').value.tr
 function copiarCupom(){navigator.clipboard.writeText(document.getElementById('cupom-disp').textContent).then(()=>toast('Copiado!'));}
 function carregarCfgAdmin(){const cfg=ls.get('cfg')||{};const m={'cfg-mp-pub':'MP_PUBLIC_KEY','cfg-url':'SITE_URL','cfg-nome-site':'NOME_SITE','cfg-nome-studio':'NOME_STUDIO','cfg-preco-eco':'PRECO_ECO','cfg-preco-pre':'PRECO_PRE','cfg-dias':'DIAS_VALIDADE'};Object.entries(m).forEach(([id,k])=>{const el=document.getElementById(id);if(el&&cfg[k]!==undefined)el.value=cfg[k];});}
 function salvarCfg(){const cfg=ls.get('cfg')||{};const m={'cfg-mp-pub':'MP_PUBLIC_KEY','cfg-url':'SITE_URL','cfg-nome-site':'NOME_SITE','cfg-nome-studio':'NOME_STUDIO','cfg-preco-eco':'PRECO_ECO','cfg-preco-pre':'PRECO_PRE','cfg-dias':'DIAS_VALIDADE'};Object.entries(m).forEach(([id,k])=>{const el=document.getElementById(id);if(el&&el.value)cfg[k]=el.value;});ls.set('cfg',cfg);if(cfg.NOME_SITE){document.getElementById('footer-nome').textContent=cfg.NOME_SITE;document.title=cfg.NOME_SITE+' — '+(cfg.NOME_STUDIO||'MFCT Estúdio');}if(cfg.NOME_STUDIO)document.getElementById('footer-studio').textContent=cfg.NOME_STUDIO;toast('✅ Configurações salvas!');}
+// ═══ ANTES/DEPOIS ═══
+let AD_FOTOS={antes:null,depois:null},AD_PROGS=[];
+function irAD(){ir('ad');mosBN();carregarFotosAD();}
+async function carregarFotosAD(){
+  if(!USER||USER.id==='admin')return;
+  try{
+    const progs=await api('/api/progresso?action=meu&usuario_id='+USER.id);
+    AD_PROGS=progs.filter(p=>p.foto_url);
+    if(!AD_PROGS.length){toast('Adicione fotos no Progresso primeiro!');}
+  }catch(e){}
+}
+function abrirSeletorAD(lado){
+  if(!AD_PROGS.length){toast('Adicione fotos nos seus registros primeiro!');return;}
+  const modal=document.createElement('div');
+  modal.className='modal-bg show';
+  modal.id='modal-sel-ad';
+  const lista=AD_PROGS.map((p,i)=>`
+    <div onclick="escolherFotoAD('${lado}','${p.foto_url}','${new Date(p.criado_em).toLocaleDateString('pt-BR')}',${i})" style="display:flex;align-items:center;gap:0.7rem;padding:0.7rem 0;border-bottom:1px solid var(--cinza-cla);cursor:pointer;">
+      <img src="${p.foto_url}" style="width:52px;height:52px;border-radius:8px;object-fit:cover;">
+      <div><div style="font-size:0.8rem;font-weight:600;color:var(--preto);">${new Date(p.criado_em).toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'})}</div>${p.peso?'<div style="font-size:0.7rem;color:var(--cinza-med);">⚖️ '+p.peso+'kg</div>':''}</div>
+    </div>`).join('');
+  modal.innerHTML=`<div class="modal"><div class="modal-handle"></div><h3>Selecionar foto — ${lado.toUpperCase()}</h3><div style="max-height:60vh;overflow-y:auto;">${lista}</div><button class="btn-full2" onclick="document.getElementById('modal-sel-ad').remove()" style="margin-top:0.8rem;">Cancelar</button></div>`;
+  document.body.appendChild(modal);
+}
+function escolherFotoAD(lado,url,data,idx){
+  document.getElementById('modal-sel-ad')?.remove();
+  AD_FOTOS[lado]=url;
+  const preview=document.getElementById('ad-sel-'+lado);
+  preview.innerHTML=`<img src="${url}" style="width:100%;height:100%;object-fit:cover;">`;
+  document.getElementById('ad-data-'+lado).textContent=data;
+  if(AD_FOTOS.antes&&AD_FOTOS.depois){
+    document.getElementById('ad-foto-antes').src=AD_FOTOS.antes;
+    document.getElementById('ad-foto-depois').src=AD_FOTOS.depois;
+    document.getElementById('ad-comparador-wrap').style.display='block';
+    document.getElementById('btn-publicar-ad').disabled=false;
+    iniciarSliderAD();
+  }
+}
+function iniciarSliderAD(){
+  const comp=document.getElementById('ad-comparador');
+  const divider=document.getElementById('ad-divider');
+  const depois=document.getElementById('ad-foto-depois');
+  let drag=false;
+  const move=x=>{const rect=comp.getBoundingClientRect();const pct=Math.max(5,Math.min(95,((x-rect.left)/rect.width)*100));divider.style.left=pct+'%';depois.style.clipPath=`inset(0 ${100-pct}% 0 0)`;};
+  divider.onmousedown=()=>{drag=true;};
+  divider.ontouchstart=()=>{drag=true;};
+  document.onmousemove=e=>{if(drag)move(e.clientX);};
+  document.ontouchmove=e=>{if(drag)move(e.touches[0].clientX);};
+  document.onmouseup=()=>{drag=false;};
+  document.ontouchend=()=>{drag=false;};
+}
+async function publicarAD(){
+  if(!AD_FOTOS.antes||!AD_FOTOS.depois){toast('Selecione as duas fotos');return;}
+  const legenda=document.getElementById('ad-legenda').value.trim()||'Meu antes & depois! 💪';
+  const btn=document.getElementById('btn-publicar-ad');
+  btn.disabled=true;btn.textContent='Publicando...';
+  try{
+    await api('/api/progresso?action=salvar','POST',{usuario_id:USER.id,tipo:'antes_depois',conteudo:legenda,foto_url:AD_FOTOS.depois,peso:null,nota:null,publico:true});
+    toast('✅ Card publicado no feed!');
+    AD_FOTOS={antes:null,depois:null};
+    document.getElementById('ad-sel-antes').innerHTML='<span style="font-size:1.5rem;">📷</span>';
+    document.getElementById('ad-sel-depois').innerHTML='<span style="font-size:1.5rem;">📷</span>';
+    document.getElementById('ad-data-antes').textContent='';
+    document.getElementById('ad-data-depois').textContent='';
+    document.getElementById('ad-comparador-wrap').style.display='none';
+    document.getElementById('ad-legenda').value='';
+    btn.disabled=true;
+    setTimeout(()=>irFeed(),1200);
+  }catch(e){toast('Erro ao publicar.');btn.disabled=false;btn.textContent='📤 Publicar no feed';}
+}
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3200);}
 </script>
 <script src="https://sdk.mercadopago.com/js/v2"></script>
