@@ -1,5 +1,4 @@
 // api/usuarios.js
-// CRUD de usuários via Supabase
 const SUPA_URL = process.env.SUPABASE_URL;
 const SUPA_KEY = process.env.SUPABASE_SECRET_KEY;
 
@@ -61,7 +60,8 @@ export default async function handler(req, res) {
     }
 
     if (action === 'config' && req.method === 'GET') {
-      return res.status(200).json({ MP_PUBLIC_KEY: process.env.MP_PUBLIC_KEY || '' });
+      const key = process.env.MP_PUBLIC_KEY || '';
+      return res.status(200).json({ MP_PUBLIC_KEY: key });
     }
 
     return res.status(400).json({ error: 'Ação inválida' });
