@@ -19,19 +19,19 @@ export default async function handler(req, res) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.MP_ACCESS_TOKEN}`,
-        'X-Idempotency-Key': `${email}-cartao-${plano}-${Date.now()}`
+        'Authorization': 'Bearer ' + process.env.MP_ACCESS_TOKEN,
+        'X-Idempotency-Key': email + '-cartao-' + plano + '-' + Date.now()
       },
       body: JSON.stringify({
         transaction_amount: parseFloat(valor),
         token,
         description: descricoes[plano] || 'NutriPlan',
         installments: parseInt(parcelas) || 1,
-        payment_method_id: 'visa', // será detectado automaticamente pelo token
+        payment_method_id: 'visa',
         payer: {
           email,
-          first_name: nome?.split(' ')[0] || '',
-          identification: { type: 'CPF', number: cpf?.replace(/\D/g, '') }
+          first_name: nome ? nome.split(' ')[0] : '',
+          identification: { type: 'CPF', number: cpf ? cpf.replace(/\D/g, '') : '' }
         }
       })
     });
