@@ -92,8 +92,8 @@ textarea{resize:vertical;min-height:68px;}
 .perfil-cred-pill{display:inline-flex;align-items:center;gap:5px;background:var(--cinza-bg);border:1px solid var(--cinza-cla);border-radius:50px;padding:4px 12px;font-size:0.72rem;color:var(--cinza-med);}
 .btn-editar-perfil{background:var(--cinza-bg);color:var(--preto);border:1px solid var(--cinza-cla);border-radius:50px;padding:7px 18px;font-size:0.78rem;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;width:100%;margin-top:0.8rem;}
 .grafico-card{background:var(--card);border-radius:var(--radius);padding:1.1rem;margin:0.8rem 1rem;box-shadow:var(--sombra);}
-.grafico-card h3{font-family:'Playfair Display',serif;font-size:0.92rem;color:var(--preto);margin-bottom:0.5rem;display:flex;align-items:center;justify-content:space-between;}
-.grafico-wrap{position:relative;height:200px;}
+.grafico-card h3{font-family:'Playfair Display',serif;font-size:0.92rem;color:var(--preto);margin-bottom:0.8rem;}
+.grafico-wrap{position:relative;height:120px;}
 .grafico-empty{text-align:center;padding:2rem 0;font-size:0.78rem;color:var(--cinza-med);}
 .posts-section{padding:0.8rem 1rem 0.5rem;display:flex;align-items:center;justify-content:space-between;}
 .posts-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin:0 1rem;}
@@ -368,6 +368,37 @@ footer strong{color:#fff;}
       <div class="grafico-empty" id="grafico-empty">Registre seu peso para ver o gráfico</div>
     </div>
   </div>
+  <!-- ANTES & DEPOIS NO PERFIL -->
+  <div id="ad-perfil-card" class="grafico-card" style="display:none;">
+    <h3>🔄 Criar Antes & Depois <button onclick="toggleADPerfil()" style="background:none;border:none;font-size:0.78rem;color:var(--cinza-med);cursor:pointer;font-family:'DM Sans',sans-serif;">fechar</button></h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-bottom:0.8rem;">
+      <div>
+        <div style="font-size:0.7rem;font-weight:600;color:var(--cinza-med);margin-bottom:0.3rem;">ANTES</div>
+        <div class="ad-sel-box" id="adp-sel-antes" onclick="abrirSeletorADP('antes')" style="height:100px;"><span style="font-size:1.5rem;">📷</span></div>
+        <div id="adp-data-antes" style="font-size:0.62rem;color:var(--cinza-med);text-align:center;margin-top:3px;"></div>
+      </div>
+      <div>
+        <div style="font-size:0.7rem;font-weight:600;color:var(--cinza-med);margin-bottom:0.3rem;">DEPOIS</div>
+        <div class="ad-sel-box" id="adp-sel-depois" onclick="abrirSeletorADP('depois')" style="height:100px;"><span style="font-size:1.5rem;">📷</span></div>
+        <div id="adp-data-depois" style="font-size:0.62rem;color:var(--cinza-med);text-align:center;margin-top:3px;"></div>
+      </div>
+    </div>
+    <div id="adp-comparador-wrap" style="display:none;margin-bottom:0.8rem;">
+      <div class="ad-comparador" id="adp-comparador">
+        <img class="ad-img" id="adp-foto-antes" src="" alt="Antes">
+        <img class="ad-img ad-img-depois" id="adp-foto-depois" src="" alt="Depois">
+        <div class="ad-divider" id="adp-divider"><div class="ad-divider-handle">⟺</div></div>
+        <span class="ad-label" style="left:8px;">ANTES</span>
+        <span class="ad-label" style="right:8px;">DEPOIS</span>
+      </div>
+    </div>
+    <div class="fg" style="margin-bottom:0.6rem;"><input type="text" id="adp-legenda" placeholder="Legenda do card... 💪" style="font-size:0.84rem;"></div>
+    <div style="display:flex;gap:0.5rem;">
+      <button onclick="publicarADP(false)" id="btn-adp-salvar" disabled class="btn-full2" style="margin-top:0;flex:1;padding:10px;font-size:0.82rem;">🔒 Salvar privado</button>
+      <button onclick="publicarADP(true)" id="btn-adp-pub" disabled class="btn-full" style="flex:1;padding:10px;font-size:0.82rem;">📤 Publicar no feed</button>
+    </div>
+  </div>
+
   <!-- Posts públicos -->
   <div class="posts-section">
     <span style="font-size:0.82rem;font-weight:600;color:var(--preto);">📸 Públicos</span>
@@ -405,19 +436,7 @@ footer strong{color:#fff;}
 </div>
 <!-- FEED -->
 <div id="tela-feed" class="tela">
-  <div class="feed-header">
-  <h2>🌍 Comunidade</h2>
-  <button onclick="abrirAddFeed()" style="background:var(--preto);color:var(--card);border:none;border-radius:50px;padding:6px 14px;font-size:0.78rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:5px;">＋ Postar</button>
-</div>
-<div id="modal-add-feed" class="modal-bg">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <h3>📤 O que deseja postar?</h3>
-    <button class="btn-full" onclick="document.getElementById('modal-add-feed').classList.remove('show');irProgresso();" style="margin-bottom:0.5rem;">📸 Novo registro de peso</button>
-    <button class="btn-full2" onclick="document.getElementById('modal-add-feed').classList.remove('show');irAD();">🔄 Card Antes & Depois</button>
-    <button class="btn-full2" onclick="document.getElementById('modal-add-feed').classList.remove('show')" style="margin-top:0.3rem;">Cancelar</button>
-  </div>
-</div>
+  <div class="feed-header"><h2>🌍 Comunidade</h2><span style="font-size:0.72rem;color:var(--cinza-med);">Inspire e seja inspirado</span></div>
   <div id="feed-container" style="padding:0.5rem 0;"></div>
 </div>
 <!-- MODO -->
@@ -730,57 +749,26 @@ function renderGrid(id,progs){
 function desenharGrafico(pesos){
   const canvas=document.getElementById('grafico-peso');
   const ctx=canvas.getContext('2d');
-  const PAD={top:28,right:12,bottom:36,left:44};
-  const W=canvas.offsetWidth||300,H=canvas.offsetHeight||200;
+  const W=canvas.offsetWidth||300,H=canvas.offsetHeight||120;
   canvas.width=W*2;canvas.height=H*2;ctx.scale(2,2);
-  const GW=W-PAD.left-PAD.right,GH=H-PAD.top-PAD.bottom;
   const vals=pesos.map(p=>p.peso);
-  const minV=Math.min(...vals),maxV=Math.max(...vals);
-  const range=Math.max(maxV-minV,2);
-  const minY=minV-range*0.15,maxY=maxV+range*0.2;
+  const min=Math.min(...vals)-2,max=Math.max(...vals)+2;
+  const xStep=W/(pesos.length-1);
+  const yScale=H/(max-min);
   const isDark=document.documentElement.getAttribute('data-theme')==='dark';
   const cor=isDark?'#fff':'#0a0a0a';
-  const cinzaMed=isDark?'rgba(255,255,255,0.35)':'rgba(0,0,0,0.35)';
-  const cinzaLin=isDark?'rgba(255,255,255,0.08)':'rgba(0,0,0,0.06)';
   ctx.clearRect(0,0,W,H);
-  const toX=i=>PAD.left+i*(GW/(pesos.length-1));
-  const toY=v=>PAD.top+GH-(v-minY)/(maxY-minY)*GH;
-  // Grid horizontal
-  const steps=4;
-  for(let i=0;i<=steps;i++){
-    const v=minY+(maxY-minY)*i/steps;
-    const y=toY(v);
-    ctx.beginPath();ctx.strokeStyle=cinzaLin;ctx.lineWidth=1;
-    ctx.moveTo(PAD.left,y);ctx.lineTo(PAD.left+GW,y);ctx.stroke();
-    ctx.font='10px DM Sans';ctx.fillStyle=cinzaMed;ctx.textAlign='right';
-    ctx.fillText(v.toFixed(1),PAD.left-6,y+4);
-  }
-  // Área gradiente
-  const grad=ctx.createLinearGradient(0,PAD.top,0,PAD.top+GH);
-  grad.addColorStop(0,isDark?'rgba(255,255,255,0.12)':'rgba(10,10,10,0.10)');
-  grad.addColorStop(1,'rgba(0,0,0,0)');
+  // Área
   ctx.beginPath();
-  pesos.forEach((p,i)=>{const x=toX(i);const y=toY(p.peso);if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);});
-  ctx.lineTo(toX(pesos.length-1),PAD.top+GH);ctx.lineTo(toX(0),PAD.top+GH);ctx.closePath();
-  ctx.fillStyle=grad;ctx.fill();
-  // Linha principal
-  ctx.beginPath();ctx.strokeStyle=cor;ctx.lineWidth=2.5;ctx.lineJoin='round';ctx.lineCap='round';
-  pesos.forEach((p,i)=>{const x=toX(i);const y=toY(p.peso);if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);});ctx.stroke();
-  // Pontos + labels de peso + datas
-  pesos.forEach((p,i)=>{
-    const x=toX(i);const y=toY(p.peso);
-    // Ponto
-    ctx.beginPath();ctx.arc(x,y,4,0,Math.PI*2);ctx.fillStyle=cor;ctx.fill();
-    ctx.beginPath();ctx.arc(x,y,2.5,0,Math.PI*2);ctx.fillStyle=isDark?'#1a1a1a':'#fff';ctx.fill();
-    // Peso acima
-    ctx.font='bold 10px DM Sans';ctx.fillStyle=cor;ctx.textAlign='center';
-    ctx.fillText(p.peso.toFixed(1),x,y-10);
-    // Data abaixo
-    const d=new Date(p.criado_em);
-    const dataStr=d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});
-    ctx.font='9px DM Sans';ctx.fillStyle=cinzaMed;
-    ctx.fillText(dataStr,x,PAD.top+GH+14);
-  });
+  pesos.forEach((p,i)=>{const x=i*xStep;const y=H-(p.peso-min)*yScale;if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);});
+  ctx.lineTo((pesos.length-1)*xStep,H);ctx.lineTo(0,H);ctx.closePath();
+  ctx.fillStyle=isDark?'rgba(255,255,255,0.05)':'rgba(0,0,0,0.05)';ctx.fill();
+  // Linha
+  ctx.beginPath();ctx.strokeStyle=cor;ctx.lineWidth=2;ctx.lineJoin='round';
+  pesos.forEach((p,i)=>{const x=i*xStep;const y=H-(p.peso-min)*yScale;if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);});ctx.stroke();
+  // Pontos + labels
+  ctx.fillStyle=cor;
+  pesos.forEach((p,i)=>{const x=i*xStep;const y=H-(p.peso-min)*yScale;ctx.beginPath();ctx.arc(x,y,3,0,Math.PI*2);ctx.fill();ctx.font='10px DM Sans';ctx.fillStyle=isDark?'rgba(255,255,255,0.6)':'rgba(0,0,0,0.5)';ctx.textAlign='center';ctx.fillText(p.peso.toFixed(1),x,y-8);ctx.fillStyle=cor;});
   document.getElementById('grafico-empty').style.display='none';
 }
 function abrirEditarPerfil(){const perfil=ls.get('perfil_'+USER?.id)||{};document.getElementById('edit-nome').value=USER?.nome||'';document.getElementById('edit-bio').value=perfil.bio||'';document.getElementById('edit-instagram').value=perfil.instagram||'';document.getElementById('modal-perfil').classList.add('show');}
@@ -829,19 +817,7 @@ async function carregarFeed(){
           <div class="feed-post-avatar">${inicial}</div>
           <div><div class="feed-post-user">${p.usuarios?.nome||'Usuário'}</div><div class="feed-post-data">${new Date(p.criado_em).toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'})}</div></div>
         </div>
-        ${(()=>{
-          if(p.tipo==='antes_depois'&&p.foto_antes&&p.foto_depois){
-            return`<div style="overflow-x:auto;display:flex;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;">
-              <img src="${p.foto_url}" alt="Canvas" style="width:100%;flex-shrink:0;aspect-ratio:2/1;object-fit:cover;scroll-snap-align:start;" loading="lazy">
-              <img src="${p.foto_antes}" alt="Antes" style="width:100%;flex-shrink:0;aspect-ratio:1;object-fit:cover;scroll-snap-align:start;" loading="lazy">
-              <img src="${p.foto_depois}" alt="Depois" style="width:100%;flex-shrink:0;aspect-ratio:1;object-fit:cover;scroll-snap-align:start;" loading="lazy">
-            </div>
-            <div style="display:flex;justify-content:center;gap:4px;padding:4px 0;background:var(--card);">
-              <span style="font-size:0.6rem;color:var(--cinza-med);">◀ deslize para ver as fotos ▶</span>
-            </div>`;
-          }
-          return p.foto_url?`<img class="feed-post-img" src="${p.foto_url}" alt="Progresso" loading="lazy">`:'<div class="feed-post-img-placeholder">💪</div>';
-        })()}
+        ${p.foto_url?`<img class="feed-post-img" src="${p.foto_url}" alt="Progresso" loading="lazy">`:'<div class="feed-post-img-placeholder">💪</div>'}
         <div class="feed-post-body">
           ${p.peso?`<div class="feed-post-peso">⚖️ ${p.peso}kg</div>`:''}
           ${p.conteudo?`<div class="feed-post-nota">${p.conteudo}</div>`:''}
