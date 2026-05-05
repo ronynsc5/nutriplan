@@ -2950,32 +2950,35 @@ async function carregarFeed(){
 
       var adpBadge=isADP?'<span style="background:var(--cinza-bg);border:1px solid var(--cinza-cla);border-radius:50px;padding:3px 10px;font-size:0.6rem;font-weight:700;color:var(--cinza-med);font-family:var(--font-mono);">ANTES/DEPOIS</span>':'';
 
-      div.innerHTML=
-        '<div class="feed-post-header">'+
-          '<div class="feed-post-avatar">'+ini+'</div>'+
-          '<div style="flex:1;">'+
-            '<div class="feed-post-user">'+(p.nome||USER?.nome||'Usuário')+'</div>'+
-            '<div class="feed-post-data">'+new Date(p.criado_em).toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'})+'</div>'+
-          '</div>'+adpBadge+
-        '</div>'+
-        midia+
-        '<div class="feed-post-body">'+
-          (p.peso?'<div class="feed-post-peso">'+p.peso+'kg</div>':'')+
-          (p.conteudo?'<div class="feed-post-nota">'+p.conteudo+'</div>':'')+
-        '</div>'+
-        '<div class="feed-post-actions">'+
-          '<button class="feed-action-btn'+(isLiked?' ativo':'')+'" onclick="toggleLike(''+p.id+'',this)">'+
-            '<span class="like-icon">'+(isLiked?'❤️':'🤍')+'</span> <span class="like-count">'+likesCount+'</span>'+
-          '</button>'+
-          '<button class="feed-action-btn" onclick="toggleComentarios(''+p.id+'')">💬 Comentar</button>'+
-        '</div>'+
-        '<div class="comentarios-section" id="coms-'+p.id+'" style="display:none;">'+
-          '<div id="coms-list-'+p.id+'" style="padding:0 1.2rem;">'+renderComentariosList(p.comentarios)+'</div>'+
-          '<div class="add-comentario">'+
-            '<input type="text" placeholder="Comentar..." id="com-input-'+p.id+'" onkeydown="if(event.key==='Enter')enviarComentario(''+p.id+'')">'+
-            '<button onclick="enviarComentario(''+p.id+'')">Enviar</button>'+
-          '</div>'+
-        '</div>';
+      // Usar template string para evitar problemas com aspas
+      div.innerHTML = `
+        <div class="feed-post-header">
+          <div class="feed-post-avatar">${ini}</div>
+          <div style="flex:1;">
+            <div class="feed-post-user">${p.nome||USER?.nome||'Usuário'}</div>
+            <div class="feed-post-data">${new Date(p.criado_em).toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'})}</div>
+          </div>
+          ${adpBadge}
+        </div>
+        ${midia}
+        <div class="feed-post-body">
+          ${p.peso ? '<div class="feed-post-peso">'+p.peso+'kg</div>' : ''}
+          ${p.conteudo ? '<div class="feed-post-nota">'+p.conteudo+'</div>' : ''}
+        </div>
+        <div class="feed-post-actions">
+          <button class="feed-action-btn ${isLiked?'ativo':''}" data-pid="${p.id}" data-action="like">
+            <span class="like-icon">${isLiked?'❤️':'🤍'}</span> <span class="like-count">${likesCount}</span>
+          </button>
+          <button class="feed-action-btn" data-pid="${p.id}" data-action="comentar">💬 Comentar</button>
+        </div>
+        <div class="comentarios-section" id="coms-${p.id}" style="display:none;">
+          <div id="coms-list-${p.id}" style="padding:0 1.2rem;">${renderComentariosList(p.comentarios)}</div>
+          <div class="add-comentario">
+            <input type="text" placeholder="Comentar..." id="com-input-${p.id}">
+            <button data-pid="${p.id}" data-action="enviar">Enviar</button>
+          </div>
+        </div>
+      `;
       container.appendChild(div);
     });
   }catch(e){
@@ -3306,6 +3309,24 @@ function toast(msg){
   window.addEventListener('touchmove',function(e){if(dragging){e.preventDefault();setPct(e.touches[0].clientX);}},{passive:false});
   window.addEventListener('touchend',function(){dragging=false;sw=null;pid=null;});
 })();
+
+// Event delegation para feed (like, comentar, enviar)
+document.getElementById('feed-container').addEventListener('click', function(e){
+  var btn = e.target.closest('[data-action]');
+  if(!btn) return;
+  var pid = btn.dataset.pid;
+  var action = btn.dataset.action;
+  if(action === 'like') toggleLike(pid, btn);
+  if(action === 'comentar') toggleComentarios(pid);
+  if(action === 'enviar') enviarComentario(pid);
+});
+document.getElementById('feed-container').addEventListener('keydown', function(e){
+  if(e.key !== 'Enter') return;
+  var inp = e.target;
+  if(!inp.id || !inp.id.startsWith('com-input-')) return;
+  var pid = inp.id.replace('com-input-','');
+  enviarComentario(pid);
+});
 
 // Fechar modal clicando fora
 document.querySelectorAll('.modal-bg').forEach(m=>{
