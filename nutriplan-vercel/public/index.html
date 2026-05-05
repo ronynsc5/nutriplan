@@ -430,7 +430,10 @@ footer strong{color:#fff;}
   <!-- Posts públicos -->
   <div class="posts-section">
     <span style="font-size:0.82rem;font-weight:600;color:var(--preto);">📸 Públicos</span>
-    <button onclick="irProgresso()" style="background:none;border:none;font-size:0.78rem;color:var(--cinza-med);cursor:pointer;">+ Adicionar</button>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <button onclick="irProgresso()" style="background:none;border:none;font-size:0.78rem;color:var(--cinza-med);cursor:pointer;font-family:'DM Sans',sans-serif;">+ Foto</button>
+      <button onclick="toggleADPerfil()" style="background:var(--preto);color:var(--card);border:none;border-radius:50px;font-size:0.72rem;cursor:pointer;padding:5px 12px;font-family:'DM Sans',sans-serif;font-weight:500;">Antes/Depois</button>
+    </div>
   </div>
   <!-- CARD ANTES/DEPOIS -->
   <div id="ad-perfil-card" class="ad-card-wrapper" style="display:none;">
