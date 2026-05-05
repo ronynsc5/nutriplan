@@ -3075,23 +3075,29 @@ function goFS(step){
   });
 }
 function confirmarEGerar(){
+  if(!document.getElementById('fidade').value){toast('Preencha sua idade');return;}
+  if(!document.getElementById('fsexo').value){toast('Selecione seu sexo');return;}
   FORM_DATA={
-    idade:document.getElementById('fidade').value,
+    // Dados físicos
+    nome:USER?.nome||'Usuário',
+    idade:Number(document.getElementById('fidade').value),
     sexo:document.getElementById('fsexo').value,
-    peso:document.getElementById('fpeso').value,
-    altura:document.getElementById('faltura').value,
-    gordura:document.querySelector('#gord-g .cb.active')?.textContent,
-    objetivo:document.querySelector('#obj-g .cb.active')?.textContent,
-    atividade:document.querySelector('#atv-g .cb.active')?.textContent,
-    treino:[...document.querySelectorAll('#tren-g .cb.active')].map(e=>e.textContent).join(', '),
-    restricoes:[...document.querySelectorAll('#rest-g .cb.active')].map(e=>e.textContent).join(', '),
-    nao_gosta:document.getElementById('fng').value,
-    saude:document.getElementById('fsaude').value,
+    peso:Number(document.getElementById('fpeso').value),
+    altura:Number(document.getElementById('faltura').value),
+    gordura:document.querySelector('#gord-g .cb.active')?.textContent||'Não sei',
+    // Objetivo
+    objetivo:document.querySelector('#obj-g .cb.active')?.textContent||'Secar',
+    atividade:document.querySelector('#atv-g .cb.active')?.textContent||'Levemente ativo',
+    treinos:[...document.querySelectorAll('#tren-g .cb.active')].map(e=>e.textContent),
+    restricoes:[...document.querySelectorAll('#rest-g .cb.active')].map(e=>e.textContent),
+    naoGosta:document.getElementById('fng').value||'nada',
+    saude:document.getElementById('fsaude').value||'nenhuma',
+    // Rotina — nomes que a API espera
     acorda:document.getElementById('facorda').value,
     dorme:document.getElementById('fdorme').value,
-    refeicoes:document.querySelector('#ref-g .cb.active')?.textContent,
-    htreino:document.querySelector('#htren-g .cb.active')?.textContent,
-    tempo:document.querySelector('#tempo-g .cb.active')?.textContent,
+    numRef:Number(document.querySelector('#ref-g .cb.active')?.textContent)||4,
+    horTreino:document.querySelector('#htren-g .cb.active')?.textContent||'Manhã',
+    tempoPreparo:document.querySelector('#tempo-g .cb.active')?.textContent||'~30min',
     modo:MODO_SEL,
     plano:PLANO_SEL
   };
