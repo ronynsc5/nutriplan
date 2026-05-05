@@ -3110,16 +3110,35 @@ async function gerarPlano(){
   const steps=["ls1","ls2","ls3","ls4","ls5"];
   let i=0;const iv=setInterval(()=>{if(i<steps.length){const el=document.getElementById(steps[i++]);if(el)el.classList.add("show");}else clearInterval(iv);},900);
   try{
-    const r=await api("/api/gerar-plano","POST",{usuario_id:USER.id,...FORM_DATA});
+    // 1. Gerar plano com IA
+    const plano=await api("/api/gerar-plano","POST",{usuario_id:USER.id,...FORM_DATA});
+    if(plano&&plano.error){clearInterval(iv);loader.style.display="none";toast("❌ "+plano.error);return;}
+
+    // 2. Salvar plano no banco
+    const cfg=ls.get('cfg')||{};
+    const diasValidade=cfg.DIAS_VALIDADE||8;
+    const expira=new Date(Date.now()+diasValidade*24*60*60*1000).toISOString();
+    try{
+      await api("/api/planos?action=salvar","POST",{
+        usuario_id:USER.id,
+        tipo:PLANO_SEL||'economico',
+        modo:MODO_SEL||'saudavel',
+        dados_form:FORM_DATA,
+        plano_gerado:plano,
+        expira_em:expira
+      });
+    }catch(saveErr){
+      console.warn("Aviso: plano gerado mas não salvo no banco:",saveErr.message);
+    }
+
     clearInterval(iv);loader.style.display="none";
-    if(r&&r.error){toast("❌ "+r.error);return;}
     if(USER)USER.creditos=Math.max(0,(USER.creditos||0)-1);
     toast("✅ Plano gerado com sucesso!");
     setTimeout(()=>irPlano(),400);
   }catch(e){
     clearInterval(iv);loader.style.display="none";
     console.error("Erro gerarPlano:",e);
-    toast("❌ Erro ao gerar plano. Verifique sua conexão.");
+    toast("❌ "+e.message);
   }
 }
 
@@ -3162,11 +3181,74 @@ async function carregarPlanoAtivo(){
   const vaz=document.getElementById('plano-vazio');
   cont.innerHTML='';exp.style.display='none';vaz.style.display='none';
   try{
-    const r=await api('/api/planos?action=meu&usuario_id='+USER.id);
-    if(!r||r.error||!r.conteudo){vaz.style.display='block';return;}
-    if(r.expirado){exp.style.display='block';return;}
-    cont.innerHTML=`<div style="padding:1rem 1.2rem;">${r.conteudo}</div>`;
-  }catch(e){vaz.style.display='block';}
+    const lista=await api('/api/planos?action=buscar&usuario_id='+USER.id);
+    if(!lista||lista.error||!lista.length){vaz.style.display='block';return;}
+    const r=lista[0]; // plano mais recente
+    // Verificar expiração
+    if(r.expira_em&&new Date(r.expira_em)<new Date()){exp.style.display='block';return;}
+    // Renderizar plano
+    const plano=r.plano_gerado||{};
+    cont.innerHTML=renderPlanoHTML(plano,r);
+  }catch(e){console.error('carregarPlanoAtivo:',e);vaz.style.display='block';}
+}
+
+function renderPlanoHTML(p,r){
+  if(!p||!p.refeicoes){return '<div style="padding:1.5rem;text-align:center;color:var(--cinza-med);">Plano sem dados. Gere um novo.</div>';}
+  const modo=r.modo==='hardcore'?'💀 Hardcore':'🥗 Saudável';
+  const expira=r.expira_em?new Date(r.expira_em).toLocaleDateString('pt-BR'):'—';
+  let html=`<div style="padding:1rem 1.2rem;">
+    <div style="background:var(--cinza-bg);border-radius:var(--radius-sm);padding:1rem;margin-bottom:1rem;display:grid;grid-template-columns:repeat(4,1fr);gap:0.5rem;text-align:center;">
+      <div><div style="font-family:var(--font-display);font-size:1.2rem;font-weight:700;color:var(--preto);">${p.calorias||'—'}</div><div style="font-size:0.6rem;color:var(--cinza-med);font-family:var(--font-mono);">KCAL</div></div>
+      <div><div style="font-family:var(--font-display);font-size:1.2rem;font-weight:700;color:var(--preto);">${p.proteinas||'—'}g</div><div style="font-size:0.6rem;color:var(--cinza-med);font-family:var(--font-mono);">PROT</div></div>
+      <div><div style="font-family:var(--font-display);font-size:1.2rem;font-weight:700;color:var(--preto);">${p.carboidratos||'—'}g</div><div style="font-size:0.6rem;color:var(--cinza-med);font-family:var(--font-mono);">CARB</div></div>
+      <div><div style="font-family:var(--font-display);font-size:1.2rem;font-weight:700;color:var(--preto);">${p.gorduras||'—'}g</div><div style="font-size:0.6rem;color:var(--cinza-med);font-family:var(--font-mono);">GORD</div></div>
+    </div>
+    <div style="display:flex;gap:0.5rem;margin-bottom:1rem;flex-wrap:wrap;">
+      <span style="background:var(--cinza-bg);border:1px solid var(--cinza-cla);border-radius:50px;padding:4px 12px;font-size:0.7rem;font-family:var(--font-mono);">${modo}</span>
+      <span style="background:var(--cinza-bg);border:1px solid var(--cinza-cla);border-radius:50px;padding:4px 12px;font-size:0.7rem;font-family:var(--font-mono);">💧 ${p.agua_litros||2}L/dia</span>
+      <span style="background:var(--cinza-bg);border:1px solid var(--cinza-cla);border-radius:50px;padding:4px 12px;font-size:0.7rem;font-family:var(--font-mono);">⏰ Válido até ${expira}</span>
+    </div>
+    ${p.estrategia?`<div style="background:var(--acento-bg);border:1px solid var(--acento);border-radius:var(--radius-sm);padding:0.8rem;margin-bottom:1rem;font-size:0.8rem;color:var(--acento);">📋 ${p.estrategia}</div>`:''}
+    <div style="display:flex;flex-direction:column;gap:0.8rem;">`;
+
+  (p.refeicoes||[]).forEach(ref=>{
+    html+=`<div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:1rem;box-shadow:var(--sombra);">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.6rem;">
+        <div>
+          <div style="font-family:var(--font-display);font-size:0.95rem;font-weight:700;color:var(--preto);">${ref.nome}</div>
+          <div style="font-size:0.65rem;color:var(--cinza-med);font-family:var(--font-mono);">${ref.hora} · ${ref.funcao}</div>
+        </div>
+        <div style="font-size:0.72rem;font-weight:700;color:var(--cinza-med);font-family:var(--font-mono);">${ref.calorias_estimadas||''}kcal</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:0.3rem;">`;
+    (ref.itens||[]).forEach(item=>{
+      html+=`<div style="display:flex;justify-content:space-between;align-items:baseline;padding:0.3rem 0;border-bottom:1px solid var(--cinza-bg);">
+        <span style="font-size:0.82rem;color:var(--texto);">${item.alimento}</span>
+        <span style="font-size:0.75rem;color:var(--cinza-med);font-family:var(--font-mono);white-space:nowrap;margin-left:0.5rem;">${item.quantidade}</span>
+      </div>`;
+    });
+    html+='</div></div>';
+  });
+
+  html+='</div>';
+
+  if(p.suplementos&&p.suplementos.length&&p.suplementos[0]){
+    html+=`<div style="margin-top:1rem;background:var(--verde-bg);border:1px solid var(--verde);border-radius:var(--radius-sm);padding:0.8rem;">
+      <div style="font-size:0.72rem;font-weight:700;color:var(--verde);font-family:var(--font-mono);margin-bottom:0.4rem;">💊 SUPLEMENTOS</div>
+      ${p.suplementos.map(s=>`<div style="font-size:0.8rem;color:var(--texto);">• ${s}</div>`).join('')}
+    </div>`;
+  }
+
+  if(p.principios&&p.principios.length){
+    html+=`<div style="margin-top:1rem;background:var(--cinza-bg);border-radius:var(--radius-sm);padding:0.8rem;">
+      <div style="font-size:0.72rem;font-weight:700;color:var(--cinza-med);font-family:var(--font-mono);margin-bottom:0.4rem;">⚡ PRINCÍPIOS</div>
+      ${p.principios.map(s=>`<div style="font-size:0.78rem;color:var(--texto);margin-bottom:0.2rem;">• ${s}</div>`).join('')}
+    </div>`;
+  }
+
+  html+=`<button onclick="irModo()" style="width:100%;margin-top:1rem;background:var(--cinza-bg);color:var(--preto);border:1.5px solid var(--cinza-cla);border-radius:50px;padding:12px;font-size:0.86rem;font-weight:600;cursor:pointer;font-family:var(--font-ui);">🔄 Gerar novo plano</button>
+  </div>`;
+  return html;
 }
 
 // ADMIN
