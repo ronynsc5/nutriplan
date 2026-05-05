@@ -17,36 +17,36 @@
 <style>
 /* ═══════════ TOKENS ═══════════ */
 [data-theme="light"]{
-  --bg:#F5F2EE;
-  --card:#FDFBF8;
+  --bg:#F0EDE8;
+  --card:#FFFFFF;
   --preto:#0D0C0A;
   --texto:#1C1A17;
-  --cinza-med:#7A7670;
-  --cinza-cla:#E2DDD6;
-  --cinza-bg:#EDE9E3;
-  --sombra:0 2px 24px rgba(13,12,10,0.08);
-  --sombra-lg:0 8px 48px rgba(13,12,10,0.12);
+  --cinza-med:#6B6560;
+  --cinza-cla:#D8D2C8;
+  --cinza-bg:#E8E3DC;
+  --sombra:0 2px 24px rgba(13,12,10,0.10);
+  --sombra-lg:0 8px 48px rgba(13,12,10,0.15);
   --acento:#C8432A;
   --acento-bg:#FFF0EE;
-  --verde:#2A8A4A;
-  --verde-bg:#EDFAF2;
-  --border:rgba(13,12,10,0.10);
+  --verde:#1E7A3C;
+  --verde-bg:#E8F5EE;
+  --border:rgba(13,12,10,0.12);
 }
 [data-theme="dark"]{
-  --bg:#0D0C0A;
-  --card:#181612;
-  --preto:#F5F2EE;
-  --texto:#D8D3CC;
+  --bg:#0A0908;
+  --card:#1A1815;
+  --preto:#EDEAE4;
+  --texto:#C8C2BA;
   --cinza-med:#7A7670;
-  --cinza-cla:#2A2722;
-  --cinza-bg:#1C1A17;
-  --sombra:0 2px 24px rgba(0,0,0,0.35);
-  --sombra-lg:0 8px 48px rgba(0,0,0,0.5);
-  --acento:#E0573D;
+  --cinza-cla:#2E2A25;
+  --cinza-bg:#211E1A;
+  --sombra:0 2px 24px rgba(0,0,0,0.4);
+  --sombra-lg:0 8px 48px rgba(0,0,0,0.6);
+  --acento:#E05A3E;
   --acento-bg:#2A1410;
   --verde:#3DAF62;
   --verde-bg:#0E2118;
-  --border:rgba(245,242,238,0.08);
+  --border:rgba(237,234,228,0.08);
 }
 
 :root{
@@ -1576,11 +1576,11 @@ input[type=range]{flex:1;accent-color:var(--preto);}
 
 /* ═══════════ FOOTER ═══════════ */
 footer{
-  background:var(--preto);color:rgba(245,242,238,0.35);
+  background:#0D0C0A;color:rgba(245,242,238,0.45);
   text-align:center;padding:1.4rem 1rem;
   font-size:0.7rem;font-family:var(--font-mono);letter-spacing:0.04em;
 }
-footer strong{color:rgba(245,242,238,0.7);}
+footer strong{color:rgba(245,242,238,0.8);}
 
 /* ═══════════ SKELETON LOADING ═══════════ */
 .skeleton{
@@ -1593,7 +1593,8 @@ footer strong{color:rgba(245,242,238,0.7);}
 /* ═══════════ RESPONSIVE ═══════════ */
 @media(min-width:768px){
   body{max-width:480px;margin:0 auto;box-shadow:0 0 60px rgba(0,0,0,0.2);}
-  .bottom-nav,nav,#notif-banner{max-width:480px;left:50%;transform:translateX(-50%);}
+  .bottom-nav,#notif-banner{max-width:480px;left:50%;transform:translateX(-50%);}
+  nav{max-width:480px;left:50%;transform:translateX(-50%);right:auto;}
   #toast{max-width:420px;}
 }
 
@@ -1844,8 +1845,10 @@ footer strong{color:rgba(245,242,238,0.7);}
     </div>
     <div id="adp-comparador-wrap" class="ad-comp-wrap" style="display:none;">
       <div class="ad-comparador" id="adp-comparador">
-        <img class="ad-img" id="adp-foto-antes" src="" alt="Antes">
-        <img class="ad-img ad-img-depois" id="adp-foto-depois" src="" alt="Depois">
+        <!-- DEPOIS: fundo fixo -->
+        <img class="ad-img" id="adp-foto-depois" src="" alt="Depois">
+        <!-- ANTES: frente com clip, drag revela o depois -->
+        <img class="ad-img" id="adp-foto-antes" src="" alt="Antes" style="clip-path:inset(0 50% 0 0);">
         <div class="ad-divider" id="adp-divider">
           <div class="ad-divider-handle">⇔</div>
         </div>
@@ -2447,11 +2450,18 @@ async function ativarNotif(){
   if(p==='granted'){toast('✅ Notificações ativadas!');ls.set('notif_ok',true);}
 }
 
-// API
+// API — trata erros de servidor (500, respostas não-JSON)
 async function api(path,method='GET',body=null){
   const opts={method,headers:{'Content-Type':'application/json'}};
   if(body)opts.body=JSON.stringify(body);
-  const r=await fetch(path,opts);return r.json();
+  const r=await fetch(path,opts);
+  const text=await r.text();
+  try{return JSON.parse(text);}
+  catch(e){
+    console.error('API error',path,r.status,text.substring(0,200));
+    if(r.status===500)throw new Error('Erro interno do servidor (500). Verifique a API no Vercel.');
+    throw new Error('Resposta inválida do servidor: '+text.substring(0,100));
+  }
 }
 
 // NAV
@@ -2792,8 +2802,10 @@ function escolherFotoADP(lado,url,data){
   var img=document.createElement('img');img.src=url;img.style.cssText='width:100%;height:100%;object-fit:cover;';box.appendChild(img);
   document.getElementById('adp-data-'+lado).textContent=data;
   if(ADP_FOTOS.antes&&ADP_FOTOS.depois){
-    document.getElementById('adp-foto-antes').src=ADP_FOTOS.antes;
+    // depois=fundo, antes=frente com clip
     document.getElementById('adp-foto-depois').src=ADP_FOTOS.depois;
+    document.getElementById('adp-foto-antes').src=ADP_FOTOS.antes;
+    document.getElementById('adp-foto-antes').style.clipPath='inset(0 50% 0 0)';
     document.getElementById('adp-comparador-wrap').style.display='block';
     document.getElementById('btn-adp-pub').disabled=false;
     document.getElementById('btn-adp-salvar').disabled=false;
@@ -2803,12 +2815,22 @@ function escolherFotoADP(lado,url,data){
 function iniciarSliderADP(){
   var comp=document.getElementById('adp-comparador');
   var divider=document.getElementById('adp-divider');
-  var depois=document.getElementById('adp-foto-depois');
+  var antes=document.getElementById('adp-foto-antes');
   var drag=false;
-  var move=function(x){var rect=comp.getBoundingClientRect();var pct=Math.max(5,Math.min(95,((x-rect.left)/rect.width)*100));divider.style.left=pct+'%';depois.style.clipPath='inset(0 '+(100-pct)+'% 0 0)';};
-  divider.onmousedown=function(){drag=true;};divider.ontouchstart=function(e){drag=true;e.preventDefault();};
-  document.onmousemove=function(e){if(drag)move(e.clientX);};document.ontouchmove=function(e){if(drag)move(e.touches[0].clientX);};
-  document.onmouseup=function(){drag=false;};document.ontouchend=function(){drag=false;};
+  // Move divider e clipa a foto ANTES — revelando o DEPOIS atrás
+  var move=function(x){
+    var rect=comp.getBoundingClientRect();
+    var pct=Math.max(2,Math.min(98,((x-rect.left)/rect.width)*100));
+    divider.style.left=pct+'%';
+    antes.style.clipPath='inset(0 '+(100-pct)+'% 0 0)';
+  };
+  divider.onmousedown=function(e){drag=true;e.preventDefault();};
+  divider.ontouchstart=function(e){drag=true;e.preventDefault();};
+  comp.onmousedown=function(e){drag=true;move(e.clientX);};
+  document.onmousemove=function(e){if(drag)move(e.clientX);};
+  document.ontouchmove=function(e){if(drag)move(e.touches[0].clientX);};
+  document.onmouseup=function(){drag=false;};
+  document.ontouchend=function(){drag=false;};
 }
 
 // PROGRESSO
@@ -2880,21 +2902,26 @@ function toggleLike(pid,btnEl){
 
 function renderSliderFeed(p){
   var pid=p.id;
-  // wrapper contém o slider para não vazar
-  return '<div style="position:relative;width:100%;overflow:hidden;background:#000;">'+
-    '<div id="fc-'+pid+'" style="position:relative;width:100%;aspect-ratio:1/1;overflow:hidden;cursor:ew-resize;user-select:none;">'+
-      '<img style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;pointer-events:none;" src="'+p.foto_antes+'" alt="Antes">'+
-      '<div id="sd-'+pid+'" style="position:absolute;top:0;bottom:0;left:50%;width:50%;overflow:hidden;">'+
-        '<img id="sdi-'+pid+'" style="position:absolute;top:0;left:0;width:200%;height:100%;object-fit:cover;pointer-events:none;" src="'+p.foto_depois+'" alt="Depois">'+
-      '</div>'+
-      '<div id="sl-'+pid+'" style="position:absolute;top:0;bottom:0;left:50%;width:3px;background:rgba(255,255,255,0.95);transform:translateX(-50%);z-index:5;pointer-events:none;box-shadow:0 0 8px rgba(0,0,0,0.6);">'+
-        '<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;font-size:16px;color:#222;box-shadow:0 2px 10px rgba(0,0,0,0.4);pointer-events:none;font-weight:900;">&#8660;</div>'+
-      '</div>'+
-      '<div style="position:absolute;bottom:0;left:0;right:0;height:44px;background:linear-gradient(transparent,rgba(0,0,0,0.7));pointer-events:none;"></div>'+
-      '<span style="position:absolute;bottom:10px;left:16px;color:#fff;font-size:11px;font-weight:800;letter-spacing:2px;pointer-events:none;text-shadow:0 1px 4px rgba(0,0,0,0.8);">ANTES</span>'+
-      '<span style="position:absolute;bottom:10px;right:16px;color:#fff;font-size:11px;font-weight:800;letter-spacing:2px;pointer-events:none;text-shadow:0 1px 4px rgba(0,0,0,0.8);">DEPOIS</span>'+
-    '</div>'+
-  '</div>';
+  // DEPOIS fica no fundo, ANTES fica na frente com clip-path
+  // Arrastar para direita revela mais do DEPOIS
+  return [
+    '<div style="position:relative;width:100%;overflow:hidden;background:#000;">',
+      '<div id="fc-'+pid+'" style="position:relative;width:100%;aspect-ratio:1/1;overflow:hidden;cursor:ew-resize;touch-action:pan-y;user-select:none;">',
+        // DEPOIS — fundo total
+        '<img style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none;" src="'+p.foto_depois+'" alt="Depois">',
+        // ANTES — frente, clipada pela metade inicial
+        '<img id="sdi-'+pid+'" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none;clip-path:inset(0 50% 0 0);" src="'+p.foto_antes+'" alt="Antes">',
+        // Linha divisória
+        '<div id="sl-'+pid+'" style="position:absolute;top:0;bottom:0;left:50%;width:3px;background:#fff;transform:translateX(-50%);z-index:10;pointer-events:none;box-shadow:0 0 10px rgba(0,0,0,0.5);">',
+          '<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border-radius:50%;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-size:18px;color:#222;box-shadow:0 2px 10px rgba(0,0,0,0.35);pointer-events:none;">&#8660;</div>',
+        '</div>',
+        // Labels
+        '<div style="position:absolute;bottom:0;left:0;right:0;height:48px;background:linear-gradient(transparent,rgba(0,0,0,0.75));pointer-events:none;z-index:5;"></div>',
+        '<span style="position:absolute;bottom:12px;left:14px;color:#fff;font-size:11px;font-weight:800;letter-spacing:2px;z-index:6;pointer-events:none;text-shadow:0 1px 6px rgba(0,0,0,1);">ANTES</span>',
+        '<span style="position:absolute;bottom:12px;right:14px;color:#fff;font-size:11px;font-weight:800;letter-spacing:2px;z-index:6;pointer-events:none;text-shadow:0 1px 6px rgba(0,0,0,1);">DEPOIS</span>',
+      '</div>',
+    '</div>'
+  ].join('');
 }
 
 function renderComentariosList(comentarios){
@@ -2945,14 +2972,22 @@ async function carregarFeed(){
     posts.forEach(function(p){
       var div=document.createElement('div');div.className='feed-post';
       var ini=(p.nome||USER?.nome||'U')[0].toUpperCase();
-      var isADP=p.tipo==='antes_depois'&&p.foto_antes&&p.foto_depois;
+      // isADP: post do tipo antes_depois com as duas fotos salvas
+      var isADP=(p.tipo==='antes_depois')&&p.foto_antes&&p.foto_depois;
+      // fallback: se tipo é antes_depois mas só tem foto_url, mostra imagem normal
+      var isADPFallback=(p.tipo==='antes_depois')&&!isADP&&p.foto_url;
       var isLiked=!!likes[p.id];
       var likesCount=p.likes||0;
 
       var midia='';
-      if(isADP){midia=renderSliderFeed(p);}
-      else if(p.foto_url){midia='<img class="feed-post-img" src="'+p.foto_url+'" loading="lazy" alt="">';}
-      else{midia='<div class="feed-post-img-placeholder">📷</div>';}
+      if(isADP){
+        midia=renderSliderFeed(p);
+      }else if(isADPFallback||p.foto_url){
+        // Antes/depois sem slider (legado) ou foto normal
+        midia='<img class="feed-post-img" src="'+p.foto_url+'" loading="lazy" alt="">';
+      }else{
+        midia='<div class="feed-post-img-placeholder">📷</div>';
+      }
 
       var adpBadge=isADP?'<span style="background:var(--cinza-bg);border:1px solid var(--cinza-cla);border-radius:50px;padding:3px 10px;font-size:0.6rem;font-weight:700;color:var(--cinza-med);font-family:var(--font-mono);">ANTES/DEPOIS</span>':'';
 
@@ -3203,7 +3238,7 @@ function adminTab(tab,el){
   document.getElementById('atc-'+tab).classList.add('active');
 }
 
-// PUBLICAR ANTES/DEPOIS — salva URLs diretas para slider no feed
+// PUBLICAR ANTES/DEPOIS
 async function publicarADP(publico){
   if(!ADP_FOTOS.antes||!ADP_FOTOS.depois){toast('Selecione as duas fotos');return;}
   var legenda=document.getElementById('adp-legenda').value.trim()||'Meu antes e depois!';
@@ -3212,7 +3247,8 @@ async function publicarADP(publico){
   if(btnP){btnP.disabled=true;btnP.textContent='Salvando...';}
   if(btnS)btnS.disabled=true;
   try{
-    await api('/api/progresso?action=salvar','POST',{
+    // Salva foto_antes E foto_depois separados — o feed vai renderizar como slider
+    var r=await api('/api/progresso?action=salvar','POST',{
       usuario_id:USER.id,
       nome:USER.nome||'Usuário',
       tipo:'antes_depois',
@@ -3222,10 +3258,14 @@ async function publicarADP(publico){
       foto_depois:ADP_FOTOS.depois,
       peso:null,nota:null,publico:publico
     });
+    if(r&&r.error){toast('Erro: '+r.error);return;}
     toast(publico?'✅ Publicado no feed!':'✅ Salvo como privado!');
+    // Reset
     ADP_FOTOS={antes:null,depois:null};
-    var selA=document.getElementById('adp-sel-antes');if(selA)selA.innerHTML='<span class="ad-add-icon">📷</span>';
-    var selD=document.getElementById('adp-sel-depois');if(selD)selD.innerHTML='<span class="ad-add-icon">📷</span>';
+    var selA=document.getElementById('adp-sel-antes');
+    if(selA)selA.innerHTML='<span class="ad-add-icon">📷</span>';
+    var selD=document.getElementById('adp-sel-depois');
+    if(selD)selD.innerHTML='<span class="ad-add-icon">📷</span>';
     document.getElementById('adp-data-antes').textContent='';
     document.getElementById('adp-data-depois').textContent='';
     document.getElementById('adp-legenda').value='';
@@ -3236,7 +3276,7 @@ async function publicarADP(publico){
     carregarPerfil();
   }catch(e){
     console.error('Erro publicarADP:',e);
-    toast('Erro: '+e.message);
+    toast('Erro ao salvar. Tente novamente.');
   }finally{
     if(btnP){btnP.disabled=false;btnP.textContent='🌍 Publicar';}
     if(btnS){btnS.disabled=false;btnS.textContent='🔒 Salvar privado';}
@@ -3246,12 +3286,15 @@ async function publicarADP(publico){
 // TOAST
 function toast(msg){
   const t=document.getElementById('toast');
-  t.textContent=msg;t.classList.add('show');
+  t.classList.remove('show');
   clearTimeout(t._timeout);
-  t._timeout=setTimeout(()=>t.classList.remove('show'),3200);
+  void t.offsetWidth; // force reflow
+  t.textContent=msg;
+  t.classList.add('show');
+  t._timeout=setTimeout(()=>{t.classList.remove('show');},3500);
 }
 
-// SLIDER GLOBAL — funciona em todos os sliders fc- da página
+// SLIDER GLOBAL — clip-path na imagem ANTES, linha divisória
 (function(){
   var sw=null,pid=null,dragging=false;
 
@@ -3259,39 +3302,30 @@ function toast(msg){
     if(!sw||!pid)return;
     var rect=sw.getBoundingClientRect();
     var pct=Math.max(0.02,Math.min(0.98,(clientX-rect.left)/rect.width));
-    var sd=document.getElementById('sd-'+pid);
+    // Move a linha
     var sl=document.getElementById('sl-'+pid);
-    if(!sd||!sl)return;
-    sl.style.left=(pct*100)+'%';
-    sd.style.left=(pct*100)+'%';
-    sd.style.width=((1-pct)*100)+'%';
-    var img=document.getElementById('sdi-'+pid);
-    if(img)img.style.marginLeft='-'+(pct/(1-pct)*100)+'%';
+    if(sl)sl.style.left=(pct*100)+'%';
+    // Clip da imagem ANTES (sdi-): mostra só a parte esquerda
+    var imgAntes=document.getElementById('sdi-'+pid);
+    if(imgAntes)imgAntes.style.clipPath='inset(0 '+(100-pct*100)+'% 0 0)';
   }
 
-  function getSliderWrap(el){
-    while(el){
-      if(el.id&&el.id.startsWith('fc-'))return el;
-      el=el.parentElement;
-    }
+  function getWrap(el){
+    while(el){if(el.id&&el.id.startsWith('fc-'))return el;el=el.parentElement;}
     return null;
   }
 
-  // Mouse
   document.addEventListener('mousedown',function(e){
-    var wrap=getSliderWrap(e.target);
-    if(!wrap)return;
-    sw=wrap;pid=wrap.id.replace('fc-','');dragging=true;
+    var w=getWrap(e.target);if(!w)return;
+    sw=w;pid=w.id.replace('fc-','');dragging=true;
     setPct(e.clientX);e.preventDefault();
   },{passive:false});
   window.addEventListener('mousemove',function(e){if(dragging)setPct(e.clientX);});
   window.addEventListener('mouseup',function(){dragging=false;sw=null;pid=null;});
 
-  // Touch
   document.addEventListener('touchstart',function(e){
-    var wrap=getSliderWrap(e.target);
-    if(!wrap)return;
-    sw=wrap;pid=wrap.id.replace('fc-','');dragging=true;
+    var w=getWrap(e.target);if(!w)return;
+    sw=w;pid=w.id.replace('fc-','');dragging=true;
     setPct(e.touches[0].clientX);
   },{passive:true});
   window.addEventListener('touchmove',function(e){
