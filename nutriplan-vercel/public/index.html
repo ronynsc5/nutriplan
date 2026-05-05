@@ -888,7 +888,47 @@ function abrirEditarPerfil(){const perfil=ls.get('perfil_'+USER?.id)||{};documen
 function salvarPerfil(){const nome=document.getElementById('edit-nome').value.trim();const bio=document.getElementById('edit-bio').value.trim();const instagram=document.getElementById('edit-instagram').value.trim();const perfil={...ls.get('perfil_'+USER?.id)||{},bio,instagram};ls.set('perfil_'+USER?.id,perfil);if(nome&&USER)USER.nome=nome;document.getElementById('modal-perfil').classList.remove('show');toast('Perfil atualizado!');carregarPerfil();}
 function editarFotoPerfil(){const input=document.createElement('input');input.type='file';input.accept='image/*';input.onchange=async(e)=>{const file=e.target.files[0];if(!file)return;const b64=await toBase64(file);toast('Enviando foto...');try{const r=await api('/api/upload-foto','POST',{image:'data:'+file.type+';base64,'+b64,usuario_id:USER.id,tipo:'perfil'});if(r.url){const perfil=ls.get('perfil_'+USER.id)||{};perfil.foto_url=r.url;ls.set('perfil_'+USER.id,perfil);document.getElementById('perfil-avatar').innerHTML=`<img src="${r.url}" alt="Avatar">`;toast('Foto atualizada!');}}catch(e){toast('Erro ao enviar foto.');}};input.click();}
 async function deletarPost(id){if(!confirm('Apagar este post?'))return;try{await api('/api/progresso?action=deletar','DELETE',{id,usuario_id:USER.id});toast('Post apagado!');carregarPerfil();}catch(e){toast('Erro ao apagar post.');}}
-function verPost(id){toast('Post '+id.substring(0,8)+'...');}
+function verPost(id){
+  if(!window.PROGS_CACHE||!window.PROGS_CACHE[id]){toast('Carregando...');return;}
+  var p=window.PROGS_CACHE[id];
+  if(!p.foto_url){toast('Sem foto neste registro');return;}
+  document.getElementById('fv-img').src=p.foto_url;
+  var data=new Date(p.criado_em).toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
+  document.getElementById('fv-title').textContent=data;
+  var metaEl=document.getElementById('fv-meta');metaEl.innerHTML='';
+  if(p.peso){var m1=document.createElement('div');m1.className='fv-meta-item';m1.innerHTML='<div class="fv-meta-val">'+p.peso+'kg</div><div class="fv-meta-label">peso</div>';metaEl.appendChild(m1);}
+  var m2=document.createElement('div');m2.className='fv-meta-item';m2.innerHTML='<div class="fv-meta-val">'+(p.publico?'publico':'privado')+'</div><div class="fv-meta-label">visibilidade</div>';metaEl.appendChild(m2);
+  document.getElementById('fv-nota').textContent=p.nota||p.conteudo||'';
+  var btn=document.getElementById('fv-btn-toggle');
+  btn.textContent=p.publico?'Tornar privado':'Tornar publico';
+  btn.className='fv-btn fv-btn-toggle'+(p.publico?' pub':'');
+  var viewer=document.getElementById('foto-viewer');
+  viewer.dataset.postId=id;
+  viewer.classList.add('show');
+  document.body.style.overflow='hidden';
+}
+
+function fecharViewer(){
+  document.getElementById('foto-viewer').classList.remove('show');
+  document.body.style.overflow='';
+}
+
+async function toggleVisibilidade(){
+  var id=document.getElementById('foto-viewer').dataset.postId;
+  var p=window.PROGS_CACHE&&window.PROGS_CACHE[id];if(!p)return;
+  var novo=!p.publico;
+  try{await api('/api/progresso?action=visibilidade','PATCH',{id:id,usuario_id:USER.id,publico:novo});}catch(e){}
+  p.publico=novo;fecharViewer();
+  toast(novo?'Agora publico!':'Agora privado!');carregarPerfil();
+}
+
+async function apagarDoViewer(){
+  var id=document.getElementById('foto-viewer').dataset.postId;
+  if(!confirm('Apagar este post?'))return;
+  fecharViewer();
+  try{await api('/api/progresso?action=deletar','DELETE',{id:id,usuario_id:USER.id});if(window.PROGS_CACHE)delete window.PROGS_CACHE[id];toast('Post apagado!');carregarPerfil();}
+  catch(e){toast('Erro ao apagar.');}
+}
 // PROGRESSO
 function toBase64(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>{res(r.result.split(',')[1]);};r.onerror=rej;r.readAsDataURL(file);});}
 function previewFoto(input){const file=input.files[0];if(!file)return;FOTO_TIPO=file.type;const reader=new FileReader();reader.onload=e=>{FOTO_BASE64=e.target.result.split(',')[1];document.getElementById('foto-preview').src=e.target.result;document.getElementById('foto-preview').style.display='block';document.getElementById('foto-placeholder').style.display='none';document.getElementById('foto-area').classList.add('tem-foto');document.getElementById('btn-remover-foto').style.display='block';};reader.readAsDataURL(file);}
