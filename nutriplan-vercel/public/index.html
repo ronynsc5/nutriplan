@@ -989,14 +989,18 @@ async function carregarFeed(){
           <div><div class="feed-post-user">${p.usuarios?.nome||'Usuário'}</div><div class="feed-post-data">${new Date(p.criado_em).toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'})}</div></div>
         </div>
         ${(p.tipo==='antes_depois'&&p.foto_antes&&p.foto_depois)?
-        `<div style="position:relative;width:100%;aspect-ratio:2/1;overflow:hidden;user-select:none;background:#000;" id="fc-${p.id}">
-          <img style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;" src="${p.foto_url}" alt="Canvas">
-        </div>
-        <div style="display:flex;border-top:1px solid var(--cinza-cla);">
-          <button onclick="ativarSliderFeed('${p.id}','${p.foto_antes}','${p.foto_depois}')" style="flex:1;background:none;border:none;border-right:1px solid var(--cinza-cla);padding:8px;font-size:0.74rem;cursor:pointer;color:var(--cinza-med);font-family:'DM Sans',sans-serif;">⇔ Slider</button>
-          <button onclick="verCanvasFeed('${p.foto_url}')" style="flex:1;background:none;border:none;padding:8px;font-size:0.74rem;cursor:pointer;color:var(--cinza-med);font-family:'DM Sans',sans-serif;">📐 Canvas</button>
-        </div>`
-      : p.foto_url?`<img class="feed-post-img" src="${p.foto_url}" alt="Progresso" loading="lazy">`:'<div class="feed-post-img-placeholder">💪</div>'}
+          `<div style="position:relative;width:100%;aspect-ratio:1/1;overflow:hidden;user-select:none;background:#000;cursor:ew-resize;" id="fc-\${p.id}">
+            <img style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;" src="\${p.foto_antes}" alt="Antes">
+            <div id="fi-depois-\${p.id}" style="position:absolute;inset:0;overflow:hidden;clip-path:inset(0 50% 0 0);">
+              <img style="width:100%;height:100%;object-fit:cover;" src="\${p.foto_depois}" alt="Depois">
+            </div>
+            <div id="fd-div-\${p.id}" style="position:absolute;top:0;bottom:0;left:50%;width:3px;background:#fff;cursor:ew-resize;z-index:10;box-shadow:0 0 8px rgba(0,0,0,0.4);">
+              <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;color:#333;box-shadow:0 2px 10px rgba(0,0,0,0.3);">⇔</div>
+            </div>
+            <span style="position:absolute;bottom:10px;left:10px;background:rgba(0,0,0,0.65);color:#fff;border-radius:50px;padding:3px 10px;font-size:0.6rem;font-weight:700;letter-spacing:1px;">ANTES</span>
+            <span style="position:absolute;bottom:10px;right:10px;background:rgba(0,0,0,0.65);color:#fff;border-radius:50px;padding:3px 10px;font-size:0.6rem;font-weight:700;letter-spacing:1px;">DEPOIS</span>
+          </div>
+          <script>initSliderFeed('\${p.id}');<\/script>`: p.foto_url?`<img class="feed-post-img" src="${p.foto_url}" alt="Progresso" loading="lazy">`:'<div class="feed-post-img-placeholder">💪</div>'}
         <div class="feed-post-body">
           ${p.peso?`<div class="feed-post-peso">⚖️ ${p.peso}kg</div>`:''}
           ${p.conteudo?`<div class="feed-post-nota">${p.conteudo}</div>`:''}
@@ -1390,32 +1394,30 @@ async function fotoComWatermark(fotoUrl) {
 }
 
 
-function ativarSliderFeed(postId, urlAntes, urlDepois) {
-  var wrap = document.getElementById('fc-' + postId);
-  if (!wrap) return;
-  wrap.innerHTML =
-    '<img style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;" src="' + urlAntes + '" alt="Antes">' +
-    '<div style="position:absolute;inset:0;overflow:hidden;clip-path:inset(0 50% 0 0);" id="fd-depois-' + postId + '">' +
-    '<img style="width:100%;height:100%;object-fit:cover;" src="' + urlDepois + '" alt="Depois"></div>' +
-    '<div id="fd-div-' + postId + '" style="position:absolute;top:0;bottom:0;left:50%;width:3px;background:#fff;cursor:ew-resize;z-index:10;box-shadow:0 0 6px rgba(0,0,0,0.4);">' +
-    '<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;color:#333;box-shadow:0 2px 8px rgba(0,0,0,0.3);">⇔</div></div>' +
-    '<span style="position:absolute;bottom:8px;left:8px;background:rgba(0,0,0,0.6);color:#fff;border-radius:50px;padding:2px 8px;font-size:0.58rem;font-weight:700;">ANTES</span>' +
-    '<span style="position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,0.6);color:#fff;border-radius:50px;padding:2px 8px;font-size:0.58rem;font-weight:700;">DEPOIS</span>';
-  var drag = false;
-  var divEl = document.getElementById('fd-div-' + postId);
-  var depoisEl = document.getElementById('fd-depois-' + postId);
-  var move = function(x) {
-    var rect = wrap.getBoundingClientRect();
-    var pct = Math.max(5, Math.min(95, ((x - rect.left) / rect.width) * 100));
-    divEl.style.left = pct + '%';
-    depoisEl.style.clipPath = 'inset(0 ' + (100 - pct) + '% 0 0)';
-  };
-  divEl.addEventListener('mousedown', function(){ drag=true; });
-  divEl.addEventListener('touchstart', function(e){ drag=true; e.preventDefault(); }, {passive:false});
-  document.addEventListener('mousemove', function(e){ if(drag) move(e.clientX); });
-  document.addEventListener('touchmove', function(e){ if(drag) move(e.touches[0].clientX); }, {passive:true});
-  document.addEventListener('mouseup', function(){ drag=false; });
-  document.addEventListener('touchend', function(){ drag=false; });
+function initSliderFeed(postId){
+  setTimeout(function(){
+    var wrap=document.getElementById('fc-'+postId);
+    var divEl=document.getElementById('fd-div-'+postId);
+    var depoisEl=document.getElementById('fi-depois-'+postId);
+    if(!wrap||!divEl||!depoisEl)return;
+    var drag=false;
+    var move=function(x){
+      var rect=wrap.getBoundingClientRect();
+      var pct=Math.max(5,Math.min(95,((x-rect.left)/rect.width)*100));
+      divEl.style.left=pct+'%';
+      depoisEl.style.clipPath='inset(0 '+(100-pct)+'% 0 0)';
+    };
+    divEl.addEventListener('mousedown',function(e){drag=true;e.preventDefault();});
+    divEl.addEventListener('touchstart',function(e){drag=true;e.preventDefault();},{passive:false});
+    document.addEventListener('mousemove',function(e){if(drag)move(e.clientX);});
+    document.addEventListener('touchmove',function(e){if(drag&&e.touches[0])move(e.touches[0].clientX);},{passive:true});
+    document.addEventListener('mouseup',function(){drag=false;});
+    document.addEventListener('touchend',function(){drag=false;});
+  },100);
+}
+
+function ativarSliderFeed(postId,urlAntes,urlDepois){
+  // Mantido para compatibilidade — não usado mais
 }
 
 function verCanvasFeed(url) {
@@ -1439,42 +1441,73 @@ async function publicarADP(publico){
   if(btnS)btnS.disabled=true;
   if(btnP)btnP.textContent='Gerando...';
   try{
-    // Gerar canvas lado a lado
-    var canvasEl=document.createElement('canvas');
-    var sz=600;canvasEl.width=sz*2;canvasEl.height=sz;
-    var cctx=canvasEl.getContext('2d');
+    // Carregar imagens
     var loadImg=function(src){return new Promise(function(res){
       var i=new Image();i.crossOrigin='anonymous';
       i.onload=function(){res(i);};i.onerror=function(){res(null);};i.src=src;
     });};
+    // Aplicar watermark nas DUAS fotos individuais
+    var aplicarWmFoto=function(imgEl,sz){
+      var c=document.createElement('canvas');c.width=sz;c.height=sz;
+      var cx=c.getContext('2d');
+      if(imgEl)cx.drawImage(imgEl,0,0,sz,sz);
+      // watermark no canto inferior direito de cada foto
+      return new Promise(function(res){
+        var wm=new Image();
+        wm.onload=function(){
+          var wmH=Math.round(sz*0.14);
+          var wmW=Math.round(wmH*(wm.width/wm.height));
+          var mg=10;
+          cx.globalAlpha=0.55;
+          cx.drawImage(wm,sz-wmW-mg,sz-wmH-mg,wmW,wmH);
+          cx.globalAlpha=1.0;
+          res(c);
+        };
+        wm.onerror=function(){res(c);};
+        wm.src=LOGO_WM_B64;
+      });
+    };
     var imgs=await Promise.all([loadImg(ADP_FOTOS.antes),loadImg(ADP_FOTOS.depois)]);
+    var sz=600;
+    // Gerar canvas de cada foto com watermark
+    var cAntes=await aplicarWmFoto(imgs[0],sz);
+    var cDepois=await aplicarWmFoto(imgs[1],sz);
+    // Upload das fotos individuais com watermark (para o slider)
+    if(btnP)btnP.textContent='Enviando...';
+    var uploadFoto=async function(canvasEl,tipo){
+      var b=canvasEl.toDataURL('image/jpeg',0.92).split(',')[1];
+      try{var r=await api('/api/upload-foto','POST',{image:'data:image/jpeg;base64,'+b,usuario_id:USER.id,tipo:tipo});return r.url||null;}catch(e){return null;}
+    };
+    var urlAntes=await uploadFoto(cAntes,'antes_wm');
+    var urlDepois=await uploadFoto(cDepois,'depois_wm');
+    // Montar canvas lado a lado (para thumbnail/preview)
+    var canvasEl=document.createElement('canvas');
+    canvasEl.width=sz*2;canvasEl.height=sz;
+    var cctx=canvasEl.getContext('2d');
     cctx.fillStyle='#000';cctx.fillRect(0,0,sz*2,sz);
-    if(imgs[0])cctx.drawImage(imgs[0],0,0,sz,sz);
-    if(imgs[1])cctx.drawImage(imgs[1],sz,0,sz,sz);
-    // Divisor
+    cctx.drawImage(cAntes,0,0,sz,sz);
+    cctx.drawImage(cDepois,sz,0,sz,sz);
     cctx.fillStyle='rgba(255,255,255,0.9)';cctx.fillRect(sz-2,0,4,sz);
-    // Labels
     cctx.fillStyle='rgba(0,0,0,0.6)';cctx.fillRect(0,sz-50,sz,50);cctx.fillRect(sz,sz-50,sz,50);
     cctx.fillStyle='#fff';cctx.font='bold 30px Arial';cctx.textAlign='center';
     cctx.fillText('ANTES',sz/2,sz-16);cctx.fillText('DEPOIS',sz+sz/2,sz-16);
-    // Legenda no topo
     if(legenda){
       cctx.fillStyle='rgba(0,0,0,0.72)';cctx.fillRect(0,0,sz*2,56);
       cctx.fillStyle='#fff';cctx.font='bold 24px Arial';
       cctx.fillText(legenda.substring(0,60),sz,38);
     }
-    // Watermark
-    await aplicarWatermark(cctx,sz*2,sz);
-    if(btnP)btnP.textContent='Enviando...';
     var b64=canvasEl.toDataURL('image/jpeg',0.92).split(',')[1];
-    var foto_url=ADP_FOTOS.depois;
+    var foto_url=urlDepois||ADP_FOTOS.depois;
     try{
       var r=await api('/api/upload-foto','POST',{image:'data:image/jpeg;base64,'+b64,usuario_id:USER.id,tipo:'antes_depois'});
       if(r.url)foto_url=r.url;
     }catch(e){}
+    // Usar URLs com watermark para o slider (ou originais como fallback)
+    var sliderAntes=urlAntes||ADP_FOTOS.antes;
+    var sliderDepois=urlDepois||ADP_FOTOS.depois;
     await api('/api/progresso?action=salvar','POST',{
       usuario_id:USER.id,tipo:'antes_depois',conteudo:legenda,
-      foto_url:foto_url,foto_antes:ADP_FOTOS.antes,foto_depois:ADP_FOTOS.depois,
+      foto_url:foto_url,foto_antes:sliderAntes,foto_depois:sliderDepois,
       peso:null,nota:null,publico:publico
     });
     toast(publico?'Publicado no feed!':'Salvo como privado!');
