@@ -1594,8 +1594,20 @@ footer strong{color:rgba(245,242,238,0.8);}
 /* ═══════════ RESPONSIVE ═══════════ */
 @media(min-width:768px){
   body{max-width:480px;margin:0 auto;box-shadow:0 0 60px rgba(0,0,0,0.2);}
-  .bottom-nav,#notif-banner{max-width:480px;left:50%;transform:translateX(-50%);}
-  nav{max-width:480px;left:50%;transform:translateX(-50%);right:auto;}
+  nav{
+    position:fixed;
+    left:50%;
+    transform:translateX(-50%);
+    width:480px;
+    max-width:480px;
+    right:auto;
+  }
+  .bottom-nav,#notif-banner{
+    max-width:480px;
+    left:50%;
+    transform:translateX(-50%);
+    right:auto;
+  }
   #toast{max-width:420px;}
 }
 
@@ -2640,17 +2652,50 @@ function renderGrid(id,progs){
   if(!window.PROGS_CACHE)window.PROGS_CACHE={};
   progs.forEach(function(p){
     window.PROGS_CACHE[p.id]=p;
-    var thumb=document.createElement('div');thumb.className='post-thumb';
-    (function(pid){thumb.addEventListener('click',function(){verPost(pid);});})(p.id);
-    if(p.foto_url){
-      var img=document.createElement('img');img.src=p.foto_url;img.alt='';img.loading='lazy';thumb.appendChild(img);
-    }else{
-      var emp=document.createElement('div');emp.className='post-thumb-empty';emp.textContent='📷';thumb.appendChild(emp);
+    var isADP=p.tipo==='antes_depois'&&p.foto_antes&&p.foto_depois;
+    var thumb=document.createElement('div');
+    thumb.className='post-thumb';
+    thumb.style.position='relative';
+
+    if(isADP){
+      // Slider miniatura no grid do perfil
+      var pid='mini-'+p.id;
+      thumb.style.overflow='hidden';
+      thumb.style.cursor='ew-resize';
+      thumb.innerHTML=
+        '<img style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;" src="'+p.foto_depois+'" alt="Depois">'+
+        '<img id="sdi-'+pid+'" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;clip-path:inset(0 50% 0 0);" src="'+p.foto_antes+'" alt="Antes">'+
+        '<div id="sl-'+pid+'" style="position:absolute;top:0;bottom:0;left:50%;width:2px;background:#fff;transform:translateX(-50%);z-index:5;pointer-events:none;box-shadow:0 0 6px rgba(0,0,0,0.5);">'+
+          '<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:10px;color:#333;box-shadow:0 1px 6px rgba(0,0,0,0.3);pointer-events:none;">&#8660;</div>'+
+        '</div>';
+      // Registra com id mini- para o slider global funcionar
+      thumb.id='fc-'+pid;
+    } else if(p.foto_url){
+      var img=document.createElement('img');
+      img.src=p.foto_url;img.alt='';img.loading='lazy';
+      thumb.appendChild(img);
+      // Click abre viewer
+      (function(pid){thumb.addEventListener('click',function(){verPost(pid);});})(p.id);
+    } else {
+      var emp=document.createElement('div');
+      emp.className='post-thumb-empty';emp.textContent='📷';
+      thumb.appendChild(emp);
+      (function(pid){thumb.addEventListener('click',function(){verPost(pid);});})(p.id);
     }
-    if(!p.publico){var bdg=document.createElement('div');bdg.className='post-thumb-badge';bdg.textContent='priv';thumb.appendChild(bdg);}
+
+    if(!p.publico){
+      var bdg=document.createElement('div');bdg.className='post-thumb-badge';bdg.textContent='priv';thumb.appendChild(bdg);
+    }
+    if(isADP){
+      var adpbdg=document.createElement('div');
+      adpbdg.style.cssText='position:absolute;top:6px;right:6px;background:rgba(0,0,0,0.6);color:#fff;border-radius:50px;padding:2px 7px;font-size:0.5rem;font-weight:700;font-family:var(--font-mono);backdrop-filter:blur(4px);z-index:10;';
+      adpbdg.textContent='A/D';thumb.appendChild(adpbdg);
+    }
     var info=document.createElement('div');info.className='post-thumb-info';
     var dataFmt=new Date(p.criado_em).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});
-    info.textContent=p.peso?p.peso+'kg':dataFmt;thumb.appendChild(info);
+    info.textContent=p.peso?p.peso+'kg':dataFmt;
+    info.style.zIndex='10';
+    thumb.appendChild(info);
     grid.appendChild(thumb);
   });
 }
