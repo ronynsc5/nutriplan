@@ -91,13 +91,13 @@ textarea{resize:vertical;min-height:68px;}
 .perfil-bio{font-size:0.82rem;color:var(--cinza-med);margin-bottom:0.8rem;line-height:1.5;}
 .perfil-cred-pill{display:inline-flex;align-items:center;gap:5px;background:var(--cinza-bg);border:1px solid var(--cinza-cla);border-radius:50px;padding:4px 12px;font-size:0.72rem;color:var(--cinza-med);}
 .btn-editar-perfil{background:var(--cinza-bg);color:var(--preto);border:1px solid var(--cinza-cla);border-radius:50px;padding:7px 18px;font-size:0.78rem;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;width:100%;margin-top:0.8rem;}
-/* grafico-card movido */
-/* grafico h3 movido */
+.grafico-card{background:var(--card);border-radius:var(--radius);padding:1.1rem;margin:0.8rem 1rem;box-shadow:var(--sombra);}
+.grafico-card h3{font-family:'Playfair Display',serif;font-size:0.92rem;color:var(--preto);margin-bottom:0.8rem;}
 .grafico-wrap{position:relative;height:120px;}
 .grafico-empty{text-align:center;padding:2rem 0;font-size:0.78rem;color:var(--cinza-med);}
 .posts-section{padding:0.8rem 1rem 0.5rem;display:flex;align-items:center;justify-content:space-between;}
-/* posts-grid movido */
-/* post-thumb movido */
+.posts-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin:0 1rem;}
+.post-thumb{aspect-ratio:1;background:var(--cinza-bg);border-radius:4px;overflow:hidden;cursor:pointer;position:relative;}
 .post-thumb img{width:100%;height:100%;object-fit:cover;}
 .post-thumb-empty{display:flex;align-items:center;justify-content:center;font-size:1.5rem;}
 .post-thumb-info{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,0.7));padding:4px 6px;font-size:0.6rem;color:#fff;font-weight:600;}
@@ -278,43 +278,30 @@ input[type=range]{flex:1;accent-color:var(--preto);}
 
 /* === PERFIL MELHORADO === */
 .grafico-card{background:var(--card);border-radius:20px;padding:1.3rem 1.1rem;margin:0.8rem 1rem;box-shadow:0 4px 20px rgba(0,0,0,0.08);}
-.grafico-card h3{font-family:'Playfair Display',serif;font-size:0.95rem;color:var(--preto);margin-bottom:1rem;display:flex;align-items:center;gap:6px;}
-.grafico-wrap{position:relative;height:200px;}
-.grafico-empty{text-align:center;padding:3rem 0;font-size:0.78rem;color:var(--cinza-med);}
-
-/* Grid fotos */
+.grafico-card h3{font-family:'Playfair Display',serif;font-size:0.95rem;color:var(--preto);margin-bottom:1rem;}
 .posts-section{padding:1rem 1rem 0.6rem;display:flex;align-items:center;justify-content:space-between;}
-.posts-section-title{font-size:0.88rem;font-weight:700;color:var(--preto);letter-spacing:-0.3px;}
-.posts-section-btns{display:flex;gap:6px;align-items:center;}
-.btn-add-foto{background:none;border:none;font-size:0.78rem;color:var(--cinza-med);cursor:pointer;font-family:'DM Sans',sans-serif;padding:4px 8px;}
-.btn-add-foto:hover{color:var(--preto);}
-.btn-ad{background:var(--preto);color:var(--card);border:none;border-radius:50px;font-size:0.72rem;cursor:pointer;padding:5px 12px;font-family:'DM Sans',sans-serif;font-weight:500;transition:opacity 0.2s;}
-.btn-ad:hover{opacity:0.8;}
-
+.btn-ad{background:var(--preto);color:var(--card);border:none;border-radius:50px;font-size:0.72rem;cursor:pointer;padding:5px 12px;font-family:'DM Sans',sans-serif;font-weight:500;}
 .posts-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;margin:0 1rem;}
 .post-thumb{aspect-ratio:1;background:var(--cinza-bg);border-radius:8px;overflow:hidden;cursor:pointer;position:relative;transition:transform 0.15s;}
-.post-thumb:hover{transform:scale(0.97);}
 .post-thumb:active{transform:scale(0.93);}
 .post-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
 .post-thumb-empty{display:flex;align-items:center;justify-content:center;font-size:1.5rem;}
 .post-thumb-info{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,0.72));padding:6px 7px 5px;font-size:0.6rem;color:#fff;font-weight:600;}
-.post-thumb-badge{position:absolute;top:6px;left:6px;background:rgba(0,0,0,0.55);color:#fff;border-radius:50px;padding:2px 7px;font-size:0.55rem;font-weight:700;letter-spacing:0.5px;}
-
-/* ANTES/DEPOIS card */
+.post-thumb-badge{position:absolute;top:6px;left:6px;background:rgba(0,0,0,0.55);color:#fff;border-radius:50px;padding:2px 7px;font-size:0.55rem;font-weight:700;}
+/* AD Card */
 .ad-card-wrapper{background:var(--card);border-radius:20px;margin:0.8rem 1rem;box-shadow:0 4px 20px rgba(0,0,0,0.08);overflow:hidden;}
 .ad-card-header{padding:1rem 1.1rem 0.6rem;display:flex;align-items:center;justify-content:space-between;}
 .ad-card-title{font-family:'Playfair Display',serif;font-size:0.95rem;color:var(--preto);}
-.ad-close-btn{background:none;border:none;font-size:1rem;color:var(--cinza-med);cursor:pointer;line-height:1;padding:2px 6px;border-radius:6px;}
-.ad-close-btn:hover{background:var(--cinza-bg);}
+.ad-close-btn{background:none;border:none;font-size:1rem;color:var(--cinza-med);cursor:pointer;padding:2px 6px;border-radius:6px;}
 .ad-card-sub{font-size:0.72rem;color:var(--cinza-med);padding:0 1.1rem 0.8rem;}
 .ad-sels{display:grid;grid-template-columns:1fr 1fr;gap:0.6rem;padding:0 1.1rem 0.8rem;}
 .ad-sel-label{font-size:0.65rem;font-weight:700;color:var(--cinza-med);letter-spacing:1px;text-transform:uppercase;margin-bottom:0.4rem;}
 .ad-sel-box{background:var(--cinza-bg);border-radius:12px;border:2px dashed var(--cinza-cla);display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;transition:border-color 0.2s;aspect-ratio:1;}
 .ad-sel-box:hover{border-color:var(--preto);}
 .ad-sel-box img{width:100%;height:100%;object-fit:cover;}
-.ad-sel-box .add-icon{font-size:1.6rem;opacity:0.5;}
+.ad-add-icon{font-size:1.6rem;opacity:0.4;}
 .ad-data-label{font-size:0.62rem;color:var(--cinza-med);text-align:center;margin-top:4px;min-height:14px;}
-.ad-comparador-wrap{margin:0 1.1rem 0.8rem;}
+.ad-comp-wrap{margin:0 1.1rem 0.8rem;}
 .ad-comparador{position:relative;aspect-ratio:1;border-radius:12px;overflow:hidden;user-select:none;}
 .ad-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
 .ad-img-depois{clip-path:inset(0 50% 0 0);}
@@ -323,36 +310,30 @@ input[type=range]{flex:1;accent-color:var(--preto);}
 .ad-label{position:absolute;bottom:10px;background:rgba(0,0,0,0.65);color:#fff;border-radius:50px;padding:3px 10px;font-size:0.6rem;font-weight:700;letter-spacing:1px;}
 .ad-compare-hint{font-size:0.65rem;color:var(--cinza-med);text-align:center;margin-top:6px;}
 .ad-legenda-wrap{padding:0 1.1rem 0.8rem;}
-.ad-legenda-wrap input{border-radius:10px;font-size:0.85rem;}
+.ad-legenda-wrap input{border-radius:10px;}
 .ad-actions{display:flex;gap:0.5rem;padding:0 1.1rem 1.1rem;}
 .ad-btn-priv{flex:1;background:var(--cinza-bg);color:var(--preto);border:1.5px solid var(--cinza-cla);border-radius:50px;padding:11px;font-size:0.82rem;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;}
 .ad-btn-pub{flex:1;background:var(--preto);color:var(--card);border:none;border-radius:50px;padding:11px;font-size:0.82rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;}
-.ad-btn-priv:disabled,.ad-btn-pub:disabled{opacity:0.45;cursor:not-allowed;}
-
-/* MODAL FOTO VISUALIZADOR */
-.foto-viewer-bg{display:none;position:fixed;inset:0;z-index:350;background:rgba(0,0,0,0.92);flex-direction:column;}
-.foto-viewer-bg.show{display:flex;}
-.foto-viewer-header{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.2rem;background:rgba(0,0,0,0.4);}
-.fv-close{background:none;border:none;color:#fff;font-size:1.5rem;cursor:pointer;line-height:1;padding:4px;}
-.fv-title{font-size:0.82rem;color:rgba(255,255,255,0.8);font-weight:500;}
-.foto-viewer-img-wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:0.5rem;overflow:hidden;}
-.foto-viewer-img-wrap img{max-width:100%;max-height:100%;object-fit:contain;border-radius:8px;}
-.foto-viewer-footer{background:rgba(10,10,10,0.95);padding:1rem 1.2rem;border-top:1px solid rgba(255,255,255,0.08);}
-.fv-meta{display:flex;gap:1rem;margin-bottom:0.8rem;}
+.ad-btn-priv:disabled,.ad-btn-pub:disabled{opacity:0.4;cursor:not-allowed;}
+/* Visualizador */
+.fv-bg{display:none;position:fixed;inset:0;z-index:350;background:rgba(0,0,0,0.93);flex-direction:column;}
+.fv-bg.show{display:flex;}
+.fv-header{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.2rem;}
+.fv-close{background:none;border:none;color:#fff;font-size:1.5rem;cursor:pointer;}
+.fv-title{font-size:0.82rem;color:rgba(255,255,255,0.75);}
+.fv-img-wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:0.5rem;overflow:hidden;}
+.fv-img-wrap img{max-width:100%;max-height:100%;object-fit:contain;border-radius:8px;}
+.fv-footer{background:rgba(10,10,10,0.96);padding:1rem 1.2rem;border-top:1px solid rgba(255,255,255,0.08);}
+.fv-meta{display:flex;gap:1rem;margin-bottom:0.7rem;}
 .fv-meta-item{text-align:center;}
 .fv-meta-val{font-size:1rem;font-weight:700;color:#fff;}
-.fv-meta-label{font-size:0.6rem;color:rgba(255,255,255,0.5);margin-top:1px;}
-.fv-nota{font-size:0.78rem;color:rgba(255,255,255,0.65);line-height:1.5;margin-bottom:0.8rem;}
-.fv-actions{display:flex;gap:0.5rem;}
+.fv-meta-label{font-size:0.58rem;color:rgba(255,255,255,0.45);margin-top:1px;}
+.fv-nota{font-size:0.78rem;color:rgba(255,255,255,0.6);margin-bottom:0.8rem;line-height:1.5;}
+.fv-acts{display:flex;gap:0.5rem;}
 .fv-btn{flex:1;border:none;border-radius:50px;padding:11px;font-size:0.8rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;}
 .fv-btn-toggle{background:rgba(255,255,255,0.12);color:#fff;}
+.fv-btn-toggle.pub{background:#16a34a;}
 .fv-btn-del{background:#dc2626;color:#fff;}
-.fv-btn-toggle.publico{background:#16a34a;}
-
-/* Privados */
-.privados-section{padding:0.8rem 1rem 0.5rem;}
-.privados-section h4{font-size:0.75rem;font-weight:700;color:var(--cinza-med);margin-bottom:0.5rem;letter-spacing:0.5px;text-transform:uppercase;}
-
 footer{background:#0a0a0a;color:rgba(255,255,255,0.4);text-align:center;padding:1.3rem 1rem;font-size:0.72rem;}
 footer strong{color:#fff;}
 @keyframes spin{to{transform:rotate(360deg);}}
@@ -451,6 +432,44 @@ footer strong{color:#fff;}
     <span style="font-size:0.82rem;font-weight:600;color:var(--preto);">📸 Públicos</span>
     <button onclick="irProgresso()" style="background:none;border:none;font-size:0.78rem;color:var(--cinza-med);cursor:pointer;">+ Adicionar</button>
   </div>
+  <!-- CARD ANTES/DEPOIS -->
+  <div id="ad-perfil-card" class="ad-card-wrapper" style="display:none;">
+    <div class="ad-card-header">
+      <div class="ad-card-title">Antes e Depois</div>
+      <button class="ad-close-btn" onclick="toggleADPerfil()">x</button>
+    </div>
+    <p class="ad-card-sub">Selecione duas fotos para criar sua comparacao.</p>
+    <div class="ad-sels">
+      <div>
+        <div class="ad-sel-label">Antes</div>
+        <div class="ad-sel-box" id="adp-sel-antes" onclick="abrirSeletorADP('antes')"><span class="ad-add-icon">foto</span></div>
+        <div class="ad-data-label" id="adp-data-antes"></div>
+      </div>
+      <div>
+        <div class="ad-sel-label">Depois</div>
+        <div class="ad-sel-box" id="adp-sel-depois" onclick="abrirSeletorADP('depois')"><span class="ad-add-icon">foto</span></div>
+        <div class="ad-data-label" id="adp-data-depois"></div>
+      </div>
+    </div>
+    <div id="adp-comparador-wrap" class="ad-comp-wrap" style="display:none;">
+      <div class="ad-comparador" id="adp-comparador">
+        <img class="ad-img" id="adp-foto-antes" src="" alt="Antes">
+        <img class="ad-img ad-img-depois" id="adp-foto-depois" src="" alt="Depois">
+        <div class="ad-divider" id="adp-divider"><div class="ad-divider-handle">II</div></div>
+        <span class="ad-label" style="left:10px;">ANTES</span>
+        <span class="ad-label" style="right:10px;">DEPOIS</span>
+      </div>
+      <p class="ad-compare-hint">Arraste para comparar</p>
+    </div>
+    <div class="ad-legenda-wrap">
+      <input type="text" id="adp-legenda" placeholder="Legenda... ex: 3 meses de dedicacao!">
+    </div>
+    <div class="ad-actions">
+      <button onclick="publicarADP(false)" id="btn-adp-salvar" disabled class="ad-btn-priv">Salvar privado</button>
+      <button onclick="publicarADP(true)" id="btn-adp-pub" disabled class="ad-btn-pub">Publicar no feed</button>
+    </div>
+  </div>
+
   <div class="posts-grid" id="posts-grid-pub"></div>
   <!-- Posts privados -->
   <div class="privados-section" id="privados-section" style="display:none;">
@@ -706,25 +725,22 @@ footer strong{color:#fff;}
   </div>
 </div>
 <!-- VISUALIZADOR DE FOTO -->
-<div class="foto-viewer-bg" id="foto-viewer">
-  <div class="foto-viewer-header">
-    <button class="fv-close" onclick="fecharViewer()">×</button>
+<div class="fv-bg" id="foto-viewer">
+  <div class="fv-header">
+    <button class="fv-close" onclick="fecharViewer()">x</button>
     <span class="fv-title" id="fv-title">Registro</span>
     <div style="width:32px;"></div>
   </div>
-  <div class="foto-viewer-img-wrap">
-    <img id="fv-img" src="" alt="">
-  </div>
-  <div class="foto-viewer-footer">
+  <div class="fv-img-wrap"><img id="fv-img" src="" alt=""></div>
+  <div class="fv-footer">
     <div class="fv-meta" id="fv-meta"></div>
     <div class="fv-nota" id="fv-nota"></div>
-    <div class="fv-actions">
-      <button class="fv-btn fv-btn-toggle" id="fv-btn-toggle" onclick="toggleVisibilidade()">🌍 Tornar público</button>
-      <button class="fv-btn fv-btn-del" onclick="apagarDoViewer()">🗑️ Apagar</button>
+    <div class="fv-acts">
+      <button class="fv-btn fv-btn-toggle" id="fv-btn-toggle" onclick="toggleVisibilidade()">Tornar publico</button>
+      <button class="fv-btn fv-btn-del" onclick="apagarDoViewer()">Apagar</button>
     </div>
   </div>
 </div>
-
 <div id="notif-banner">🔔 Ativar lembretes de refeição?<button onclick="ativarNotif()">Ativar</button><button onclick="document.getElementById('notif-banner').classList.remove('show')" style="background:transparent;color:rgba(255,255,255,0.6);border:1px solid rgba(255,255,255,0.3);">Não</button></div>
 <div id="loader"><div class="spin"></div><div class="load-txt" id="load-txt">Gerando seu plano com IA...</div><div class="load-steps"><div class="load-step" id="ls1">⚙️ Calculando seu metabolismo...</div><div class="load-step" id="ls2">🧬 Aplicando metodologia...</div><div class="load-step" id="ls3">🍽️ Distribuindo macronutrientes...</div><div class="load-step" id="ls4">📊 Montando cardápio personalizado...</div><div class="load-step" id="ls5">✅ Finalizando seu plano...</div></div></div>
 <div id="toast"></div>
@@ -805,19 +821,42 @@ async function carregarPerfil(){
   }catch(e){console.error(e);}
 }
 function renderGrid(id,progs){
-  const grid=document.getElementById(id);
-  if(!progs.length){grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:1.5rem;font-size:0.78rem;color:var(--cinza-med);">Nenhum post ainda</div>';return;}
+  var grid=document.getElementById(id);
+  grid.innerHTML='';
+  if(!progs.length){
+    var el=document.createElement('div');
+    el.style.cssText='grid-column:1/-1;text-align:center;padding:1.5rem;font-size:0.78rem;color:var(--cinza-med);';
+    el.textContent='Nenhum post ainda';
+    grid.appendChild(el);
+    return;
+  }
   if(!window.PROGS_CACHE)window.PROGS_CACHE={};
-  progs.forEach(p=>{window.PROGS_CACHE[p.id]=p;});
-  grid.innerHTML=progs.map(p=>{
-    const dataFmt=new Date(p.criado_em).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});
-    const badge=p.publico?'':'<div class="post-thumb-badge">🔒</div>';
-    return '<div class="post-thumb" onclick="verPost(''+p.id+'')">'+
-      (p.foto_url?'<img src="'+p.foto_url+'" alt="" loading="lazy">':'<div class="post-thumb-empty">⚖️</div>')+
-      badge+
-      '<div class="post-thumb-info">'+(p.peso?p.peso+'kg':dataFmt)+'</div>'+
-      '</div>';
-  }).join('');
+  progs.forEach(function(p){
+    window.PROGS_CACHE[p.id]=p;
+    var thumb=document.createElement('div');
+    thumb.className='post-thumb';
+    (function(pid){thumb.addEventListener('click',function(){verPost(pid);});})(p.id);
+    if(p.foto_url){
+      var img=document.createElement('img');
+      img.src=p.foto_url;img.alt='';img.loading='lazy';
+      thumb.appendChild(img);
+    }else{
+      var emp=document.createElement('div');
+      emp.className='post-thumb-empty';
+      emp.textContent='sem foto';thumb.appendChild(emp);
+    }
+    if(!p.publico){
+      var bdg=document.createElement('div');
+      bdg.className='post-thumb-badge';
+      bdg.textContent='priv';thumb.appendChild(bdg);
+    }
+    var info=document.createElement('div');
+    info.className='post-thumb-info';
+    var dataFmt=new Date(p.criado_em).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});
+    info.textContent=p.peso?p.peso+'kg':dataFmt;
+    thumb.appendChild(info);
+    grid.appendChild(thumb);
+  });
 }
 
 function desenharGrafico(pesos){
@@ -1168,6 +1207,125 @@ async function gerarCupom(){const prefix=(document.getElementById('ap').value.tr
 function copiarCupom(){navigator.clipboard.writeText(document.getElementById('cupom-disp').textContent).then(()=>toast('Copiado!'));}
 function carregarCfgAdmin(){const cfg=ls.get('cfg')||{};const m={'cfg-mp-pub':'MP_PUBLIC_KEY','cfg-url':'SITE_URL','cfg-nome-site':'NOME_SITE','cfg-nome-studio':'NOME_STUDIO','cfg-preco-eco':'PRECO_ECO','cfg-preco-pre':'PRECO_PRE','cfg-dias':'DIAS_VALIDADE'};Object.entries(m).forEach(([id,k])=>{const el=document.getElementById(id);if(el&&cfg[k]!==undefined)el.value=cfg[k];});}
 function salvarCfg(){const cfg=ls.get('cfg')||{};const m={'cfg-mp-pub':'MP_PUBLIC_KEY','cfg-url':'SITE_URL','cfg-nome-site':'NOME_SITE','cfg-nome-studio':'NOME_STUDIO','cfg-preco-eco':'PRECO_ECO','cfg-preco-pre':'PRECO_PRE','cfg-dias':'DIAS_VALIDADE'};Object.entries(m).forEach(([id,k])=>{const el=document.getElementById(id);if(el&&el.value)cfg[k]=el.value;});ls.set('cfg',cfg);if(cfg.NOME_SITE){document.getElementById('footer-nome').textContent=cfg.NOME_SITE;document.title=cfg.NOME_SITE+' — '+(cfg.NOME_STUDIO||'MFCT Estúdio');}if(cfg.NOME_STUDIO)document.getElementById('footer-studio').textContent=cfg.NOME_STUDIO;toast('✅ Configurações salvas!');}
+// ANTES/DEPOIS
+var ADP_FOTOS={antes:null,depois:null},ADP_PROGS=[];
+
+function toggleADPerfil(){
+  var card=document.getElementById('ad-perfil-card');
+  var show=card.style.display==='none';
+  card.style.display=show?'block':'none';
+  if(show){card.scrollIntoView({behavior:'smooth',block:'nearest'});carregarFotosADP();}
+}
+
+async function carregarFotosADP(){
+  if(!USER||USER.id==='admin')return;
+  try{
+    var progs=await api('/api/progresso?action=meu&usuario_id='+USER.id);
+    ADP_PROGS=progs.filter(function(p){return p.foto_url;});
+    if(!ADP_PROGS.length)toast('Adicione fotos nos registros primeiro!');
+  }catch(e){}
+}
+
+function abrirSeletorADP(lado){
+  if(!ADP_PROGS.length){toast('Adicione fotos nos registros primeiro!');return;}
+  var old=document.getElementById('modal-sel-adp');
+  if(old)old.remove();
+  var modal=document.createElement('div');
+  modal.className='modal-bg show';modal.id='modal-sel-adp';
+  var inner=document.createElement('div');inner.className='modal';
+  var handle=document.createElement('div');handle.className='modal-handle';inner.appendChild(handle);
+  var titulo=document.createElement('h3');titulo.textContent='Selecionar - '+lado.toUpperCase();inner.appendChild(titulo);
+  var lista=document.createElement('div');lista.style.cssText='max-height:60vh;overflow-y:auto;';
+  ADP_PROGS.forEach(function(p){
+    var item=document.createElement('div');
+    item.style.cssText='display:flex;align-items:center;gap:0.7rem;padding:0.7rem 0;border-bottom:1px solid #e5e7eb;cursor:pointer;';
+    var img=document.createElement('img');img.src=p.foto_url;img.style.cssText='width:54px;height:54px;border-radius:8px;object-fit:cover;flex-shrink:0;';item.appendChild(img);
+    var info=document.createElement('div');
+    var dataStr=new Date(p.criado_em).toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
+    var d1=document.createElement('div');d1.style.cssText='font-size:0.82rem;font-weight:600;';d1.textContent=dataStr;info.appendChild(d1);
+    if(p.peso){var d2=document.createElement('div');d2.style.cssText='font-size:0.72rem;color:#6b7280;';d2.textContent=p.peso+'kg';info.appendChild(d2);}
+    item.appendChild(info);
+    var fotoUrl=p.foto_url;
+    item.onclick=function(){escolherFotoADP(lado,fotoUrl,dataStr);};
+    lista.appendChild(item);
+  });
+  inner.appendChild(lista);
+  var btnC=document.createElement('button');btnC.className='btn-full2';btnC.style.marginTop='0.8rem';btnC.textContent='Cancelar';btnC.onclick=function(){modal.remove();};inner.appendChild(btnC);
+  modal.appendChild(inner);document.body.appendChild(modal);
+}
+
+function escolherFotoADP(lado,url,data){
+  var el=document.getElementById('modal-sel-adp');if(el)el.remove();
+  ADP_FOTOS[lado]=url;
+  var box=document.getElementById('adp-sel-'+lado);
+  box.innerHTML='';
+  var img=document.createElement('img');img.src=url;img.style.cssText='width:100%;height:100%;object-fit:cover;';box.appendChild(img);
+  document.getElementById('adp-data-'+lado).textContent=data;
+  if(ADP_FOTOS.antes&&ADP_FOTOS.depois){
+    document.getElementById('adp-foto-antes').src=ADP_FOTOS.antes;
+    document.getElementById('adp-foto-depois').src=ADP_FOTOS.depois;
+    document.getElementById('adp-comparador-wrap').style.display='block';
+    document.getElementById('btn-adp-salvar').disabled=false;
+    document.getElementById('btn-adp-pub').disabled=false;
+    iniciarSliderADP();
+  }
+}
+
+function iniciarSliderADP(){
+  var comp=document.getElementById('adp-comparador');
+  var divider=document.getElementById('adp-divider');
+  var depois=document.getElementById('adp-foto-depois');
+  var drag=false;
+  var move=function(x){var rect=comp.getBoundingClientRect();var pct=Math.max(5,Math.min(95,((x-rect.left)/rect.width)*100));divider.style.left=pct+'%';depois.style.clipPath='inset(0 '+(100-pct)+'% 0 0)';};
+  divider.onmousedown=function(){drag=true;};
+  divider.ontouchstart=function(e){drag=true;e.preventDefault();};
+  document.onmousemove=function(e){if(drag)move(e.clientX);};
+  document.ontouchmove=function(e){if(drag)move(e.touches[0].clientX);};
+  document.onmouseup=function(){drag=false;};
+  document.ontouchend=function(){drag=false;};
+}
+
+async function publicarADP(publico){
+  if(!ADP_FOTOS.antes||!ADP_FOTOS.depois){toast('Selecione as duas fotos');return;}
+  var legenda=document.getElementById('adp-legenda').value.trim()||'Meu antes e depois!';
+  var btnS=document.getElementById('btn-adp-salvar');
+  var btnP=document.getElementById('btn-adp-pub');
+  btnS.disabled=true;btnP.disabled=true;btnP.textContent='Gerando...';
+  try{
+    var canvasEl=document.createElement('canvas');
+    var sz=600;canvasEl.width=sz*2;canvasEl.height=sz;
+    var cctx=canvasEl.getContext('2d');
+    var loadImg=function(src){return new Promise(function(res){var i=new Image();i.crossOrigin='anonymous';i.onload=function(){res(i);};i.onerror=function(){res(null);};i.src=src;});};
+    var imgs=await Promise.all([loadImg(ADP_FOTOS.antes),loadImg(ADP_FOTOS.depois)]);
+    cctx.fillStyle='#000';cctx.fillRect(0,0,sz*2,sz);
+    if(imgs[0])cctx.drawImage(imgs[0],0,0,sz,sz);
+    if(imgs[1])cctx.drawImage(imgs[1],sz,0,sz,sz);
+    cctx.fillStyle='rgba(255,255,255,0.8)';cctx.fillRect(sz-1,0,2,sz);
+    cctx.fillStyle='rgba(0,0,0,0.6)';cctx.fillRect(0,sz-48,sz,48);cctx.fillRect(sz,sz-48,sz,48);
+    cctx.fillStyle='#fff';cctx.font='bold 28px Arial';cctx.textAlign='center';
+    cctx.fillText('ANTES',sz/2,sz-16);cctx.fillText('DEPOIS',sz+sz/2,sz-16);
+    if(legenda){cctx.fillStyle='rgba(0,0,0,0.7)';cctx.fillRect(0,0,sz*2,50);cctx.fillStyle='#fff';cctx.font='bold 22px Arial';cctx.fillText(legenda.substring(0,60),sz,34);}
+    var b64=canvasEl.toDataURL('image/jpeg',0.90).split(',')[1];
+    btnP.textContent='Enviando...';
+    var canvas_url=null;
+    try{var r=await api('/api/upload-foto','POST',{image:'data:image/jpeg;base64,'+b64,usuario_id:USER.id,tipo:'antes_depois'});if(r.url)canvas_url=r.url;}catch(e){}
+    await api('/api/progresso?action=salvar','POST',{usuario_id:USER.id,tipo:'antes_depois',conteudo:legenda,foto_url:canvas_url||ADP_FOTOS.depois,foto_antes:ADP_FOTOS.antes,foto_depois:ADP_FOTOS.depois,peso:null,nota:null,publico:publico});
+    toast(publico?'Card publicado no feed!':'Salvo no perfil!');
+    ADP_FOTOS={antes:null,depois:null};
+    var selA=document.getElementById('adp-sel-antes');selA.innerHTML='<span class="ad-add-icon">foto</span>';
+    var selD=document.getElementById('adp-sel-depois');selD.innerHTML='<span class="ad-add-icon">foto</span>';
+    document.getElementById('adp-data-antes').textContent='';
+    document.getElementById('adp-data-depois').textContent='';
+    document.getElementById('adp-legenda').value='';
+    document.getElementById('adp-comparador-wrap').style.display='none';
+    document.getElementById('btn-adp-salvar').disabled=true;
+    document.getElementById('btn-adp-pub').disabled=true;
+    document.getElementById('ad-perfil-card').style.display='none';
+    carregarPerfil();
+  }catch(e){console.error(e);toast('Erro ao publicar.');}
+  finally{btnS.disabled=false;btnP.disabled=false;btnP.textContent='Publicar no feed';}
+}
+
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3200);}
 </script>
 <script src="https://sdk.mercadopago.com/js/v2"></script>
