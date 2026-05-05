@@ -3203,72 +3203,26 @@ function adminTab(tab,el){
   document.getElementById('atc-'+tab).classList.add('active');
 }
 
-// PUBLICAR ANTES/DEPOIS
+// PUBLICAR ANTES/DEPOIS — salva URLs diretas para slider no feed
 async function publicarADP(publico){
   if(!ADP_FOTOS.antes||!ADP_FOTOS.depois){toast('Selecione as duas fotos');return;}
   var legenda=document.getElementById('adp-legenda').value.trim()||'Meu antes e depois!';
   var btnP=document.getElementById('btn-adp-pub');
   var btnS=document.getElementById('btn-adp-salvar');
-  if(btnP)btnP.disabled=true;
+  if(btnP){btnP.disabled=true;btnP.textContent='Salvando...';}
   if(btnS)btnS.disabled=true;
-  if(btnP)btnP.textContent='Gerando...';
   try{
-    var loadImg=function(src){return new Promise(function(res){
-      var i=new Image();i.crossOrigin='anonymous';
-      i.onload=function(){res(i);};i.onerror=function(){res(null);};i.src=src;
-    });};
-    var aplicarWmFoto=function(imgEl,sz){
-      var c=document.createElement('canvas');c.width=sz;c.height=sz;
-      var cx=c.getContext('2d');
-      if(imgEl)cx.drawImage(imgEl,0,0,sz,sz);
-      return new Promise(function(res){
-        var wm=new Image();
-        wm.onload=function(){
-          var wmH=Math.round(sz*0.14);var wmW=Math.round(wmH*(wm.width/wm.height));var mg=10;
-          cx.globalAlpha=0.55;cx.drawImage(wm,sz-wmW-mg,sz-wmH-mg,wmW,wmH);cx.globalAlpha=1.0;res(c);
-        };wm.onerror=function(){res(c);};wm.src=LOGO_WM_B64;
-      });
-    };
-    var imgs=await Promise.all([loadImg(ADP_FOTOS.antes),loadImg(ADP_FOTOS.depois)]);
-    var sz=600;
-    var cAntes=await aplicarWmFoto(imgs[0],sz);
-    var cDepois=await aplicarWmFoto(imgs[1],sz);
-    if(btnP)btnP.textContent='Enviando...';
-    var uploadFoto=async function(canvasEl,tipo){
-      var b=canvasEl.toDataURL('image/jpeg',0.92).split(',')[1];
-      try{var r=await api('/api/upload-foto','POST',{image:'data:image/jpeg;base64,'+b,usuario_id:USER.id,tipo:tipo});return r.url||null;}catch(e){return null;}
-    };
-    var urlAntes=await uploadFoto(cAntes,'antes_wm');
-    var urlDepois=await uploadFoto(cDepois,'depois_wm');
-    // Canvas lado a lado
-    var canvasEl=document.createElement('canvas');canvasEl.width=sz*2;canvasEl.height=sz;
-    var cctx=canvasEl.getContext('2d');
-    cctx.fillStyle='#000';cctx.fillRect(0,0,sz*2,sz);
-    cctx.drawImage(cAntes,0,0,sz,sz);cctx.drawImage(cDepois,sz,0,sz,sz);
-    cctx.fillStyle='rgba(255,255,255,0.9)';cctx.fillRect(sz-2,0,4,sz);
-    cctx.fillStyle='rgba(0,0,0,0.6)';cctx.fillRect(0,sz-50,sz,50);cctx.fillRect(sz,sz-50,sz,50);
-    cctx.fillStyle='#fff';cctx.font='bold 28px Arial';cctx.textAlign='center';
-    cctx.fillText('ANTES',sz/2,sz-16);cctx.fillText('DEPOIS',sz+sz/2,sz-16);
-    if(legenda){
-      cctx.fillStyle='rgba(0,0,0,0.72)';cctx.fillRect(0,0,sz*2,56);
-      cctx.fillStyle='#fff';cctx.font='bold 22px Arial';
-      cctx.fillText(legenda.substring(0,60),sz,38);
-    }
-    var b64=canvasEl.toDataURL('image/jpeg',0.92).split(',')[1];
-    var foto_url=urlDepois||ADP_FOTOS.depois;
-    try{
-      var ru=await api('/api/upload-foto','POST',{image:'data:image/jpeg;base64,'+b64,usuario_id:USER.id,tipo:'antes_depois'});
-      if(ru.url)foto_url=ru.url;
-    }catch(e){}
-    var sliderAntes=urlAntes||ADP_FOTOS.antes;
-    var sliderDepois=urlDepois||ADP_FOTOS.depois;
     await api('/api/progresso?action=salvar','POST',{
-      usuario_id:USER.id,nome:USER.nome||'Usuário',tipo:'antes_depois',conteudo:legenda,
-      foto_url:foto_url,foto_antes:sliderAntes,foto_depois:sliderDepois,
+      usuario_id:USER.id,
+      nome:USER.nome||'Usuário',
+      tipo:'antes_depois',
+      conteudo:legenda,
+      foto_url:ADP_FOTOS.depois,
+      foto_antes:ADP_FOTOS.antes,
+      foto_depois:ADP_FOTOS.depois,
       peso:null,nota:null,publico:publico
     });
     toast(publico?'✅ Publicado no feed!':'✅ Salvo como privado!');
-    // Reset
     ADP_FOTOS={antes:null,depois:null};
     var selA=document.getElementById('adp-sel-antes');if(selA)selA.innerHTML='<span class="ad-add-icon">📷</span>';
     var selD=document.getElementById('adp-sel-depois');if(selD)selD.innerHTML='<span class="ad-add-icon">📷</span>';
@@ -3282,7 +3236,7 @@ async function publicarADP(publico){
     carregarPerfil();
   }catch(e){
     console.error('Erro publicarADP:',e);
-    toast('❌ Erro ao publicar. Tente novamente.');
+    toast('Erro: '+e.message);
   }finally{
     if(btnP){btnP.disabled=false;btnP.textContent='🌍 Publicar';}
     if(btnS){btnS.disabled=false;btnS.textContent='🔒 Salvar privado';}
