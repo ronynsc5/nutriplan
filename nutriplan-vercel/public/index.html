@@ -989,7 +989,7 @@ async function carregarFeed(){
           <div><div class="feed-post-user">${p.usuarios?.nome||'Usuário'}</div><div class="feed-post-data">${new Date(p.criado_em).toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'})}</div></div>
         </div>
         ${(p.tipo==='antes_depois'&&p.foto_antes&&p.foto_depois)?
-          `<div style="position:relative;width:100%;aspect-ratio:1/1;overflow:hidden;user-select:none;background:#000;cursor:ew-resize;" id="fc-\${p.id}">
+          `<div style="position:relative;width:100%;aspect-ratio:1/1;overflow:hidden;user-select:none;background:#000;cursor:ew-resize;touch-action:none;" id="fc-\${p.id}">
             <img style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;" src="\${p.foto_antes}" alt="Antes">
             <div id="fi-depois-\${p.id}" style="position:absolute;inset:0;overflow:hidden;clip-path:inset(0 50% 0 0);">
               <img style="width:100%;height:100%;object-fit:cover;" src="\${p.foto_depois}" alt="Depois">
@@ -1406,31 +1406,25 @@ function initSliderFeed(postId){
   var divEl=document.getElementById('fd-div-'+postId);
   var depoisEl=document.getElementById('fi-depois-'+postId);
   if(!wrap||!divEl||!depoisEl)return;
-  if(divEl.dataset.init==='1')return; // já inicializado
-  divEl.dataset.init='1';
+  if(wrap.dataset.sliderOk==='1')return;
+  wrap.dataset.sliderOk='1';
+  // touch-action none para o browser nao rolar a pagina ao arrastar
+  wrap.style.touchAction='none';
   var drag=false;
-  var move=function(clientX){
+  function mover(clientX){
     var rect=wrap.getBoundingClientRect();
-    var pct=Math.max(3,Math.min(97,((clientX-rect.left)/rect.width)*100));
+    var pct=Math.max(2,Math.min(98,((clientX-rect.left)/rect.width)*100));
     divEl.style.left=pct+'%';
     depoisEl.style.clipPath='inset(0 '+(100-pct)+'% 0 0)';
-  };
-  // Mouse
-  divEl.addEventListener('mousedown',function(e){drag=true;e.preventDefault();e.stopPropagation();});
-  window.addEventListener('mousemove',function(e){if(drag)move(e.clientX);});
+  }
+  wrap.addEventListener('mousedown',function(e){drag=true;mover(e.clientX);});
+  window.addEventListener('mousemove',function(e){if(drag)mover(e.clientX);});
   window.addEventListener('mouseup',function(){drag=false;});
-  // Touch
-  divEl.addEventListener('touchstart',function(e){drag=true;e.stopPropagation();},{passive:true});
+  wrap.addEventListener('touchstart',function(e){drag=true;mover(e.touches[0].clientX);},{passive:true});
   window.addEventListener('touchmove',function(e){
-    if(drag&&e.touches.length>0){
-      e.preventDefault();
-      move(e.touches[0].clientX);
-    }
+    if(drag){e.preventDefault();mover(e.touches[0].clientX);}
   },{passive:false});
   window.addEventListener('touchend',function(){drag=false;});
-  // Também arrastar clicando na área toda
-  wrap.addEventListener('mousedown',function(e){drag=true;move(e.clientX);});
-  wrap.addEventListener('touchstart',function(e){drag=true;if(e.touches.length>0)move(e.touches[0].clientX);},{passive:true});
 }
 
 function ativarSliderFeed(postId,urlAntes,urlDepois){
