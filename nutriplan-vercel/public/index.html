@@ -666,7 +666,7 @@ textarea{resize:vertical;min-height:72px;}
   border-radius:50px;padding:3px 10px;
   letter-spacing:0.06em;
 }
-.grafico-wrap{position:relative;height:130px;}
+.grafico-wrap{position:relative;height:140px;padding:8px 4px 4px;}
 .grafico-empty{
   text-align:center;padding:2rem 0;
   font-size:0.78rem;color:var(--cinza-med);
@@ -904,6 +904,8 @@ textarea{resize:vertical;min-height:72px;}
   animation:fadeUp 0.4s var(--ease-out) both;
   overflow:hidden;
   width:100%;
+  max-width:100%;
+  contain:layout;
 }
 .feed-post-header{
   display:flex;align-items:center;gap:0.8rem;
@@ -1594,21 +1596,18 @@ footer strong{color:rgba(245,242,238,0.8);}
 /* ═══════════ RESPONSIVE ═══════════ */
 @media(min-width:768px){
   body{max-width:480px;margin:0 auto;box-shadow:0 0 60px rgba(0,0,0,0.2);}
-  nav{
-    position:fixed;
-    left:50%;
-    transform:translateX(-50%);
-    width:480px;
-    max-width:480px;
-    right:auto;
+  nav,
+  .bottom-nav,
+  #notif-banner{
+    left:50% !important;
+    right:auto !important;
+    transform:translateX(-50%) !important;
+    width:480px !important;
+    max-width:480px !important;
   }
-  .bottom-nav,#notif-banner{
-    max-width:480px;
-    left:50%;
-    transform:translateX(-50%);
-    right:auto;
+  #toast{
+    max-width:420px;
   }
-  #toast{max-width:420px;}
 }
 
 /* ═══════════ SCROLLBAR CUSTOMIZADA ═══════════ */
@@ -2707,32 +2706,39 @@ function desenharGrafico(pesos){
   canvas.width=W*2;canvas.height=H*2;ctx.scale(2,2);
   const vals=pesos.map(p=>p.peso);
   const min=Math.min(...vals)-2,max=Math.max(...vals)+2;
-  const xStep=W/(pesos.length-1);
-  const yScale=H/(max-min);
+  // padding interno para não cortar pontos/labels nas bordas
+  const PAD_X=20,PAD_TOP=18,PAD_BOT=8;
+  const GW=W-PAD_X*2,GH=H-PAD_TOP-PAD_BOT;
+  const xStep=GW/(pesos.length-1);
+  const yScale=GH/(max-min);
   const isDark=document.documentElement.getAttribute('data-theme')==='dark';
   const cor=isDark?'#F5F2EE':'#0D0C0A';
   ctx.clearRect(0,0,W,H);
-  // Área sob a linha
+  // Área sob a linha — com offset de padding
+  const gx=i=>PAD_X+i*xStep;
+  const gy=peso=>PAD_TOP+GH-(peso-min)*yScale;
   ctx.beginPath();
-  pesos.forEach((p,i)=>{const x=i*xStep;const y=H-(p.peso-min)*yScale;if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);});
-  ctx.lineTo((pesos.length-1)*xStep,H);ctx.lineTo(0,H);ctx.closePath();
-  const grad=ctx.createLinearGradient(0,0,0,H);
+  pesos.forEach((p,i)=>{if(i===0)ctx.moveTo(gx(i),gy(p.peso));else ctx.lineTo(gx(i),gy(p.peso));});
+  ctx.lineTo(gx(pesos.length-1),H-PAD_BOT);ctx.lineTo(PAD_X,H-PAD_BOT);ctx.closePath();
+  const grad=ctx.createLinearGradient(0,PAD_TOP,0,H);
   grad.addColorStop(0,isDark?'rgba(245,242,238,0.12)':'rgba(13,12,10,0.08)');
   grad.addColorStop(1,'transparent');
   ctx.fillStyle=grad;ctx.fill();
   // Linha
   ctx.beginPath();ctx.strokeStyle=cor;ctx.lineWidth=2.5;ctx.lineJoin='round';ctx.lineCap='round';
-  pesos.forEach((p,i)=>{const x=i*xStep;const y=H-(p.peso-min)*yScale;if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);});ctx.stroke();
+  pesos.forEach((p,i)=>{if(i===0)ctx.moveTo(gx(i),gy(p.peso));else ctx.lineTo(gx(i),gy(p.peso));});
+  ctx.stroke();
   // Pontos + labels
   pesos.forEach((p,i)=>{
-    const x=i*xStep;const y=H-(p.peso-min)*yScale;
+    const x=gx(i),y=gy(p.peso);
     ctx.beginPath();ctx.arc(x,y,4,0,Math.PI*2);
     ctx.fillStyle=cor;ctx.fill();
     ctx.beginPath();ctx.arc(x,y,2,0,Math.PI*2);
     ctx.fillStyle=isDark?'#0D0C0A':'#F5F2EE';ctx.fill();
     ctx.font='bold 10px Syne,sans-serif';
     ctx.fillStyle=isDark?'rgba(245,242,238,0.55)':'rgba(13,12,10,0.45)';
-    ctx.textAlign='center';ctx.fillText(p.peso.toFixed(1),x,y-10);
+    ctx.textAlign='center';
+    ctx.fillText(p.peso.toFixed(1),x,Math.max(12,y-10));
   });
   document.getElementById('grafico-empty').style.display='none';
 }
@@ -3017,7 +3023,8 @@ async function carregarFeed(){
     var likes=getLikes();
     posts.forEach(function(p){
       var div=document.createElement('div');div.className='feed-post';
-      var ini=(p.nome||USER?.nome||'U')[0].toUpperCase();
+      var nome=p.nome||USER?.nome||'Usuário';
+      var ini=nome[0].toUpperCase();
       // isADP: post do tipo antes_depois com as duas fotos salvas
       var isADP=(p.tipo==='antes_depois')&&p.foto_antes&&p.foto_depois;
       // fallback: se tipo é antes_depois mas só tem foto_url, mostra imagem normal
@@ -3040,9 +3047,9 @@ async function carregarFeed(){
       // Usar template string para evitar problemas com aspas
       div.innerHTML = `
         <div class="feed-post-header">
-          <div class="feed-post-avatar">${ini}</div>
+          <div class="feed-post-avatar" style="background:${['#C8432A','#2A8A4A','#2563eb','#7c3aed','#b45309'][(p.nome||'U').charCodeAt(0)%5]};color:#fff;font-weight:700;font-size:1rem;">${ini}</div>
           <div style="flex:1;">
-            <div class="feed-post-user">${p.nome||USER?.nome||'Usuário'}</div>
+            <div class="feed-post-user">${nome}</div>
             <div class="feed-post-data">${new Date(p.criado_em).toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'})}</div>
           </div>
           ${adpBadge}
