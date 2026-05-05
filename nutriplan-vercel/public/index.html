@@ -430,10 +430,15 @@ footer strong{color:#fff;}
   <!-- Posts públicos -->
   <div class="posts-section">
     <span style="font-size:0.82rem;font-weight:600;color:var(--preto);">📸 Públicos</span>
-    <div style="display:flex;gap:8px;align-items:center;">
-      <button onclick="irProgresso()" style="background:none;border:none;font-size:0.78rem;color:var(--cinza-med);cursor:pointer;font-family:'DM Sans',sans-serif;">+ Foto</button>
-      <button onclick="toggleADPerfil()" style="background:var(--preto);color:var(--card);border:none;border-radius:50px;font-size:0.72rem;cursor:pointer;padding:5px 12px;font-family:'DM Sans',sans-serif;font-weight:500;">Antes/Depois</button>
+    <button onclick="irProgresso()" style="background:none;border:none;font-size:0.78rem;color:var(--cinza-med);cursor:pointer;font-family:'DM Sans',sans-serif;">+ Foto</button>
+  </div>
+  <!-- BANNER ANTES/DEPOIS DESTACADO -->
+  <div onclick="toggleADPerfil()" style="margin:0 1rem 0.8rem;background:linear-gradient(135deg,#0a0a0a 0%,#2a2a2a 100%);border-radius:16px;padding:1rem 1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:1rem;border:1.5px solid rgba(255,255,255,0.08);">
+    <div>
+      <div style="font-size:0.9rem;font-weight:700;color:#fff;margin-bottom:3px;">✨ Antes &amp; Depois</div>
+      <div style="font-size:0.72rem;color:rgba(255,255,255,0.55);">Compare sua evolução com slider</div>
     </div>
+    <div style="background:rgba(255,255,255,0.15);border-radius:50px;padding:6px 14px;font-size:0.75rem;color:#fff;font-weight:600;white-space:nowrap;flex-shrink:0;">Criar →</div>
   </div>
   <!-- CARD ANTES/DEPOIS -->
   <div id="ad-perfil-card" class="ad-card-wrapper" style="display:none;">
@@ -467,9 +472,26 @@ footer strong{color:#fff;}
     <div class="ad-legenda-wrap">
       <input type="text" id="adp-legenda" placeholder="Legenda... ex: 3 meses de dedicacao!">
     </div>
-    <div class="ad-actions">
-      <button onclick="publicarADP(false)" id="btn-adp-salvar" disabled class="ad-btn-priv">Salvar privado</button>
-      <button onclick="publicarADP(true)" id="btn-adp-pub" disabled class="ad-btn-pub">Publicar no feed</button>
+    <!-- Opções de publicação -->
+    <div id="adp-opcoes" style="display:none;padding:0 1.1rem 0.5rem;">
+      <div style="font-size:0.72rem;font-weight:700;color:var(--cinza-med);letter-spacing:0.5px;margin-bottom:0.6rem;text-transform:uppercase;">O que publicar?</div>
+      <div style="display:flex;flex-direction:column;gap:0.4rem;">
+        <button onclick="publicarADP(true,'canvas')" id="btn-adp-canvas" class="ad-btn-pub" style="text-align:left;padding:10px 14px;border-radius:12px;">
+          📐 Lado a lado — imagens juntas num card
+        </button>
+        <button onclick="publicarADP(true,'antes')" id="btn-adp-so-antes" class="ad-btn-priv" style="text-align:left;padding:10px 14px;border-radius:12px;">
+          ⬅️ Só o ANTES
+        </button>
+        <button onclick="publicarADP(true,'depois')" id="btn-adp-so-depois" class="ad-btn-priv" style="text-align:left;padding:10px 14px;border-radius:12px;">
+          ➡️ Só o DEPOIS
+        </button>
+        <button onclick="publicarADP(false,'canvas')" class="ad-btn-priv" style="text-align:left;padding:10px 14px;border-radius:12px;border-style:dashed;">
+          🔒 Salvar privado (lado a lado)
+        </button>
+      </div>
+    </div>
+    <div class="ad-actions" id="adp-btn-principal">
+      <button onclick="abrirOpcoesADP()" id="btn-adp-pub" disabled class="ad-btn-pub">Ver opções de publicação →</button>
     </div>
   </div>
 
@@ -1308,7 +1330,6 @@ function escolherFotoADP(lado,url,data){
     document.getElementById('adp-foto-antes').src=ADP_FOTOS.antes;
     document.getElementById('adp-foto-depois').src=ADP_FOTOS.depois;
     document.getElementById('adp-comparador-wrap').style.display='block';
-    document.getElementById('btn-adp-salvar').disabled=false;
     document.getElementById('btn-adp-pub').disabled=false;
     iniciarSliderADP();
   }
@@ -1328,45 +1349,74 @@ function iniciarSliderADP(){
   document.ontouchend=function(){drag=false;};
 }
 
-async function publicarADP(publico){
+function abrirOpcoesADP(){
+  if(!ADP_FOTOS.antes||!ADP_FOTOS.depois){toast('Selecione as duas fotos primeiro');return;}
+  document.getElementById('adp-opcoes').style.display='block';
+  document.getElementById('adp-btn-principal').style.display='none';
+}
+
+async function publicarADP(publico,tipo){
+  tipo=tipo||'canvas';
   if(!ADP_FOTOS.antes||!ADP_FOTOS.depois){toast('Selecione as duas fotos');return;}
   var legenda=document.getElementById('adp-legenda').value.trim()||'Meu antes e depois!';
-  var btnS=document.getElementById('btn-adp-salvar');
-  var btnP=document.getElementById('btn-adp-pub');
-  btnS.disabled=true;btnP.disabled=true;btnP.textContent='Gerando...';
+  var btnP=document.getElementById('btn-adp-canvas')||document.getElementById('btn-adp-pub');
+  if(btnP){btnP.textContent='Gerando...';}
   try{
-    var canvasEl=document.createElement('canvas');
-    var sz=600;canvasEl.width=sz*2;canvasEl.height=sz;
-    var cctx=canvasEl.getContext('2d');
-    var loadImg=function(src){return new Promise(function(res){var i=new Image();i.crossOrigin='anonymous';i.onload=function(){res(i);};i.onerror=function(){res(null);};i.src=src;});};
-    var imgs=await Promise.all([loadImg(ADP_FOTOS.antes),loadImg(ADP_FOTOS.depois)]);
-    cctx.fillStyle='#000';cctx.fillRect(0,0,sz*2,sz);
-    if(imgs[0])cctx.drawImage(imgs[0],0,0,sz,sz);
-    if(imgs[1])cctx.drawImage(imgs[1],sz,0,sz,sz);
-    cctx.fillStyle='rgba(255,255,255,0.8)';cctx.fillRect(sz-1,0,2,sz);
-    cctx.fillStyle='rgba(0,0,0,0.6)';cctx.fillRect(0,sz-48,sz,48);cctx.fillRect(sz,sz-48,sz,48);
-    cctx.fillStyle='#fff';cctx.font='bold 28px Arial';cctx.textAlign='center';
-    cctx.fillText('ANTES',sz/2,sz-16);cctx.fillText('DEPOIS',sz+sz/2,sz-16);
-    if(legenda){cctx.fillStyle='rgba(0,0,0,0.7)';cctx.fillRect(0,0,sz*2,50);cctx.fillStyle='#fff';cctx.font='bold 22px Arial';cctx.fillText(legenda.substring(0,60),sz,34);}
-    var b64=canvasEl.toDataURL('image/jpeg',0.90).split(',')[1];
-    btnP.textContent='Enviando...';
-    var canvas_url=null;
-    try{var r=await api('/api/upload-foto','POST',{image:'data:image/jpeg;base64,'+b64,usuario_id:USER.id,tipo:'antes_depois'});if(r.url)canvas_url=r.url;}catch(e){}
-    await api('/api/progresso?action=salvar','POST',{usuario_id:USER.id,tipo:'antes_depois',conteudo:legenda,foto_url:canvas_url||ADP_FOTOS.depois,foto_antes:ADP_FOTOS.antes,foto_depois:ADP_FOTOS.depois,peso:null,nota:null,publico:publico});
-    toast(publico?'Card publicado no feed!':'Salvo no perfil!');
+    var foto_url=ADP_FOTOS.depois;
+    if(tipo==='antes'){
+      foto_url=ADP_FOTOS.antes;
+    }else if(tipo==='depois'){
+      foto_url=ADP_FOTOS.depois;
+    }else{
+      // Gerar canvas lado a lado
+      var canvasEl=document.createElement('canvas');
+      var sz=600;canvasEl.width=sz*2;canvasEl.height=sz;
+      var cctx=canvasEl.getContext('2d');
+      var loadImg=function(src){return new Promise(function(res){var i=new Image();i.crossOrigin='anonymous';i.onload=function(){res(i);};i.onerror=function(){res(null);};i.src=src;});};
+      var imgs=await Promise.all([loadImg(ADP_FOTOS.antes),loadImg(ADP_FOTOS.depois)]);
+      cctx.fillStyle='#000';cctx.fillRect(0,0,sz*2,sz);
+      if(imgs[0])cctx.drawImage(imgs[0],0,0,sz,sz);
+      if(imgs[1])cctx.drawImage(imgs[1],sz,0,sz,sz);
+      // Divisor
+      cctx.fillStyle='rgba(255,255,255,0.9)';cctx.fillRect(sz-2,0,4,sz);
+      // Labels ANTES/DEPOIS
+      cctx.fillStyle='rgba(0,0,0,0.6)';cctx.fillRect(0,sz-50,sz,50);cctx.fillRect(sz,sz-50,sz,50);
+      cctx.fillStyle='#fff';cctx.font='bold 30px Arial';cctx.textAlign='center';
+      cctx.fillText('ANTES',sz/2,sz-16);cctx.fillText('DEPOIS',sz+sz/2,sz-16);
+      // Legenda no topo
+      if(legenda){
+        cctx.fillStyle='rgba(0,0,0,0.72)';cctx.fillRect(0,0,sz*2,56);
+        cctx.fillStyle='#fff';cctx.font='bold 24px Arial';
+        cctx.fillText(legenda.substring(0,60),sz,36);
+      }
+      var b64=canvasEl.toDataURL('image/jpeg',0.92).split(',')[1];
+      if(btnP)btnP.textContent='Enviando...';
+      try{
+        var r=await api('/api/upload-foto','POST',{image:'data:image/jpeg;base64,'+b64,usuario_id:USER.id,tipo:'antes_depois'});
+        if(r.url)foto_url=r.url;
+      }catch(e){}
+    }
+    await api('/api/progresso?action=salvar','POST',{
+      usuario_id:USER.id,tipo:'antes_depois',conteudo:legenda,
+      foto_url:foto_url,foto_antes:ADP_FOTOS.antes,foto_depois:ADP_FOTOS.depois,
+      peso:null,nota:null,publico:publico
+    });
+    toast(publico?'Publicado no feed!':'Salvo como privado!');
+    // Reset
     ADP_FOTOS={antes:null,depois:null};
-    var selA=document.getElementById('adp-sel-antes');selA.innerHTML='<span class="ad-add-icon">foto</span>';
-    var selD=document.getElementById('adp-sel-depois');selD.innerHTML='<span class="ad-add-icon">foto</span>';
+    var selA=document.getElementById('adp-sel-antes');if(selA)selA.innerHTML='<span class="ad-add-icon">foto</span>';
+    var selD=document.getElementById('adp-sel-depois');if(selD)selD.innerHTML='<span class="ad-add-icon">foto</span>';
     document.getElementById('adp-data-antes').textContent='';
     document.getElementById('adp-data-depois').textContent='';
     document.getElementById('adp-legenda').value='';
     document.getElementById('adp-comparador-wrap').style.display='none';
-    document.getElementById('btn-adp-salvar').disabled=true;
+    document.getElementById('adp-opcoes').style.display='none';
+    document.getElementById('adp-btn-principal').style.display='flex';
     document.getElementById('btn-adp-pub').disabled=true;
     document.getElementById('ad-perfil-card').style.display='none';
     carregarPerfil();
   }catch(e){console.error(e);toast('Erro ao publicar.');}
-  finally{btnS.disabled=false;btnP.disabled=false;btnP.textContent='Publicar no feed';}
+  finally{if(btnP&&btnP.textContent==='Enviando...')btnP.textContent='Publicar';}
 }
 
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3200);}
