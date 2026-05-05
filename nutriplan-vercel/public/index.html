@@ -2837,7 +2837,7 @@ async function salvarProgresso(){
       }catch(e){toast('⚠️ Erro no upload da foto, mas registro salvo.');}
     }
     const conteudo=frase||nota||('Registro de peso: '+peso+'kg');
-    await api('/api/progresso?action=salvar','POST',{usuario_id:USER.id,tipo:'progresso',conteudo,foto_url,peso,nota,publico});
+    await api('/api/progresso?action=salvar','POST',{usuario_id:USER.id,nome:USER.nome||'Usuário',tipo:'progresso',conteudo,foto_url,peso,nota,publico});
     removerFoto();document.getElementById('prog-peso').value='';document.getElementById('prog-nota').value='';document.getElementById('prog-frase').value='';document.getElementById('prog-publico').checked=false;
     toast('✅ Progresso salvo!');irPerfil();
   }catch(e){toast('Erro ao salvar. Tente novamente.');}
@@ -2860,36 +2860,130 @@ async function fotoComWatermark(fotoUrl){
   });
 }
 
-// FEED
+// FEED — slider interativo, likes e comentários
+const LIKES_KEY='feed_likes';
+function getLikes(){return ls.get(LIKES_KEY)||{};}
+function toggleLike(pid,btnEl){
+  var likes=getLikes();
+  if(likes[pid]){delete likes[pid];}else{likes[pid]=true;}
+  ls.set(LIKES_KEY,likes);
+  var isLiked=!!likes[pid];
+  btnEl.classList.toggle('ativo',isLiked);
+  var span=btnEl.querySelector('.like-count');
+  if(span){var cur=parseInt(span.textContent)||0;span.textContent=isLiked?cur+1:Math.max(0,cur-1);}
+  btnEl.querySelector('.like-icon').textContent=isLiked?'❤️':'🤍';
+  btnEl.style.transform='scale(1.35)';
+  setTimeout(()=>{btnEl.style.transform='';},200);
+}
+
+function renderSliderFeed(p){
+  var pid=p.id;
+  return '<div id="fc-'+pid+'" style="position:relative;width:100%;aspect-ratio:1/1;overflow:hidden;cursor:ew-resize;background:#000;touch-action:pan-y;">'+
+    '<img style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;pointer-events:none;user-select:none;" src="'+p.foto_antes+'" alt="Antes">'+
+    '<div id="sd-'+pid+'" style="position:absolute;top:0;bottom:0;left:50%;width:50%;overflow:hidden;">'+
+      '<img id="sdi-'+pid+'" style="position:absolute;top:0;left:0;width:200%;height:100%;object-fit:cover;pointer-events:none;user-select:none;" src="'+p.foto_depois+'" alt="Depois">'+
+    '</div>'+
+    '<div id="sl-'+pid+'" style="position:absolute;top:0;bottom:0;left:50%;width:4px;background:#fff;transform:translateX(-50%);z-index:5;pointer-events:none;box-shadow:0 0 12px rgba(0,0,0,0.5);">'+
+      '<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border-radius:50%;width:42px;height:42px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:18px;color:#333;box-shadow:0 2px 12px rgba(0,0,0,0.35);pointer-events:none;">&#x21D4;</div>'+
+    '</div>'+
+    '<span style="position:absolute;bottom:12px;left:12px;background:rgba(0,0,0,0.65);color:#fff;border-radius:20px;padding:3px 12px;font-size:11px;font-weight:700;letter-spacing:1px;pointer-events:none;backdrop-filter:blur(4px);">ANTES</span>'+
+    '<span style="position:absolute;bottom:12px;right:12px;background:rgba(0,0,0,0.65);color:#fff;border-radius:20px;padding:3px 12px;font-size:11px;font-weight:700;letter-spacing:1px;pointer-events:none;backdrop-filter:blur(4px);">DEPOIS</span>'+
+  '</div>';
+}
+
+function renderComentariosList(comentarios){
+  if(!comentarios||!comentarios.length)return '';
+  return comentarios.map(function(c){
+    return '<div class="comentario-item">'+
+      '<div class="comentario-avatar">'+(c.nome?c.nome[0].toUpperCase():'?')+'</div>'+
+      '<div class="comentario-body">'+
+        '<div class="comentario-user">'+(c.nome||'Usuário')+'</div>'+
+        '<div class="comentario-txt">'+c.texto+'</div>'+
+      '</div></div>';
+  }).join('');
+}
+
+function toggleComentarios(pid){
+  var el=document.getElementById('coms-'+pid);
+  if(!el)return;
+  var aberto=el.style.display!=='none'&&el.style.display!=='';
+  el.style.display=aberto?'none':'block';
+  if(!aberto){var inp=document.getElementById('com-input-'+pid);if(inp)inp.focus();}
+}
+
+async function enviarComentario(pid){
+  var inp=document.getElementById('com-input-'+pid);
+  var listEl=document.getElementById('coms-list-'+pid);
+  if(!inp||!listEl)return;
+  var texto=inp.value.trim();
+  if(!texto||!USER)return;
+  var nome=USER.nome||'Usuário';
+  inp.value='';
+  var item=document.createElement('div');item.className='comentario-item';
+  item.innerHTML='<div class="comentario-avatar">'+nome[0].toUpperCase()+'</div><div class="comentario-body"><div class="comentario-user">'+nome+'</div><div class="comentario-txt">'+texto+'</div></div>';
+  listEl.appendChild(item);
+  try{await api('/api/comentarios?action=salvar','POST',{progresso_id:pid,usuario_id:USER.id,nome,texto});}catch(e){}
+}
+
 async function carregarFeed(){
-  // Stub — implementação igual ao original
-  const container=document.getElementById('feed-container');
+  var container=document.getElementById('feed-container');
   container.innerHTML='<div style="text-align:center;padding:3rem 1rem;color:var(--cinza-med);font-family:var(--font-mono);font-size:0.78rem;">Carregando feed...</div>';
   try{
-    const posts=await api('/api/progresso?action=feed');
+    var posts=await api('/api/progresso?action=feed');
     container.innerHTML='';
-    if(!posts||!posts.length){container.innerHTML='<div style="text-align:center;padding:3rem 1rem;color:var(--cinza-med);font-family:var(--font-mono);font-size:0.78rem;">Nenhuma publicação ainda.</div>';return;}
-    posts.forEach(p=>{
-      const div=document.createElement('div');div.className='feed-post';
-      const ini=p.nome?p.nome[0].toUpperCase():'?';
-      div.innerHTML=`
-        <div class="feed-post-header">
-          <div class="feed-post-avatar">${ini}</div>
-          <div>
-            <div class="feed-post-user">${p.nome||'Anônimo'}</div>
-            <div class="feed-post-data">${new Date(p.criado_em).toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'})}</div>
-          </div>
-        </div>
-        ${p.foto_url?`<img class="feed-post-img" src="${p.foto_url}" loading="lazy" alt="">`:`<div class="feed-post-img-placeholder">📷</div>`}
-        <div class="feed-post-body">
-          ${p.peso?`<div class="feed-post-peso">${p.peso}kg</div>`:''}
-          <div class="feed-post-nota">${p.conteudo||''}</div>
-        </div>
-      `;
+    if(!posts||!posts.length){
+      container.innerHTML='<div style="text-align:center;padding:3rem 1rem;color:var(--cinza-med);font-family:var(--font-mono);font-size:0.78rem;">Nenhuma publicação ainda. Seja o primeiro! 💪</div>';
+      return;
+    }
+    var likes=getLikes();
+    posts.forEach(function(p){
+      var div=document.createElement('div');div.className='feed-post';
+      var ini=(p.nome||USER?.nome||'U')[0].toUpperCase();
+      var isADP=p.tipo==='antes_depois'&&p.foto_antes&&p.foto_depois;
+      var isLiked=!!likes[p.id];
+      var likesCount=p.likes||0;
+
+      var midia='';
+      if(isADP){midia=renderSliderFeed(p);}
+      else if(p.foto_url){midia='<img class="feed-post-img" src="'+p.foto_url+'" loading="lazy" alt="">';}
+      else{midia='<div class="feed-post-img-placeholder">📷</div>';}
+
+      var adpBadge=isADP?'<span style="background:var(--cinza-bg);border:1px solid var(--cinza-cla);border-radius:50px;padding:3px 10px;font-size:0.6rem;font-weight:700;color:var(--cinza-med);font-family:var(--font-mono);">ANTES/DEPOIS</span>':'';
+
+      div.innerHTML=
+        '<div class="feed-post-header">'+
+          '<div class="feed-post-avatar">'+ini+'</div>'+
+          '<div style="flex:1;">'+
+            '<div class="feed-post-user">'+(p.nome||USER?.nome||'Usuário')+'</div>'+
+            '<div class="feed-post-data">'+new Date(p.criado_em).toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'})+'</div>'+
+          '</div>'+adpBadge+
+        '</div>'+
+        midia+
+        '<div class="feed-post-body">'+
+          (p.peso?'<div class="feed-post-peso">'+p.peso+'kg</div>':'')+
+          (p.conteudo?'<div class="feed-post-nota">'+p.conteudo+'</div>':'')+
+        '</div>'+
+        '<div class="feed-post-actions">'+
+          '<button class="feed-action-btn'+(isLiked?' ativo':'')+'" onclick="toggleLike(''+p.id+'',this)">'+
+            '<span class="like-icon">'+(isLiked?'❤️':'🤍')+'</span> <span class="like-count">'+likesCount+'</span>'+
+          '</button>'+
+          '<button class="feed-action-btn" onclick="toggleComentarios(''+p.id+'')">💬 Comentar</button>'+
+        '</div>'+
+        '<div class="comentarios-section" id="coms-'+p.id+'" style="display:none;">'+
+          '<div id="coms-list-'+p.id+'" style="padding:0 1.2rem;">'+renderComentariosList(p.comentarios)+'</div>'+
+          '<div class="add-comentario">'+
+            '<input type="text" placeholder="Comentar..." id="com-input-'+p.id+'" onkeydown="if(event.key==='Enter')enviarComentario(''+p.id+'')">'+
+            '<button onclick="enviarComentario(''+p.id+'')">Enviar</button>'+
+          '</div>'+
+        '</div>';
       container.appendChild(div);
     });
-  }catch(e){container.innerHTML='<div style="text-align:center;padding:2rem;color:var(--acento);font-family:var(--font-mono);font-size:0.78rem;">Erro ao carregar feed.</div>';}
+  }catch(e){
+    console.error('Feed erro:',e);
+    container.innerHTML='<div style="text-align:center;padding:2rem;color:var(--acento);font-family:var(--font-mono);font-size:0.78rem;">Erro ao carregar feed.</div>';
+  }
 }
+
 
 // MODO
 function selecionarModo(modo){
@@ -3160,7 +3254,7 @@ async function publicarADP(publico){
     var sliderAntes=urlAntes||ADP_FOTOS.antes;
     var sliderDepois=urlDepois||ADP_FOTOS.depois;
     await api('/api/progresso?action=salvar','POST',{
-      usuario_id:USER.id,tipo:'antes_depois',conteudo:legenda,
+      usuario_id:USER.id,nome:USER.nome||'Usuário',tipo:'antes_depois',conteudo:legenda,
       foto_url:foto_url,foto_antes:sliderAntes,foto_depois:sliderDepois,
       peso:null,nota:null,publico:publico
     });
