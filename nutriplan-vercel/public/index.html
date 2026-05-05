@@ -968,7 +968,16 @@ async function salvarProgresso(){
   try{
     let foto_url=null;
     if(FOTO_BASE64&&FOTO_TIPO){
-      try{const r=await api('/api/upload-foto','POST',{image:'data:'+FOTO_TIPO+';base64,'+FOTO_BASE64,usuario_id:USER.id,tipo:'progresso'});if(r.url)foto_url=r.url;else toast('⚠️ Foto não enviada, mas registro salvo.');}catch(e){toast('⚠️ Erro no upload da foto, mas registro salvo.');}
+      try{
+        // Aplicar watermark
+        var fotoDataB64=FOTO_BASE64;
+        try{
+          var wmB64=await fotoComWatermark('data:'+FOTO_TIPO+';base64,'+FOTO_BASE64);
+          if(wmB64)fotoDataB64=wmB64;
+        }catch(we){}
+        const r=await api('/api/upload-foto','POST',{image:'data:image/jpeg;base64,'+fotoDataB64,usuario_id:USER.id,tipo:'progresso'});
+        if(r.url)foto_url=r.url;else toast('⚠️ Foto não enviada, mas registro salvo.');
+      }catch(e){toast('⚠️ Erro no upload da foto, mas registro salvo.');}
     }
     const conteudo=frase||nota||('Registro de peso: '+peso+'kg');
     await api('/api/progresso?action=salvar','POST',{usuario_id:USER.id,tipo:'progresso',conteudo,foto_url,peso,nota,publico});
@@ -995,7 +1004,15 @@ async function carregarFeed(){
           <div class="feed-post-avatar">${inicial}</div>
           <div><div class="feed-post-user">${p.usuarios?.nome||'Usuário'}</div><div class="feed-post-data">${new Date(p.criado_em).toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'})}</div></div>
         </div>
-        ${p.foto_url?`<img class="feed-post-img" src="${p.foto_url}" alt="Progresso" loading="lazy">`:'<div class="feed-post-img-placeholder">💪</div>'}
+        ${(p.tipo==='antes_depois'&&p.foto_antes&&p.foto_depois)?
+        `<div style="position:relative;width:100%;aspect-ratio:2/1;overflow:hidden;user-select:none;background:#000;" id="fc-${p.id}">
+          <img style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;" src="${p.foto_url}" alt="Canvas">
+        </div>
+        <div style="display:flex;border-top:1px solid var(--cinza-cla);">
+          <button onclick="ativarSliderFeed('${p.id}','${p.foto_antes}','${p.foto_depois}')" style="flex:1;background:none;border:none;border-right:1px solid var(--cinza-cla);padding:8px;font-size:0.74rem;cursor:pointer;color:var(--cinza-med);font-family:'DM Sans',sans-serif;">⇔ Slider</button>
+          <button onclick="verCanvasFeed('${p.foto_url}')" style="flex:1;background:none;border:none;padding:8px;font-size:0.74rem;cursor:pointer;color:var(--cinza-med);font-family:'DM Sans',sans-serif;">📐 Canvas</button>
+        </div>`
+      : p.foto_url?`<img class="feed-post-img" src="${p.foto_url}" alt="Progresso" loading="lazy">`:'<div class="feed-post-img-placeholder">💪</div>'}
         <div class="feed-post-body">
           ${p.peso?`<div class="feed-post-peso">⚖️ ${p.peso}kg</div>`:''}
           ${p.conteudo?`<div class="feed-post-nota">${p.conteudo}</div>`:''}
@@ -1349,6 +1366,85 @@ function iniciarSliderADP(){
   document.ontouchend=function(){drag=false;};
 }
 
+
+// Aplica watermark MFCT no canvas
+async function aplicarWatermark(ctx, W, H) {
+  return new Promise(function(res) {
+    var wm = new Image();
+    wm.onload = function() {
+      var wmH = Math.round(H * 0.15);
+      var wmW = Math.round(wmH * (wm.width / wm.height));
+      var margin = 12;
+      ctx.globalAlpha = 0.55;
+      ctx.drawImage(wm, W - wmW - margin, H - wmH - margin, wmW, wmH);
+      ctx.globalAlpha = 1.0;
+      res();
+    };
+    wm.onerror = function() { res(); };
+    wm.src = LOGO_WM_B64;
+  });
+}
+
+// Aplica watermark em uma foto antes de upload
+async function fotoComWatermark(fotoUrl) {
+  return new Promise(function(res) {
+    var img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = async function() {
+      var c = document.createElement('canvas');
+      c.width = img.width; c.height = img.height;
+      var ctx = c.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+      await aplicarWatermark(ctx, img.width, img.height);
+      var b64 = c.toDataURL('image/jpeg', 0.92).split(',')[1];
+      res(b64);
+    };
+    img.onerror = function() { res(null); };
+    img.src = fotoUrl;
+  });
+}
+
+
+function ativarSliderFeed(postId, urlAntes, urlDepois) {
+  var wrap = document.getElementById('fc-' + postId);
+  if (!wrap) return;
+  wrap.innerHTML =
+    '<img style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;" src="' + urlAntes + '" alt="Antes">' +
+    '<div style="position:absolute;inset:0;overflow:hidden;clip-path:inset(0 50% 0 0);" id="fd-depois-' + postId + '">' +
+    '<img style="width:100%;height:100%;object-fit:cover;" src="' + urlDepois + '" alt="Depois"></div>' +
+    '<div id="fd-div-' + postId + '" style="position:absolute;top:0;bottom:0;left:50%;width:3px;background:#fff;cursor:ew-resize;z-index:10;box-shadow:0 0 6px rgba(0,0,0,0.4);">' +
+    '<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;color:#333;box-shadow:0 2px 8px rgba(0,0,0,0.3);">⇔</div></div>' +
+    '<span style="position:absolute;bottom:8px;left:8px;background:rgba(0,0,0,0.6);color:#fff;border-radius:50px;padding:2px 8px;font-size:0.58rem;font-weight:700;">ANTES</span>' +
+    '<span style="position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,0.6);color:#fff;border-radius:50px;padding:2px 8px;font-size:0.58rem;font-weight:700;">DEPOIS</span>';
+  var drag = false;
+  var divEl = document.getElementById('fd-div-' + postId);
+  var depoisEl = document.getElementById('fd-depois-' + postId);
+  var move = function(x) {
+    var rect = wrap.getBoundingClientRect();
+    var pct = Math.max(5, Math.min(95, ((x - rect.left) / rect.width) * 100));
+    divEl.style.left = pct + '%';
+    depoisEl.style.clipPath = 'inset(0 ' + (100 - pct) + '% 0 0)';
+  };
+  divEl.addEventListener('mousedown', function(){ drag=true; });
+  divEl.addEventListener('touchstart', function(e){ drag=true; e.preventDefault(); }, {passive:false});
+  document.addEventListener('mousemove', function(e){ if(drag) move(e.clientX); });
+  document.addEventListener('touchmove', function(e){ if(drag) move(e.touches[0].clientX); }, {passive:true});
+  document.addEventListener('mouseup', function(){ drag=false; });
+  document.addEventListener('touchend', function(){ drag=false; });
+}
+
+function verCanvasFeed(url) {
+  // Abre o canvas em tela cheia no viewer
+  document.getElementById('fv-img').src = url;
+  document.getElementById('fv-title').textContent = 'Canvas Antes & Depois';
+  document.getElementById('fv-meta').innerHTML = '';
+  document.getElementById('fv-nota').textContent = '';
+  document.getElementById('fv-btn-toggle').style.display = 'none';
+  document.getElementById('foto-viewer').dataset.postId = '';
+  document.getElementById('foto-viewer').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
 function abrirOpcoesADP(){
   if(!ADP_FOTOS.antes||!ADP_FOTOS.depois){toast('Selecione as duas fotos primeiro');return;}
   document.getElementById('adp-opcoes').style.display='block';
@@ -1389,6 +1485,7 @@ async function publicarADP(publico,tipo){
         cctx.fillStyle='#fff';cctx.font='bold 24px Arial';
         cctx.fillText(legenda.substring(0,60),sz,36);
       }
+      await aplicarWatermark(cctx, sz*2, sz);
       var b64=canvasEl.toDataURL('image/jpeg',0.92).split(',')[1];
       if(btnP)btnP.textContent='Enviando...';
       try{
