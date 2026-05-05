@@ -1496,3 +1496,15 @@ async function publicarADP(publico){
     if(btnS){btnS.disabled=false;btnS.textContent='Salvar privado';}
   }
 }
+
+
+
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3200);
+}
+</script>
+<script src="https://sdk.mercadopago.com/js/v2"></script>
+</body>
+</html>
