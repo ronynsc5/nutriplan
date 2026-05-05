@@ -975,6 +975,18 @@ async function salvarProgresso(){
   finally{btn.disabled=false;btn.textContent='Salvar progresso';}
 }
 // FEED
+function sliderHTML(p){
+  var pid=p.id,ante=p.foto_antes,dep=p.foto_depois;
+  return '<div style="position:relative;width:100%;aspect-ratio:1/1;overflow:hidden;background:#000;cursor:ew-resize;touch-action:none;" id="fc-'+pid+'">'+
+    '<img style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;" src="'+ante+'" alt="Antes">'+
+    '<div id="fi-depois-'+pid+'" style="position:absolute;inset:0;overflow:hidden;clip-path:inset(0 50% 0 0);">'+
+    '<img style="width:100%;height:100%;object-fit:cover;" src="'+dep+'" alt="Depois"></div>'+
+    '<div id="fd-div-'+pid+'" style="position:absolute;top:0;bottom:0;left:50%;width:4px;background:#fff;z-index:10;cursor:ew-resize;">'+
+    '<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;color:#222;box-shadow:0 2px 10px rgba(0,0,0,0.4);">&#8660;</div></div>'+
+    '<span style="position:absolute;bottom:10px;left:10px;background:rgba(0,0,0,0.65);color:#fff;border-radius:50px;padding:3px 10px;font-size:0.6rem;font-weight:700;">ANTES</span>'+
+    '<span style="position:absolute;bottom:10px;right:10px;background:rgba(0,0,0,0.65);color:#fff;border-radius:50px;padding:3px 10px;font-size:0.6rem;font-weight:700;">DEPOIS</span>'+
+    '</div>';
+}
 async function carregarFeed(){
   const container=document.getElementById('feed-container');
   container.innerHTML='<div style="text-align:center;padding:2rem;color:var(--cinza-med);"><div class="spin" style="margin:0 auto 0.5rem;width:28px;height:28px;border-width:2px;"></div></div>';
@@ -988,19 +1000,7 @@ async function carregarFeed(){
           <div class="feed-post-avatar">${inicial}</div>
           <div><div class="feed-post-user">${p.usuarios?.nome||'Usuário'}</div><div class="feed-post-data">${new Date(p.criado_em).toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'})}</div></div>
         </div>
-        ${(p.tipo==='antes_depois'&&p.foto_antes&&p.foto_depois)?
-          `<div style="position:relative;width:100%;aspect-ratio:1/1;overflow:hidden;user-select:none;background:#000;cursor:ew-resize;touch-action:none;" id="fc-\${p.id}">
-            <img style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;" src="\${p.foto_antes}" alt="Antes">
-            <div id="fi-depois-\${p.id}" style="position:absolute;inset:0;overflow:hidden;clip-path:inset(0 50% 0 0);">
-              <img style="width:100%;height:100%;object-fit:cover;" src="\${p.foto_depois}" alt="Depois">
-            </div>
-            <div id="fd-div-\${p.id}" style="position:absolute;top:0;bottom:0;left:50%;width:3px;background:#fff;cursor:ew-resize;z-index:10;box-shadow:0 0 8px rgba(0,0,0,0.4);">
-              <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;color:#333;box-shadow:0 2px 10px rgba(0,0,0,0.3);">⇔</div>
-            </div>
-            <span style="position:absolute;bottom:10px;left:10px;background:rgba(0,0,0,0.65);color:#fff;border-radius:50px;padding:3px 10px;font-size:0.6rem;font-weight:700;letter-spacing:1px;">ANTES</span>
-            <span style="position:absolute;bottom:10px;right:10px;background:rgba(0,0,0,0.65);color:#fff;border-radius:50px;padding:3px 10px;font-size:0.6rem;font-weight:700;letter-spacing:1px;">DEPOIS</span>
-          </div>
-          <script>initSliderFeed('\${p.id}');<\/script>`: p.foto_url?`<img class="feed-post-img" src="${p.foto_url}" alt="Progresso" loading="lazy">`:'<div class="feed-post-img-placeholder">💪</div>'}
+        ${((p.tipo==='antes_depois'&&p.foto_antes&&p.foto_depois)?sliderHTML(p):(p.foto_url?'<img class="feed-post-img" src="'+p.foto_url+'" alt="Progresso" loading="lazy">':'<div class="feed-post-img-placeholder">&#128170;</div>'))}
         <div class="feed-post-body">
           ${p.peso?`<div class="feed-post-peso">⚖️ ${p.peso}kg</div>`:''}
           ${p.conteudo?`<div class="feed-post-nota">${p.conteudo}</div>`:''}
