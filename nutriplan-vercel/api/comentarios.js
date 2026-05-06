@@ -2,55 +2,67 @@
 const SUPA_URL = process.env.SUPABASE_URL;
 const SUPA_KEY = process.env.SUPABASE_SECRET_KEY;
 
-async function supa(path, method = 'GET', body = null) {
-  const opts = {
-    method,
-    headers: {
-      'Content-Type': 'application/json',
-      'apikey': SUPA_KEY,
-      'Authorization': `Bearer ${SUPA_KEY}`,
-      'Prefer': method === 'POST' ? 'return=representation' : ''
-    }
-  };
-  if (body) opts.body = JSON.stringify(body);
-  const r = await fetch(`${SUPA_URL}/rest/v1/${path}`, opts);
-  return r.json();
+async function supa(path, method='GET', body=null) {
+  const opts = { method, headers: {
+    'Content-Type':'application/json',
+    'apikey':SUPA_KEY,
+    'Authorization':`Bearer ${SUPA_KEY}`,
+    'Prefer':method==='POST'?'return=representation':'return=minimal'
+  }};
+  if(body) opts.body=JSON.stringify(body);
+  const r=await fetch(`${SUPA_URL}/rest/v1/${path}`,opts);
+  const t=await r.text();
+  if(!t) return [];
+  try{return JSON.parse(t);}catch(e){return [];}
 }
 
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,DELETE');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  if (req.method === 'OPTIONS') return res.status(200).end();
+  res.setHeader('Access-Control-Allow-Origin','*');
+  res.setHeader('Access-Control-Allow-Methods','GET,POST,DELETE,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers','Content-Type, Authorization');
+  if(req.method==='OPTIONS') return res.status(200).end();
 
-  const { action } = req.query;
+  const {action} = req.query;
 
   try {
-    // LISTAR COMENTÁRIOS DE UM POST
-    if (action === 'listar' && req.method === 'GET') {
-      const { progresso_id } = req.query;
-      const c = await supa(`comentarios?progresso_id=eq.${progresso_id}&order=criado_em.asc&select=*,usuarios(nome)`);
-      return res.status(200).json(c);
+    // SALVAR comentário
+    if(action==='salvar' && req.method==='POST') {
+      const {usuario_id, nome, texto} = req.body;
+      // Aceitar tanto progresso_id quanto post_id
+      const progresso_id = req.body.progresso_id || req.body.post_id;
+
+      if(!usuario_id || !nome || !texto || !progresso_id)
+        return res.status(400).json({error:'Campos obrigatórios: usuario_id, nome, texto, progresso_id'});
+
+      const novo = await supa('comentarios','POST',{
+        progresso_id,
+        usuario_id,
+        nome,
+        texto,
+        criado_em: new Date().toISOString()
+      });
+      return res.status(200).json(novo[0]||{ok:true});
     }
 
-    // ADICIONAR COMENTÁRIO
-    if (action === 'adicionar' && req.method === 'POST') {
-      const { progresso_id, usuario_id, texto } = req.body;
-      if (!texto?.trim()) return res.status(400).json({ error: 'Texto obrigatório' });
-      const novo = await supa('comentarios', 'POST', { progresso_id, usuario_id, texto: texto.trim() });
-      return res.status(200).json(novo[0]);
+    // BUSCAR comentários de um post
+    if(action==='buscar' && req.method==='GET') {
+      const {progresso_id, post_id} = req.query;
+      const pid = progresso_id || post_id;
+      if(!pid) return res.status(400).json({error:'progresso_id obrigatório'});
+      const coms = await supa(`comentarios?progresso_id=eq.${pid}&order=criado_em.asc&select=*`);
+      return res.status(200).json(coms||[]);
     }
 
-    // DELETAR COMENTÁRIO
-    if (action === 'deletar' && req.method === 'DELETE') {
-      const { id, usuario_id } = req.body;
-      await supa(`comentarios?id=eq.${id}&usuario_id=eq.${usuario_id}`, 'DELETE');
-      return res.status(200).json({ ok: true });
+    // DELETAR
+    if(action==='deletar' && req.method==='DELETE') {
+      const {id, usuario_id} = req.body;
+      await supa(`comentarios?id=eq.${id}&usuario_id=eq.${usuario_id}`,'DELETE');
+      return res.status(200).json({ok:true});
     }
 
-    return res.status(400).json({ error: 'Ação inválida' });
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json({ error: 'Erro interno' });
+    return res.status(400).json({error:`Ação inválida: ${action}`});
+  } catch(err) {
+    console.error('Comentarios error:',err);
+    return res.status(500).json({error:'Erro interno',details:err.message});
   }
 }
