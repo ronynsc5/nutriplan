@@ -1,6 +1,6 @@
 // api/progresso.js
-import { createHmac } from 'crypto';
 
+import { createHmac } from 'crypto';
 const JWT_SECRET = process.env.JWT_SECRET || 'nutriplan-secret-change-me';
 
 function b64urlDecode(str) {
@@ -8,6 +8,23 @@ function b64urlDecode(str) {
   while (str.length % 4) str += '=';
   return Buffer.from(str, 'base64').toString('utf8');
 }
+function verificarToken(req) {
+  try {
+    const header = req.headers['authorization'] || '';
+    const token  = header.startsWith('Bearer ') ? header.slice(7) : null;
+    if (!token) return null;
+    const [h, b, sig] = token.split('.');
+    const esperado = createHmac('sha256', JWT_SECRET)
+      .update(h + '.' + b).digest('base64url');
+    if (sig !== esperado) return null;
+    const payload = JSON.parse(b64urlDecode(b));
+    if (payload.exp && Date.now() / 1000 > payload.exp) return null;
+    return payload;
+  } catch (e) { return null; }
+}
+
+const JWT_SECRET = process.env.JWT_SECRET || 'nutriplan-secret-change-me';
+
 function verificarToken(req) {
   try {
     const header = req.headers['authorization'] || '';
