@@ -1,62 +1,54 @@
 // api/usuarios.js — com autenticação JWT
 
-import { createHmac } from 'crypto';
+
 const JWT_SECRET = process.env.JWT_SECRET || 'nutriplan-secret-change-me';
 
-function b64urlDecode(str) {
-  str = str.replace(/-/g, '+').replace(/_/g, '/');
-  while (str.length % 4) str += '=';
-  return Buffer.from(str, 'base64').toString('utf8');
+// HMAC-SHA256 via Node crypto — compatível com ES Module sem import
+async function hmacSha256(secret, msg) {
+  const enc = new TextEncoder();
+  const key = await globalThis.crypto.subtle.importKey(
+    'raw', enc.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']
+  );
+  const sig = await globalThis.crypto.subtle.sign('HMAC', key, enc.encode(msg));
+  return Buffer.from(sig).toString('base64url');
 }
-function verificarToken(req) {
+
+function b64uDec(s) {
+  s = s.replace(/-/g,'+').replace(/_/g,'/');
+  while(s.length%4) s+='=';
+  return Buffer.from(s,'base64').toString('utf8');
+}
+
+async function verificarToken(req) {
   try {
     const header = req.headers['authorization'] || '';
     const token  = header.startsWith('Bearer ') ? header.slice(7) : null;
     if (!token) return null;
     const [h, b, sig] = token.split('.');
-    const esperado = createHmac('sha256', JWT_SECRET)
-      .update(h + '.' + b).digest('base64url');
+    const esperado = await hmacSha256(JWT_SECRET, h + '.' + b);
     if (sig !== esperado) return null;
-    const payload = JSON.parse(b64urlDecode(b));
+    const payload = JSON.parse(b64uDec(b));
     if (payload.exp && Date.now() / 1000 > payload.exp) return null;
     return payload;
   } catch (e) { return null; }
 }
 
-function b64url(str) {
-  return Buffer.from(str).toString('base64')
-    .replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');
-}
-function gerarToken(usuario) {
-  const h = b64url(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
-  const b = b64url(JSON.stringify({
+
+async function gerarToken(usuario) {
+  function b64u(s){ return Buffer.from(s).toString('base64').replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,''); }
+  const h = b64u(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
+  const b = b64u(JSON.stringify({
     sub: usuario.id, email: usuario.email,
     is_admin: usuario.is_admin || false,
     exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30
   }));
-  const sig = createHmac('sha256', JWT_SECRET)
-    .update(h + '.' + b).digest('base64url');
+  const sig = await hmacSha256(JWT_SECRET, h + '.' + b);
   return h + '.' + b + '.' + sig;
 }
 
-const JWT_SECRET = process.env.JWT_SECRET || 'nutriplan-secret-change-me';
+const SUPA_URL = process.env.SUPABASE_URL;
+const SUPA_KEY = process.env.SUPABASE_SECRET_KEY;
 
-function verificarToken(req) {
-  try {
-    const header = req.headers['authorization'] || '';
-    const token  = header.startsWith('Bearer ') ? header.slice(7) : null;
-    if (!token) return null;
-    const [h, b, sig] = token.split('.');
-    const esperado = createHmac('sha256', JWT_SECRET).update(`${h}.${b}`).digest('base64url');
-    if (sig !== esperado) return null;
-    const payload = JSON.parse(b64urlDecode(b));
-    if (payload.exp && Date.now() / 1000 > payload.exp) return null;
-    return payload;
-  } catch (e) { return null; }
-}
-
-
-// ── Supabase helper ──────────────────────────────────────────────────────────
 async function supa(path, method = 'GET', body = null) {
   const opts = {
     method,
@@ -107,7 +99,7 @@ export default async function handler(req, res) {
       if (!novo[0]) return res.status(500).json({ error: 'Erro ao criar conta' });
 
       // Retornar usuário + token já no cadastro
-      const token = gerarToken(novo[0]);
+      const token = await gerarToken(novo[0]);
       return res.status(200).json({ ...novo[0], token });
     }
 
@@ -124,7 +116,7 @@ export default async function handler(req, res) {
         return res.status(401).json({ error: 'Email ou senha incorretos' });
 
       // Retornar usuário + token JWT
-      const token = gerarToken(u[0]);
+      const token = await gerarToken(u[0]);
       return res.status(200).json({ ...u[0], token });
     }
 
@@ -136,7 +128,7 @@ export default async function handler(req, res) {
     // ════════════════════════════════════════════════════════════════════════
     // ROTAS PROTEGIDAS — verificar token
     // ════════════════════════════════════════════════════════════════════════
-    const auth = verificarToken(req);
+    const auth = await verificarToken(req);
     if (!auth) return res.status(401).json({ error: 'Não autenticado. Faça login novamente.' });
 
     // ── BUSCAR PRÓPRIO PERFIL ─────────────────────────────────────────────────
