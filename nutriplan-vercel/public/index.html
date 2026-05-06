@@ -1610,6 +1610,173 @@ footer strong{color:rgba(245,242,238,0.8);}
   }
 }
 
+
+/* ═══════════ SISTEMA ADAPTATIVO ═══════════ */
+
+/* Indicadores */
+.sistema-card{
+  background:var(--card);border-radius:var(--radius);
+  padding:1.2rem;margin:0.8rem 1.2rem;
+  box-shadow:var(--sombra);border:1px solid var(--border);
+}
+.sistema-card-title{
+  font-family:var(--font-mono);font-size:0.68rem;font-weight:700;
+  color:var(--cinza-med);letter-spacing:0.1em;text-transform:uppercase;
+  margin-bottom:0.8rem;
+}
+.indicadores-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:0.6rem;
+}
+.indicador-item{
+  background:var(--cinza-bg);border-radius:var(--radius-xs);
+  padding:0.7rem;border:1px solid var(--cinza-cla);
+}
+.indicador-valor{
+  font-family:var(--font-display);font-size:1.1rem;font-weight:700;
+  color:var(--preto);line-height:1;margin-bottom:2px;
+}
+.indicador-label{
+  font-size:0.58rem;color:var(--cinza-med);
+  font-family:var(--font-mono);letter-spacing:0.06em;
+}
+.status-badge{
+  display:inline-block;border-radius:50px;
+  padding:2px 10px;font-size:0.62rem;font-weight:700;
+  font-family:var(--font-mono);letter-spacing:0.04em;
+}
+.status-ok{background:var(--verde-bg);color:var(--verde);}
+.status-lento{background:#fefce8;color:#ca8a04;}
+.status-rapido{background:var(--acento-bg);color:var(--acento);}
+
+/* Feedback do sistema */
+.feedback-sistema{
+  background:var(--card);border-radius:var(--radius);
+  padding:1rem 1.2rem;margin:0.8rem 1.2rem;
+  box-shadow:var(--sombra);border:1px solid var(--border);
+  display:none;
+}
+.feedback-sistema.show{display:block;}
+.feedback-msg{
+  display:flex;align-items:flex-start;gap:0.7rem;
+  padding:0.7rem;background:var(--cinza-bg);
+  border-radius:var(--radius-xs);
+  font-size:0.82rem;color:var(--texto);line-height:1.5;
+}
+.feedback-icon{font-size:1.2rem;flex-shrink:0;}
+
+/* Registro de peso rápido */
+.peso-rapido{
+  display:flex;gap:0.6rem;align-items:center;
+  margin-top:0.8rem;
+}
+.peso-rapido input{
+  flex:1;padding:10px 12px;
+  font-size:0.9rem;border-radius:var(--radius-xs);
+}
+.peso-rapido button{
+  background:var(--preto);color:var(--bg);
+  border:none;border-radius:var(--radius-xs);
+  padding:10px 16px;font-size:0.82rem;font-weight:600;
+  cursor:pointer;font-family:var(--font-ui);white-space:nowrap;
+  transition:transform 0.15s var(--ease-spring);
+}
+.peso-rapido button:hover{transform:scale(1.04);}
+
+/* Histórico de peso */
+.historico-peso{margin-top:0.8rem;}
+.historico-item{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0.45rem 0;border-bottom:1px solid var(--cinza-bg);
+  font-size:0.8rem;
+}
+.historico-item:last-child{border-bottom:none;}
+.historico-peso-val{
+  font-family:var(--font-display);font-weight:700;color:var(--preto);
+}
+.historico-data{font-family:var(--font-mono);font-size:0.65rem;color:var(--cinza-med);}
+.historico-diff{
+  font-family:var(--font-mono);font-size:0.65rem;font-weight:700;
+}
+.diff-pos{color:var(--acento);}
+.diff-neg{color:var(--verde);}
+
+/* Saldo de macros */
+.saldo-macros{
+  background:var(--card);border-radius:var(--radius);
+  padding:1rem 1.2rem;margin:0.8rem 1.2rem;
+  box-shadow:var(--sombra);border:1px solid var(--border);
+}
+.saldo-title{
+  font-family:var(--font-mono);font-size:0.66rem;font-weight:700;
+  color:var(--cinza-med);letter-spacing:0.1em;text-transform:uppercase;
+  margin-bottom:0.7rem;
+}
+.saldo-bars{display:flex;flex-direction:column;gap:0.5rem;}
+.saldo-bar-row{display:flex;align-items:center;gap:0.6rem;}
+.saldo-bar-label{
+  font-size:0.65rem;font-family:var(--font-mono);
+  color:var(--cinza-med);width:36px;
+}
+.saldo-bar-track{
+  flex:1;height:6px;background:var(--cinza-bg);
+  border-radius:50px;overflow:hidden;
+}
+.saldo-bar-fill{
+  height:100%;border-radius:50px;
+  transition:width 0.4s var(--ease-out);
+}
+.saldo-bar-kcal .saldo-bar-fill{background:var(--acento);}
+.saldo-bar-prot .saldo-bar-fill{background:var(--verde);}
+.saldo-bar-carb .saldo-bar-fill{background:#2563eb;}
+.saldo-bar-gord .saldo-bar-fill{background:#b45309;}
+.saldo-bar-val{
+  font-size:0.65rem;font-family:var(--font-mono);
+  color:var(--preto);width:60px;text-align:right;font-weight:600;
+}
+
+/* Conquistas */
+.conquistas-section{
+  background:var(--card);border-radius:var(--radius);
+  padding:1.2rem;margin:0.8rem 1.2rem;
+  box-shadow:var(--sombra);border:1px solid var(--border);
+}
+.conquistas-title{
+  font-family:var(--font-display);font-size:0.95rem;font-weight:700;
+  color:var(--preto);margin-bottom:0.8rem;
+}
+.conquista-item{
+  display:flex;align-items:center;gap:0.8rem;
+  padding:0.7rem 0;border-bottom:1px solid var(--cinza-bg);
+}
+.conquista-item:last-child{border-bottom:none;}
+.conquista-icon{
+  width:40px;height:40px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.2rem;flex-shrink:0;
+}
+.conquista-icon.desbloqueada{background:var(--cinza-bg);}
+.conquista-icon.bloqueada{background:var(--cinza-bg);filter:grayscale(1);opacity:0.4;}
+.conquista-info{flex:1;}
+.conquista-nome{
+  font-size:0.82rem;font-weight:700;color:var(--preto);margin-bottom:2px;
+}
+.conquista-desc{font-size:0.68rem;color:var(--cinza-med);font-family:var(--font-mono);}
+.conquista-progress{
+  margin-top:4px;height:4px;background:var(--cinza-bg);
+  border-radius:50px;overflow:hidden;
+}
+.conquista-progress-fill{
+  height:100%;background:var(--preto);border-radius:50px;
+  transition:width 0.5s var(--ease-out);
+}
+.conquista-badge{
+  font-size:0.58rem;font-weight:700;
+  font-family:var(--font-mono);
+  padding:2px 8px;border-radius:50px;
+}
+.conquista-badge.nova{background:var(--verde-bg);color:var(--verde);}
+.conquista-badge.em-progresso{background:var(--cinza-bg);color:var(--cinza-med);}
+
 /* ═══════════ SCROLLBAR CUSTOMIZADA ═══════════ */
 ::-webkit-scrollbar{width:4px;}
 ::-webkit-scrollbar-track{background:transparent;}
@@ -1883,6 +2050,69 @@ footer strong{color:rgba(245,242,238,0.8);}
   <div class="privados-section" id="privados-section" style="display:none;">
     <h4>🔒 Privados (só você vê)</h4>
     <div class="posts-grid" id="posts-grid-priv"></div>
+  </div>
+
+  <!-- CONQUISTAS -->
+  <div class="conquistas-section" id="conquistas">
+    <div class="conquistas-title">🏆 Conquistas</div>
+    <div id="lista-conquistas">
+      <!-- Conquistas desbloqueadas -->
+      <div class="conquista-item" id="cq-primeiro-peso">
+        <div class="conquista-icon bloqueada">⚖️</div>
+        <div class="conquista-info">
+          <div class="conquista-nome">Primeira medição</div>
+          <div class="conquista-desc">Registre seu peso pela primeira vez</div>
+          <div class="conquista-progress">
+            <div class="conquista-progress-fill" id="prog-primeiro-peso" style="width:0%"></div>
+          </div>
+        </div>
+        <span class="conquista-badge em-progresso" id="badge-primeiro-peso">0/1</span>
+      </div>
+      <div class="conquista-item" id="cq-semana-completa">
+        <div class="conquista-icon bloqueada">📅</div>
+        <div class="conquista-info">
+          <div class="conquista-nome">Semana completa</div>
+          <div class="conquista-desc">7 dias consecutivos de registro</div>
+          <div class="conquista-progress">
+            <div class="conquista-progress-fill" id="prog-semana-completa" style="width:0%"></div>
+          </div>
+        </div>
+        <span class="conquista-badge em-progresso" id="badge-semana-completa">0/7</span>
+      </div>
+      <div class="conquista-item" id="cq-primeiro-kilo">
+        <div class="conquista-icon bloqueada">🔥</div>
+        <div class="conquista-info">
+          <div class="conquista-nome">Primeiro quilo</div>
+          <div class="conquista-desc">Perca 1kg em relação ao início</div>
+          <div class="conquista-progress">
+            <div class="conquista-progress-fill" id="prog-primeiro-kilo" style="width:0%"></div>
+          </div>
+        </div>
+        <span class="conquista-badge em-progresso" id="badge-primeiro-kilo">0/1kg</span>
+      </div>
+      <div class="conquista-item" id="cq-antes-depois">
+        <div class="conquista-icon bloqueada">✨</div>
+        <div class="conquista-info">
+          <div class="conquista-nome">Transformação</div>
+          <div class="conquista-desc">Publique seu primeiro antes & depois</div>
+          <div class="conquista-progress">
+            <div class="conquista-progress-fill" id="prog-antes-depois" style="width:0%"></div>
+          </div>
+        </div>
+        <span class="conquista-badge em-progresso" id="badge-antes-depois">0/1</span>
+      </div>
+      <div class="conquista-item" id="cq-comunidade">
+        <div class="conquista-icon bloqueada">🌍</div>
+        <div class="conquista-info">
+          <div class="conquista-nome">Membro da comunidade</div>
+          <div class="conquista-desc">Publique no feed público</div>
+          <div class="conquista-progress">
+            <div class="conquista-progress-fill" id="prog-comunidade" style="width:0%"></div>
+          </div>
+        </div>
+        <span class="conquista-badge em-progresso" id="badge-comunidade">0/1</span>
+      </div>
+    </div>
   </div>
 
   <div style="height:1.5rem;"></div>
@@ -2210,7 +2440,85 @@ footer strong{color:rgba(245,242,238,0.8);}
 
 <!-- ═══════════ PLANO ATIVO ═══════════ -->
 <div id="tela-plano" class="tela">
-  <div id="plano-ativo-container"></div>
+
+  <!-- FEEDBACK DO SISTEMA -->
+  <div class="feedback-sistema" id="feedback-sistema">
+    <div class="sistema-card-title">🤖 Sistema Adaptativo</div>
+    <div class="feedback-msg" id="feedback-msg">
+      <span class="feedback-icon">💡</span>
+      <span id="feedback-texto">Aguardando dados suficientes para análise...</span>
+    </div>
+  </div>
+
+  <!-- INDICADORES -->
+  <div class="sistema-card" id="sistema-indicadores" style="display:none;">
+    <div class="sistema-card-title">📊 Indicadores do Sistema</div>
+    <div class="indicadores-grid">
+      <div class="indicador-item">
+        <div class="indicador-valor" id="ritmo-atual">—</div>
+        <div class="indicador-label">ritmo / semana</div>
+        <div style="margin-top:4px;" id="status-ritmo"></div>
+      </div>
+      <div class="indicador-item">
+        <div class="indicador-valor" id="precisao-dados">—</div>
+        <div class="indicador-label">precisão dos dados</div>
+      </div>
+      <div class="indicador-item">
+        <div class="indicador-valor" id="score-adesao">—</div>
+        <div class="indicador-label">adesão</div>
+      </div>
+      <div class="indicador-item">
+        <div class="indicador-valor" id="score-progresso">—</div>
+        <div class="indicador-label">progresso</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SALDO DE MACROS DO DIA -->
+  <div class="saldo-macros" id="saldo-macros" style="display:none;">
+    <div class="saldo-title">⚡ Saldo restante hoje</div>
+    <div class="saldo-bars">
+      <div class="saldo-bar-row saldo-bar-kcal">
+        <div class="saldo-bar-label">Kcal</div>
+        <div class="saldo-bar-track"><div class="saldo-bar-fill" id="bar-kcal" style="width:0%"></div></div>
+        <div class="saldo-bar-val" id="val-kcal">—</div>
+      </div>
+      <div class="saldo-bar-row saldo-bar-prot">
+        <div class="saldo-bar-label">Prot</div>
+        <div class="saldo-bar-track"><div class="saldo-bar-fill" id="bar-prot" style="width:0%"></div></div>
+        <div class="saldo-bar-val" id="val-prot">—</div>
+      </div>
+      <div class="saldo-bar-row saldo-bar-carb">
+        <div class="saldo-bar-label">Carb</div>
+        <div class="saldo-bar-track"><div class="saldo-bar-fill" id="bar-carb" style="width:0%"></div></div>
+        <div class="saldo-bar-val" id="val-carb">—</div>
+      </div>
+      <div class="saldo-bar-row saldo-bar-gord">
+        <div class="saldo-bar-label">Gord</div>
+        <div class="saldo-bar-track"><div class="saldo-bar-fill" id="bar-gord" style="width:0%"></div></div>
+        <div class="saldo-bar-val" id="val-gord">—</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- REGISTRO DE PESO RÁPIDO -->
+  <div class="sistema-card">
+    <div class="sistema-card-title">⚖️ Registro de Peso</div>
+    <div class="peso-rapido">
+      <input type="number" id="peso-input" placeholder="74.2" step="0.1"
+        min="30" max="300" inputmode="decimal">
+      <button id="btn-registrar-peso" onclick="registrarPesoRapido()">Registrar</button>
+    </div>
+    <div class="historico-peso" id="historico-peso">
+      <!-- Preenchido por JS -->
+    </div>
+  </div>
+
+  <!-- PLANO ALIMENTAR -->
+  <div id="plano-alimentar">
+    <div id="plano-ativo-container"></div>
+  </div>
+
   <div id="plano-expirado" style="display:none;" class="plano-expirado-msg">
     <div style="font-size:2.5rem;margin-bottom:0.8rem;">⏰</div>
     <div style="font-family:var(--font-display);font-size:1.2rem;font-weight:700;color:var(--preto);margin-bottom:0.5rem;">Plano expirado</div>
@@ -2486,8 +2794,8 @@ function ir(id){
 function irHero(){ir('hero');escBN();}
 function irAuth(){ir('auth');authTab('login',document.getElementById('tab-login'));escBN();}
 function irAuthCad(){ir('auth');authTab('cadastro',document.getElementById('tab-cad'));escBN();}
-function irPerfil(){ir('perfil');carregarPerfil();mosBN();setABN('perfil');}
-function irPlano(){ir('plano');carregarPlanoAtivo();mosBN();setABN('plano');}
+function irPerfil(){ir('perfil');carregarPerfil();carregarSistemaAdaptativo();mosBN();setABN('perfil');}
+function irPlano(){ir('plano');carregarPlanoAtivo();carregarHistoricoPeso();mosBN();setABN('plano');}
 function irModo(){ir('modo');escBN();}
 function irPlanos(){ir('planos');atualizaCreds();escBN();}
 function irForm(){ir('form');escBN();}
@@ -3435,6 +3743,198 @@ function toast(msg){
   t._timeout=setTimeout(()=>{t.classList.remove('show');},3500);
 }
 
+
+// ═══════════════════════════════════════════════════════
+// SISTEMA ADAPTATIVO — Interface (sem lógica de negócio)
+// ═══════════════════════════════════════════════════════
+
+// ── REGISTRO DE PESO RÁPIDO ──────────────────────────
+function registrarPesoRapido(){
+  var val = parseFloat(document.getElementById('peso-input').value);
+  if(!val || val < 30 || val > 300){ toast('Informe um peso válido'); return; }
+  // Delega ao salvarProgresso sem foto
+  var pesoInput = document.getElementById('prog-peso');
+  if(pesoInput) pesoInput.value = val;
+  // Salva direto via API
+  api('/api/progresso?action=salvar','POST',{
+    usuario_id: USER.id,
+    nome: USER.nome || 'Usuário',
+    tipo: 'progresso',
+    conteudo: 'Registro de peso: ' + val + 'kg',
+    foto_url: null,
+    peso: val,
+    nota: null,
+    publico: false
+  }).then(function(){
+    document.getElementById('peso-input').value = '';
+    toast('⚖️ Peso registrado!');
+    atualizarHistoricoPeso(val);
+    // Notifica motor de decisão (se existir)
+    if(typeof motorDecisao !== 'undefined') motorDecisao.registrarPeso(val);
+  }).catch(function(e){
+    toast('Erro ao registrar peso');
+    console.error(e);
+  });
+}
+
+// ── HISTÓRICO DE PESO (local) ────────────────────────
+function atualizarHistoricoPeso(novoPeso){
+  var KEY = 'historico_peso_' + (USER?.id||'');
+  var hist = ls.get(KEY) || [];
+  hist.unshift({ peso: novoPeso, data: new Date().toISOString() });
+  if(hist.length > 10) hist = hist.slice(0, 10);
+  ls.set(KEY, hist);
+  renderHistoricoPeso(hist);
+}
+
+function renderHistoricoPeso(hist){
+  var el = document.getElementById('historico-peso');
+  if(!el || !hist || !hist.length) return;
+  el.innerHTML = hist.slice(0, 5).map(function(item, i){
+    var diff = i < hist.length - 1 ? (item.peso - hist[i+1].peso) : null;
+    var diffHtml = diff !== null
+      ? '<span class="historico-diff ' + (diff > 0 ? 'diff-pos' : 'diff-neg') + '">'
+        + (diff > 0 ? '+' : '') + diff.toFixed(1) + 'kg</span>'
+      : '';
+    var data = new Date(item.data).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});
+    return '<div class="historico-item">'
+      + '<span class="historico-peso-val">' + item.peso.toFixed(1) + 'kg</span>'
+      + '<span class="historico-data">' + data + '</span>'
+      + diffHtml
+      + '</div>';
+  }).join('');
+}
+
+function carregarHistoricoPeso(){
+  if(!USER) return;
+  var KEY = 'historico_peso_' + USER.id;
+  var hist = ls.get(KEY) || [];
+  renderHistoricoPeso(hist);
+}
+
+// ── EXIBIR FEEDBACK DO SISTEMA ───────────────────────
+// Chamado pelo motor-decisao.js quando tomar uma decisão
+function exibirFeedback(tipo, mensagem){
+  var icons = {
+    'mantido': '✅', 'ajustado': '📊',
+    'refeed': '🔄', 'alerta': '⚠️', 'info': '💡'
+  };
+  var el = document.getElementById('feedback-sistema');
+  var txt = document.getElementById('feedback-texto');
+  var icon = document.querySelector('.feedback-icon');
+  if(!el || !txt) return;
+  if(icon) icon.textContent = icons[tipo] || '💡';
+  txt.textContent = mensagem;
+  el.classList.add('show');
+}
+
+// ── ATUALIZAR INDICADORES ─────────────────────────────
+// Chamado pelo progresso.js com dados calculados
+function atualizarIndicadores(dados){
+  // dados: { ritmo, status, precisao, adesao, progresso }
+  var el = document.getElementById('sistema-indicadores');
+  if(!el || !dados) return;
+  el.style.display = 'block';
+
+  var ritmoEl = document.getElementById('ritmo-atual');
+  var statusEl = document.getElementById('status-ritmo');
+  var precisaoEl = document.getElementById('precisao-dados');
+  var adesaoEl = document.getElementById('score-adesao');
+  var progressoEl = document.getElementById('score-progresso');
+
+  if(ritmoEl) ritmoEl.textContent = dados.ritmo
+    ? (dados.ritmo > 0 ? '+' : '') + dados.ritmo.toFixed(2) + 'kg/sem'
+    : '—';
+
+  if(statusEl && dados.status){
+    var classes = { adequado:'status-ok', lento:'status-lento', rapido:'status-rapido' };
+    statusEl.innerHTML = '<span class="status-badge ' + (classes[dados.status]||'status-ok') + '">'
+      + dados.status + '</span>';
+  }
+
+  if(precisaoEl) precisaoEl.textContent = dados.precisao ? dados.precisao + '%' : '—';
+  if(adesaoEl)   adesaoEl.textContent   = dados.adesao   ? dados.adesao + '%'   : '—';
+  if(progressoEl) progressoEl.textContent = dados.progresso ? dados.progresso + '%' : '—';
+}
+
+// ── ATUALIZAR SALDO DE MACROS ─────────────────────────
+// Chamado com os macros do plano e o consumido hoje
+function atualizarSaldoMacros(meta, consumido){
+  var el = document.getElementById('saldo-macros');
+  if(!el || !meta) return;
+  el.style.display = 'block';
+
+  function atualizar(id, barId, metaVal, consumidoVal){
+    var saldo = Math.max(0, metaVal - (consumidoVal || 0));
+    var pct = Math.min(100, ((consumidoVal || 0) / metaVal) * 100);
+    var valEl = document.getElementById(id);
+    var barEl = document.getElementById(barId);
+    if(valEl) valEl.textContent = Math.round(saldo) + (id.includes('kcal') ? 'kcal' : 'g');
+    if(barEl) barEl.style.width = pct + '%';
+  }
+
+  atualizar('val-kcal', 'bar-kcal', meta.calorias,    consumido?.calorias);
+  atualizar('val-prot', 'bar-prot', meta.proteinas,   consumido?.proteinas);
+  atualizar('val-carb', 'bar-carb', meta.carboidratos, consumido?.carboidratos);
+  atualizar('val-gord', 'bar-gord', meta.gorduras,     consumido?.gorduras);
+}
+
+// ── ATUALIZAR CONQUISTAS ──────────────────────────────
+// Chamado com array de conquistas e seus progressos
+function atualizarConquistas(conquistas){
+  // conquistas: [{ id, desbloqueada, progresso, total, label }]
+  if(!conquistas || !conquistas.length) return;
+  conquistas.forEach(function(cq){
+    var icon = document.querySelector('#cq-' + cq.id + ' .conquista-icon');
+    var prog = document.getElementById('prog-' + cq.id);
+    var badge = document.getElementById('badge-' + cq.id);
+    if(icon){
+      icon.className = 'conquista-icon ' + (cq.desbloqueada ? 'desbloqueada' : 'bloqueada');
+    }
+    if(prog){
+      var pct = Math.min(100, (cq.progresso / cq.total) * 100);
+      prog.style.width = pct + '%';
+    }
+    if(badge){
+      badge.textContent = cq.desbloqueada ? '✅' : (cq.progresso + '/' + cq.label);
+      badge.className = 'conquista-badge ' + (cq.desbloqueada ? 'nova' : 'em-progresso');
+    }
+  });
+}
+
+// ── CARREGAR DADOS DO SISTEMA NO PERFIL ──────────────
+function carregarSistemaAdaptativo(){
+  if(!USER || USER.id === 'admin') return;
+  carregarHistoricoPeso();
+  // Motor de decisão e progresso.js chamarão:
+  // atualizarIndicadores(), atualizarConquistas(), exibirFeedback()
+  // quando tiverem dados calculados
+}
+
+// Prompts para outros agentes:
+// ─────────────────────────────────────────────────────
+// 🔧 motor-decisao.js:
+//   - calcular scores de adesão, progresso, fadiga, estabilidade
+//   - decidir: manter / ajustar calorias / refeed
+//   - chamar: exibirFeedback(tipo, mensagem)
+//   - chamar: atualizarIndicadores(dados)
+// ─────────────────────────────────────────────────────
+// 📊 progresso.js (api):
+//   - armazenar peso diário na tabela progresso
+//   - calcular média semanal e ritmo (kg/semana)
+//   - retornar dados para atualizarIndicadores()
+// ─────────────────────────────────────────────────────
+// 🤖 gerar-plano.js (api):
+//   - receber macros vindos do motor-decisao.js
+//   - organizar refeições respeitando esses macros
+//   - sugerir substituições de alimentos
+// ─────────────────────────────────────────────────────
+// 🎮 conquistas.js (novo agente):
+//   - verificar eventos: primeiro peso, 7 dias, -1kg, publicar
+//   - chamar: atualizarConquistas(array)
+// ─────────────────────────────────────────────────────
+
+
 // SLIDER GLOBAL — clip-path na imagem ANTES, linha divisória
 (function(){
   var sw=null,pid=null,dragging=false;
@@ -3505,4 +4005,4 @@ setTimeout(()=>{
 </script>
 <script src="https://sdk.mercadopago.com/js/v2"></script>
 </body>
-</html>
+</html>v
