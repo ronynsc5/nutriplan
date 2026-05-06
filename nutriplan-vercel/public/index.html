@@ -2846,15 +2846,25 @@ function sair(){
     USER={nome:'Admin MFCT',email:ADMIN_EMAIL,is_admin:true,creditos:999999,id:'admin'};
     atualizaNav();irAdmin();return;
   }
+  // Se não tem token salvo, sessão expirou — limpar e ir para hero
+  const tokenSalvo = ls.get('auth_token');
+  if(!tokenSalvo){
+    ls.set('session', null);
+    return; // vai mostrar hero (já está ativa por padrão)
+  }
   api('/api/usuarios?action=buscar&email='+encodeURIComponent(email))
     .then(u=>{
       if(u&&!u.error){
         USER=u;
-        if(u.token)ls.set('auth_token',u.token);
         atualizaNav();irPerfil();
       }
     })
-    .catch(()=>{});
+    .catch(e=>{
+      // Token inválido ou expirado — limpar sessão
+      if(e.message && e.message.includes('expirada')){
+        ls.set('session',null);ls.set('auth_token',null);
+      }
+    });
 })();
 
 // AUTH
