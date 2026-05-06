@@ -2770,17 +2770,26 @@ async function ativarNotif(){
   if(p==='granted'){toast('✅ Notificações ativadas!');ls.set('notif_ok',true);}
 }
 
-// API — trata erros de servidor (500, respostas não-JSON)
+// API — com JWT auth e tratamento de erros
 async function api(path,method='GET',body=null){
-  const opts={method,headers:{'Content-Type':'application/json'}};
+  const token=ls.get('auth_token');
+  const headers={'Content-Type':'application/json'};
+  if(token) headers['Authorization']='Bearer '+token;
+  const opts={method,headers};
   if(body)opts.body=JSON.stringify(body);
   const r=await fetch(path,opts);
   const text=await r.text();
+  // Token expirado — forçar logout
+  if(r.status===401){
+    ls.set('session',null);ls.set('auth_token',null);
+    USER=null;atualizaNav();irHero();
+    throw new Error('Sessão expirada. Faça login novamente.');
+  }
   try{return JSON.parse(text);}
   catch(e){
     console.error('API error',path,r.status,text.substring(0,200));
-    if(r.status===500)throw new Error('Erro interno do servidor (500). Verifique a API no Vercel.');
-    throw new Error('Resposta inválida do servidor: '+text.substring(0,100));
+    if(r.status===500)throw new Error('Erro interno do servidor.');
+    throw new Error('Resposta inválida: '+text.substring(0,100));
   }
 }
 
@@ -2826,6 +2835,7 @@ function atualizaNav(){
 function sair(){
   USER=null;PLANO_ATUAL=null;
   ls.set('session',null);
+  ls.set('auth_token',null);
   atualizaNav();irHero();toast('Até logo!');
 }
 
@@ -2837,7 +2847,13 @@ function sair(){
     atualizaNav();irAdmin();return;
   }
   api('/api/usuarios?action=buscar&email='+encodeURIComponent(email))
-    .then(u=>{if(u&&!u.error){USER=u;atualizaNav();irPerfil();}})
+    .then(u=>{
+      if(u&&!u.error){
+        USER=u;
+        if(u.token)ls.set('auth_token',u.token);
+        atualizaNav();irPerfil();
+      }
+    })
     .catch(()=>{});
 })();
 
@@ -2860,7 +2876,9 @@ async function fazerLogin(){
   try{
     const u=await api('/api/usuarios?action=login','POST',{email,senha});
     if(u.error){toast(u.error);return;}
-    USER=u;ls.set('session',email);atualizaNav();
+    USER=u;ls.set('session',email);
+    if(u.token)ls.set('auth_token',u.token);
+    atualizaNav();
     toast('Bem-vindo, '+u.nome.split(' ')[0]+'! 👋');
     setTimeout(()=>irPerfil(),300);
   }catch(e){toast('Erro ao conectar. Tente novamente.');}
@@ -2877,6 +2895,7 @@ async function fazerCadastro(){
     const u=await api('/api/usuarios?action=cadastrar','POST',{nome,email,senha,wpp});
     if(u.error){toast(u.error);return;}
     USER=u;
+    if(u.token)ls.set('auth_token',u.token);
     if(CUPOM_CAD_INFO){
       try{await api('/api/cupons?action=validar','POST',{codigo:CUPOM_CAD_INFO.codigo,usuario_id:u.id});}catch(e){}
     }
