@@ -1,11 +1,7 @@
 // api/planos.js
-// Inclui: gestão de planos + motor de decisão adaptativo (v2)
-
-const SUPA_URL = process.env.SUPABASE_URL;
-const SUPA_KEY = process.env.SUPABASE_SECRET_KEY;
+import { createHmac } from 'crypto';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'nutriplan-secret-change-me';
-import { createHmac } from 'crypto';
 
 function b64urlDecode(str) {
   str = str.replace(/-/g, '+').replace(/_/g, '/');
@@ -18,13 +14,19 @@ function verificarToken(req) {
     const token  = header.startsWith('Bearer ') ? header.slice(7) : null;
     if (!token) return null;
     const [h, b, sig] = token.split('.');
-    const esperado = createHmac('sha256', JWT_SECRET)
-      .update(`${h}.${b}`).digest('base64url');
+    const esperado = createHmac('sha256', JWT_SECRET).update(`${h}.${b}`).digest('base64url');
     if (sig !== esperado) return null;
     const payload = JSON.parse(b64urlDecode(b));
     if (payload.exp && Date.now() / 1000 > payload.exp) return null;
     return payload;
   } catch (e) { return null; }
+}
+
+// Inclui: gestão de planos + motor de decisão adaptativo (v2)
+
+const SUPA_URL = process.env.SUPABASE_URL;
+const SUPA_KEY = process.env.SUPABASE_SECRET_KEY;
+
 }
 
 
