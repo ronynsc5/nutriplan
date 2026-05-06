@@ -2795,7 +2795,7 @@ function irHero(){ir('hero');escBN();}
 function irAuth(){ir('auth');authTab('login',document.getElementById('tab-login'));escBN();}
 function irAuthCad(){ir('auth');authTab('cadastro',document.getElementById('tab-cad'));escBN();}
 function irPerfil(){ir('perfil');carregarPerfil();carregarSistemaAdaptativo();mosBN();setABN('perfil');}
-function irPlano(){ir('plano');carregarPlanoAtivo();carregarHistoricoPeso();mosBN();setABN('plano');}
+function irPlano(){ir('plano');carregarPlanoAtivo();carregarHistoricoPeso();carregarSistemaAdaptativo();mosBN();setABN('plano');}
 function irModo(){ir('modo');escBN();}
 function irPlanos(){ir('planos');atualizaCreds();escBN();}
 function irForm(){ir('form');escBN();}
@@ -3769,8 +3769,8 @@ function registrarPesoRapido(){
     document.getElementById('peso-input').value = '';
     toast('⚖️ Peso registrado!');
     atualizarHistoricoPeso(val);
-    // Notifica motor de decisão (se existir)
-    if(typeof motorDecisao !== 'undefined') motorDecisao.registrarPeso(val);
+    // Atualiza análise automática após novo peso
+    setTimeout(carregarSistemaAdaptativo, 500);
   }).catch(function(e){
     toast('Erro ao registrar peso');
     console.error(e);
@@ -3903,12 +3903,32 @@ function atualizarConquistas(conquistas){
 }
 
 // ── CARREGAR DADOS DO SISTEMA NO PERFIL ──────────────
-function carregarSistemaAdaptativo(){
+async function carregarSistemaAdaptativo(){
   if(!USER || USER.id === 'admin') return;
   carregarHistoricoPeso();
-  // Motor de decisão e progresso.js chamarão:
-  // atualizarIndicadores(), atualizarConquistas(), exibirFeedback()
-  // quando tiverem dados calculados
+
+  // 1. Buscar análise do motor de decisão
+  try{
+    var analise = await api('/api/planos?action=analisar&usuario_id='+USER.id);
+    if(analise && analise.indicadores){
+      atualizarIndicadores({
+        ritmo:     analise.indicadores.ritmo,
+        status:    analise.indicadores.status,
+        precisao:  analise.precisao,
+        adesao:    analise.indicadores.adesao,
+        progresso: analise.indicadores.progresso
+      });
+    }
+    if(analise && analise.feedback){
+      exibirFeedback(analise.feedback.tipo, analise.feedback.mensagem);
+    }
+  }catch(e){ console.warn('Motor decisao:', e.message); }
+
+  // 2. Buscar conquistas
+  try{
+    var conquistas = await api('/api/progresso?action=conquistas&usuario_id='+USER.id);
+    if(conquistas && conquistas.length) atualizarConquistas(conquistas);
+  }catch(e){ console.warn('Conquistas:', e.message); }
 }
 
 // Prompts para outros agentes:
@@ -4005,4 +4025,4 @@ setTimeout(()=>{
 </script>
 <script src="https://sdk.mercadopago.com/js/v2"></script>
 </body>
-</html>v
+</html>
