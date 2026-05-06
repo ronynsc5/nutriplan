@@ -1,7 +1,49 @@
-// api/usuarios.js
+// api/usuarios.js — com autenticação JWT
+
 const SUPA_URL = process.env.SUPABASE_URL;
 const SUPA_KEY = process.env.SUPABASE_SECRET_KEY;
+const JWT_SECRET = process.env.JWT_SECRET || 'nutriplan-secret-change-me';
 
+import { createHmac } from 'crypto';
+
+// ── JWT helpers (sem deps externas) ─────────────────────────────────────────
+function b64url(str) {
+  return Buffer.from(str).toString('base64')
+    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+}
+function b64urlDecode(str) {
+  str = str.replace(/-/g, '+').replace(/_/g, '/');
+  while (str.length % 4) str += '=';
+  return Buffer.from(str, 'base64').toString('utf8');
+}
+function gerarToken(usuario) {
+  const header = b64url(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
+  const body   = b64url(JSON.stringify({
+    sub:      usuario.id,
+    email:    usuario.email,
+    is_admin: usuario.is_admin || false,
+    exp:      Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30 // 30 dias
+  }));
+  const sig = createHmac('sha256', JWT_SECRET)
+    .update(`${header}.${body}`).digest('base64url');
+  return `${header}.${body}.${sig}`;
+}
+function verificarToken(req) {
+  try {
+    const header = req.headers['authorization'] || '';
+    const token  = header.startsWith('Bearer ') ? header.slice(7) : null;
+    if (!token) return null;
+    const [h, b, sig] = token.split('.');
+    const esperado = createHmac('sha256', JWT_SECRET)
+      .update(`${h}.${b}`).digest('base64url');
+    if (sig !== esperado) return null;
+    const payload = JSON.parse(b64urlDecode(b));
+    if (payload.exp && Date.now() / 1000 > payload.exp) return null;
+    return payload;
+  } catch (e) { return null; }
+}
+
+// ── Supabase helper ──────────────────────────────────────────────────────────
 async function supa(path, method = 'GET', body = null) {
   const opts = {
     method,
@@ -15,74 +57,105 @@ async function supa(path, method = 'GET', body = null) {
   if (body) opts.body = JSON.stringify(body);
   const r = await fetch(`${SUPA_URL}/rest/v1/${path}`, opts);
   const text = await r.text();
+  if (!r.ok && method !== 'PATCH' && method !== 'DELETE') {
+    throw new Error(`Supabase ${r.status}: ${text.substring(0, 150)}`);
+  }
   if (!text) return [];
-  try { return JSON.parse(text); }
-  catch (e) { console.error('Supa parse error:', text.substring(0, 200)); return []; }
+  try { return JSON.parse(text); } catch (e) { return []; }
 }
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PATCH,DELETE,OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   if (req.method === 'OPTIONS') return res.status(200).end();
 
   const { action } = req.query;
 
   try {
+
+    // ════════════════════════════════════════════════════════════════════════
+    // ROTAS PÚBLICAS (sem auth)
+    // ════════════════════════════════════════════════════════════════════════
+
     // ── CADASTRAR ────────────────────────────────────────────────────────────
     if (action === 'cadastrar' && req.method === 'POST') {
       const { nome, email, senha, wpp } = req.body;
-      if (!nome || !email || !senha) return res.status(400).json({ error: 'Campos obrigatórios faltando' });
+      if (!nome || !email || !senha)
+        return res.status(400).json({ error: 'Campos obrigatórios faltando' });
 
       const existe = await supa(`usuarios?email=eq.${encodeURIComponent(email)}&select=id`);
-      if (existe.length > 0) return res.status(400).json({ error: 'Email já cadastrado' });
+      if (existe.length > 0)
+        return res.status(400).json({ error: 'Email já cadastrado' });
 
       const novo = await supa('usuarios', 'POST', {
-        nome, email, senha, wpp: wpp || null,
-        creditos: 0, is_admin: false
+        nome, email, senha, wpp: wpp || null, creditos: 0, is_admin: false
       });
       if (!novo[0]) return res.status(500).json({ error: 'Erro ao criar conta' });
-      return res.status(200).json(novo[0]);
+
+      // Retornar usuário + token já no cadastro
+      const token = gerarToken(novo[0]);
+      return res.status(200).json({ ...novo[0], token });
     }
 
     // ── LOGIN ────────────────────────────────────────────────────────────────
     if (action === 'login' && req.method === 'POST') {
       const { email, senha } = req.body;
-      if (!email || !senha) return res.status(400).json({ error: 'Email e senha obrigatórios' });
+      if (!email || !senha)
+        return res.status(400).json({ error: 'Email e senha obrigatórios' });
 
       const u = await supa(
         `usuarios?email=eq.${encodeURIComponent(email)}&senha=eq.${encodeURIComponent(senha)}&select=*`
       );
-      if (!u.length) return res.status(401).json({ error: 'Email ou senha incorretos' });
-      return res.status(200).json(u[0]);
+      if (!u.length)
+        return res.status(401).json({ error: 'Email ou senha incorretos' });
+
+      // Retornar usuário + token JWT
+      const token = gerarToken(u[0]);
+      return res.status(200).json({ ...u[0], token });
     }
 
-    // ── BUSCAR POR EMAIL (sessão) ─────────────────────────────────────────────
+    // ── CONFIG (chave pública MP — pública) ──────────────────────────────────
+    if (action === 'config' && req.method === 'GET') {
+      return res.status(200).json({ MP_PUBLIC_KEY: process.env.MP_PUBLIC_KEY || '' });
+    }
+
+    // ════════════════════════════════════════════════════════════════════════
+    // ROTAS PROTEGIDAS — verificar token
+    // ════════════════════════════════════════════════════════════════════════
+    const auth = verificarToken(req);
+    if (!auth) return res.status(401).json({ error: 'Não autenticado. Faça login novamente.' });
+
+    // ── BUSCAR PRÓPRIO PERFIL ─────────────────────────────────────────────────
     if (action === 'buscar' && req.method === 'GET') {
       const { email } = req.query;
-      if (!email) return res.status(400).json({ error: 'Email obrigatório' });
+      // Só pode buscar o próprio email (ou admin busca qualquer um)
+      if (!auth.is_admin && email && email !== auth.email)
+        return res.status(403).json({ error: 'Acesso negado.' });
 
-      const u = await supa(`usuarios?email=eq.${encodeURIComponent(email)}&select=*`);
+      const consulta = email
+        ? `usuarios?email=eq.${encodeURIComponent(email)}&select=*`
+        : `usuarios?id=eq.${auth.sub}&select=*`;
+      const u = await supa(consulta);
       if (!u.length) return res.status(404).json({ error: 'Não encontrado' });
       return res.status(200).json(u[0]);
     }
 
-    // ── ATUALIZAR CRÉDITOS ───────────────────────────────────────────────────
+    // ── ATUALIZAR CRÉDITOS (admin only) ──────────────────────────────────────
     if (action === 'creditos' && req.method === 'PATCH') {
+      if (!auth.is_admin) return res.status(403).json({ error: 'Acesso negado.' });
       const { id, creditos } = req.body;
       await supa(`usuarios?id=eq.${id}`, 'PATCH', { creditos });
       return res.status(200).json({ ok: true });
     }
 
-    // ── LISTAR (admin) ───────────────────────────────────────────────────────
+    // ── LISTAR (admin only) ───────────────────────────────────────────────────
     if (action === 'listar' && req.method === 'GET') {
-      const u = await supa('usuarios?is_admin=eq.false&select=id,nome,email,creditos,modo,criado_em&order=criado_em.desc');
+      if (!auth.is_admin) return res.status(403).json({ error: 'Acesso negado.' });
+      const u = await supa(
+        'usuarios?is_admin=eq.false&select=id,nome,email,creditos,modo,criado_em&order=criado_em.desc'
+      );
       return res.status(200).json(u || []);
-    }
-
-    // ── CONFIG (chave pública MP) ────────────────────────────────────────────
-    if (action === 'config' && req.method === 'GET') {
-      return res.status(200).json({ MP_PUBLIC_KEY: process.env.MP_PUBLIC_KEY || '' });
     }
 
     return res.status(400).json({ error: `Ação inválida: ${action}` });
