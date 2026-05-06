@@ -1808,7 +1808,7 @@ footer strong{color:rgba(245,242,238,0.8);}
     <span class="icon">🍽️</span><span class="label">Plano</span>
   </button>
   <button class="bnav-item" id="bn-progresso" onclick="bnav('progresso')">
-    <span class="icon">📸</span><span class="label">Progresso</span>
+    <span class="icon">📊</span><span class="label">Evolução</span>
   </button>
   <button class="bnav-item" id="bn-feed" onclick="bnav('feed')">
     <span class="icon">🌍</span><span class="label">Feed</span>
@@ -1970,21 +1970,12 @@ footer strong{color:rgba(245,242,238,0.8);}
     <button class="btn-editar-perfil" onclick="abrirEditarPerfil()">✏️ Editar perfil</button>
   </div>
 
-  <div class="grafico-card">
-    <div class="grafico-card-header">
-      <h3>📊 Evolução de peso</h3>
-      <span class="grafico-badge">últimos registros</span>
-    </div>
-    <div class="grafico-wrap">
-      <canvas id="grafico-peso" style="width:100%;height:100%;"></canvas>
-      <div class="grafico-empty" id="grafico-empty">Registre seu peso para ver o gráfico</div>
-    </div>
-  </div>
+  <!-- gráfico movido para tela Evolução -->
 
   <!-- Posts públicos -->
   <div class="section-header">
-    <span class="section-title">📸 Públicos</span>
-    <button onclick="irProgresso()" class="btn-ad">+ Foto</button>
+    <span class="section-title">📸 Fotos & Slides</span>
+    <button onclick="irProgresso()" class="btn-ad">+ Adicionar</button>
   </div>
 
   <!-- Banner Antes/Depois -->
@@ -2052,19 +2043,76 @@ footer strong{color:rgba(245,242,238,0.8);}
     <div class="posts-grid" id="posts-grid-priv"></div>
   </div>
 
+
+  <!-- conquistas movidas para tela Evolução -->
+
+  <div style="height:1.5rem;"></div>
+</div>
+
+<!-- ═══════════ PROGRESSO ═══════════ -->
+<div id="tela-progresso" class="tela">
+  <!-- CABEÇALHO -->
+  <div style="padding:1rem 1.2rem 0;display:flex;align-items:center;justify-content:space-between;">
+    <span style="font-family:var(--font-display);font-size:1.1rem;font-weight:700;color:var(--preto);letter-spacing:-0.02em;">📊 Evolução</span>
+  </div>
+
+  <!-- REGISTRO DE PESO DIÁRIO -->
+  <div class="sistema-card">
+    <div class="sistema-card-title">⚖️ Peso de hoje</div>
+    <div class="peso-rapido">
+      <input type="number" id="peso-input" placeholder="74.2" step="0.1"
+        min="30" max="300" inputmode="decimal">
+      <button id="btn-registrar-peso" onclick="registrarPesoRapido()">Registrar</button>
+    </div>
+    <div class="historico-peso" id="historico-peso"></div>
+  </div>
+
+  <!-- GRÁFICO DE EVOLUÇÃO -->
+  <div class="grafico-card">
+    <div class="grafico-card-header">
+      <h3>📈 Curva de peso</h3>
+      <span class="grafico-badge">últimos registros</span>
+    </div>
+    <div class="grafico-wrap">
+      <canvas id="grafico-peso" style="width:100%;height:100%;"></canvas>
+      <div class="grafico-empty" id="grafico-empty">Registre seu peso para ver o gráfico</div>
+    </div>
+  </div>
+
+  <!-- INDICADORES DO SISTEMA -->
+  <div class="sistema-card" id="sistema-indicadores" style="display:none;">
+    <div class="sistema-card-title">📊 Indicadores</div>
+    <div class="indicadores-grid">
+      <div class="indicador-item">
+        <div class="indicador-valor" id="ritmo-atual">—</div>
+        <div class="indicador-label">ritmo / semana</div>
+        <div style="margin-top:4px;" id="status-ritmo"></div>
+      </div>
+      <div class="indicador-item">
+        <div class="indicador-valor" id="precisao-dados">—</div>
+        <div class="indicador-label">precisão</div>
+      </div>
+      <div class="indicador-item">
+        <div class="indicador-valor" id="score-adesao">—</div>
+        <div class="indicador-label">adesão</div>
+      </div>
+      <div class="indicador-item">
+        <div class="indicador-valor" id="score-progresso">—</div>
+        <div class="indicador-label">progresso</div>
+      </div>
+    </div>
+  </div>
+
   <!-- CONQUISTAS -->
   <div class="conquistas-section" id="conquistas">
     <div class="conquistas-title">🏆 Conquistas</div>
     <div id="lista-conquistas">
-      <!-- Conquistas desbloqueadas -->
       <div class="conquista-item" id="cq-primeiro-peso">
         <div class="conquista-icon bloqueada">⚖️</div>
         <div class="conquista-info">
           <div class="conquista-nome">Primeira medição</div>
           <div class="conquista-desc">Registre seu peso pela primeira vez</div>
-          <div class="conquista-progress">
-            <div class="conquista-progress-fill" id="prog-primeiro-peso" style="width:0%"></div>
-          </div>
+          <div class="conquista-progress"><div class="conquista-progress-fill" id="prog-primeiro-peso" style="width:0%"></div></div>
         </div>
         <span class="conquista-badge em-progresso" id="badge-primeiro-peso">0/1</span>
       </div>
@@ -2072,10 +2120,8 @@ footer strong{color:rgba(245,242,238,0.8);}
         <div class="conquista-icon bloqueada">📅</div>
         <div class="conquista-info">
           <div class="conquista-nome">Semana completa</div>
-          <div class="conquista-desc">7 dias consecutivos de registro</div>
-          <div class="conquista-progress">
-            <div class="conquista-progress-fill" id="prog-semana-completa" style="width:0%"></div>
-          </div>
+          <div class="conquista-desc">7 dias consecutivos de atividade</div>
+          <div class="conquista-progress"><div class="conquista-progress-fill" id="prog-semana-completa" style="width:0%"></div></div>
         </div>
         <span class="conquista-badge em-progresso" id="badge-semana-completa">0/7</span>
       </div>
@@ -2084,78 +2130,74 @@ footer strong{color:rgba(245,242,238,0.8);}
         <div class="conquista-info">
           <div class="conquista-nome">Primeiro quilo</div>
           <div class="conquista-desc">Perca 1kg em relação ao início</div>
-          <div class="conquista-progress">
-            <div class="conquista-progress-fill" id="prog-primeiro-kilo" style="width:0%"></div>
-          </div>
+          <div class="conquista-progress"><div class="conquista-progress-fill" id="prog-primeiro-kilo" style="width:0%"></div></div>
         </div>
         <span class="conquista-badge em-progresso" id="badge-primeiro-kilo">0/1kg</span>
+      </div>
+      <div class="conquista-item" id="cq-cinco-kilos">
+        <div class="conquista-icon bloqueada">💪</div>
+        <div class="conquista-info">
+          <div class="conquista-nome">Cinco quilos</div>
+          <div class="conquista-desc">Perca 5kg em relação ao início</div>
+          <div class="conquista-progress"><div class="conquista-progress-fill" id="prog-cinco-kilos" style="width:0%"></div></div>
+        </div>
+        <span class="conquista-badge em-progresso" id="badge-cinco-kilos">0/5kg</span>
       </div>
       <div class="conquista-item" id="cq-antes-depois">
         <div class="conquista-icon bloqueada">✨</div>
         <div class="conquista-info">
           <div class="conquista-nome">Transformação</div>
           <div class="conquista-desc">Publique seu primeiro antes & depois</div>
-          <div class="conquista-progress">
-            <div class="conquista-progress-fill" id="prog-antes-depois" style="width:0%"></div>
-          </div>
+          <div class="conquista-progress"><div class="conquista-progress-fill" id="prog-antes-depois" style="width:0%"></div></div>
         </div>
         <span class="conquista-badge em-progresso" id="badge-antes-depois">0/1</span>
       </div>
       <div class="conquista-item" id="cq-comunidade">
         <div class="conquista-icon bloqueada">🌍</div>
         <div class="conquista-info">
-          <div class="conquista-nome">Membro da comunidade</div>
+          <div class="conquista-nome">Comunidade</div>
           <div class="conquista-desc">Publique no feed público</div>
-          <div class="conquista-progress">
-            <div class="conquista-progress-fill" id="prog-comunidade" style="width:0%"></div>
-          </div>
+          <div class="conquista-progress"><div class="conquista-progress-fill" id="prog-comunidade" style="width:0%"></div></div>
         </div>
         <span class="conquista-badge em-progresso" id="badge-comunidade">0/1</span>
       </div>
+      <div class="conquista-item" id="cq-dez-fotos">
+        <div class="conquista-icon bloqueada">📸</div>
+        <div class="conquista-info">
+          <div class="conquista-nome">Álbum fitness</div>
+          <div class="conquista-desc">Registre 10 fotos de progresso</div>
+          <div class="conquista-progress"><div class="conquista-progress-fill" id="prog-dez-fotos" style="width:0%"></div></div>
+        </div>
+        <span class="conquista-badge em-progresso" id="badge-dez-fotos">0/10</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- FEEDBACK DO SISTEMA -->
+  <div class="feedback-sistema" id="feedback-sistema">
+    <div class="sistema-card-title">🤖 Sistema Adaptativo</div>
+    <div class="feedback-msg" id="feedback-msg">
+      <span class="feedback-icon">💡</span>
+      <span id="feedback-texto">Aguardando dados para análise...</span>
     </div>
   </div>
 
   <div style="height:1.5rem;"></div>
-</div>
 
-<!-- ═══════════ PROGRESSO ═══════════ -->
-<div id="tela-progresso" class="tela">
-  <div class="prog-header">
-    <span class="prog-title">📸 Novo registro</span>
+  <!-- Campos ocultos usados pelo salvarProgresso (compatibilidade) -->
+  <input type="number" id="prog-peso" style="display:none;">
+  <textarea id="prog-nota" style="display:none;"></textarea>
+  <input type="text" id="prog-frase" style="display:none;">
+  <input type="checkbox" id="prog-publico" style="display:none;">
+
+  <!-- Área de upload oculta (usada pelo perfil via irProgresso) -->
+  <div id="foto-area" style="display:none;position:relative;">
+    <input type="file" id="foto-input" accept="image/*" style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;" onchange="previewFoto(this)">
+    <div id="foto-placeholder"></div>
+    <img id="foto-preview" style="display:none;" alt="Preview">
   </div>
-  <div class="prog-form-card">
-    <div class="foto-upload-area" id="foto-area">
-      <input type="file" id="foto-input" accept="image/*"
-        style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;"
-        onchange="previewFoto(this)">
-      <div id="foto-placeholder">
-        <div class="foto-upload-icon">📷</div>
-        <div class="foto-upload-txt">Toque para adicionar foto (opcional)</div>
-      </div>
-      <img id="foto-preview" style="display:none;width:100%;border-radius:var(--radius-sm);" alt="Preview">
-    </div>
-    <button id="btn-remover-foto" onclick="removerFoto()"
-      style="display:none;background:none;border:none;color:var(--acento);font-size:0.76rem;cursor:pointer;margin-bottom:0.6rem;font-family:var(--font-mono);">
-      ✕ Remover foto
-    </button>
-    <div class="fg">
-      <label>⚖️ Peso atual (kg) *</label>
-      <input type="number" id="prog-peso" placeholder="74.2" step="0.1" min="30" max="300" inputmode="decimal">
-    </div>
-    <div class="fg">
-      <label>📝 Como você está se sentindo?</label>
-      <textarea id="prog-nota" placeholder="Ex: Me sinto mais leve, os jeans estão folgando..."></textarea>
-    </div>
-    <div class="fg">
-      <label>💬 Legenda / frase motivacional</label>
-      <input type="text" id="prog-frase" placeholder="Ex: Cada dia é uma vitória! 💪">
-    </div>
-    <div class="pub-toggle">
-      <input type="checkbox" id="prog-publico">
-      <label for="prog-publico">Compartilhar no feed público</label>
-    </div>
-    <button class="btn-full" onclick="salvarProgresso()" id="btn-salvar-prog">Salvar progresso</button>
-  </div>
+  <button id="btn-remover-foto" onclick="removerFoto()" style="display:none;"></button>
+  <button id="btn-salvar-prog" style="display:none;" onclick="salvarProgresso()"></button>
 </div>
 
 <!-- ═══════════ FEED ═══════════ -->
@@ -2440,80 +2482,6 @@ footer strong{color:rgba(245,242,238,0.8);}
 
 <!-- ═══════════ PLANO ATIVO ═══════════ -->
 <div id="tela-plano" class="tela">
-
-  <!-- FEEDBACK DO SISTEMA -->
-  <div class="feedback-sistema" id="feedback-sistema">
-    <div class="sistema-card-title">🤖 Sistema Adaptativo</div>
-    <div class="feedback-msg" id="feedback-msg">
-      <span class="feedback-icon">💡</span>
-      <span id="feedback-texto">Aguardando dados suficientes para análise...</span>
-    </div>
-  </div>
-
-  <!-- INDICADORES -->
-  <div class="sistema-card" id="sistema-indicadores" style="display:none;">
-    <div class="sistema-card-title">📊 Indicadores do Sistema</div>
-    <div class="indicadores-grid">
-      <div class="indicador-item">
-        <div class="indicador-valor" id="ritmo-atual">—</div>
-        <div class="indicador-label">ritmo / semana</div>
-        <div style="margin-top:4px;" id="status-ritmo"></div>
-      </div>
-      <div class="indicador-item">
-        <div class="indicador-valor" id="precisao-dados">—</div>
-        <div class="indicador-label">precisão dos dados</div>
-      </div>
-      <div class="indicador-item">
-        <div class="indicador-valor" id="score-adesao">—</div>
-        <div class="indicador-label">adesão</div>
-      </div>
-      <div class="indicador-item">
-        <div class="indicador-valor" id="score-progresso">—</div>
-        <div class="indicador-label">progresso</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- SALDO DE MACROS DO DIA -->
-  <div class="saldo-macros" id="saldo-macros" style="display:none;">
-    <div class="saldo-title">⚡ Saldo restante hoje</div>
-    <div class="saldo-bars">
-      <div class="saldo-bar-row saldo-bar-kcal">
-        <div class="saldo-bar-label">Kcal</div>
-        <div class="saldo-bar-track"><div class="saldo-bar-fill" id="bar-kcal" style="width:0%"></div></div>
-        <div class="saldo-bar-val" id="val-kcal">—</div>
-      </div>
-      <div class="saldo-bar-row saldo-bar-prot">
-        <div class="saldo-bar-label">Prot</div>
-        <div class="saldo-bar-track"><div class="saldo-bar-fill" id="bar-prot" style="width:0%"></div></div>
-        <div class="saldo-bar-val" id="val-prot">—</div>
-      </div>
-      <div class="saldo-bar-row saldo-bar-carb">
-        <div class="saldo-bar-label">Carb</div>
-        <div class="saldo-bar-track"><div class="saldo-bar-fill" id="bar-carb" style="width:0%"></div></div>
-        <div class="saldo-bar-val" id="val-carb">—</div>
-      </div>
-      <div class="saldo-bar-row saldo-bar-gord">
-        <div class="saldo-bar-label">Gord</div>
-        <div class="saldo-bar-track"><div class="saldo-bar-fill" id="bar-gord" style="width:0%"></div></div>
-        <div class="saldo-bar-val" id="val-gord">—</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- REGISTRO DE PESO RÁPIDO -->
-  <div class="sistema-card">
-    <div class="sistema-card-title">⚖️ Registro de Peso</div>
-    <div class="peso-rapido">
-      <input type="number" id="peso-input" placeholder="74.2" step="0.1"
-        min="30" max="300" inputmode="decimal">
-      <button id="btn-registrar-peso" onclick="registrarPesoRapido()">Registrar</button>
-    </div>
-    <div class="historico-peso" id="historico-peso">
-      <!-- Preenchido por JS -->
-    </div>
-  </div>
-
   <!-- PLANO ALIMENTAR -->
   <div id="plano-alimentar">
     <div id="plano-ativo-container"></div>
@@ -2803,13 +2771,17 @@ function ir(id){
 function irHero(){ir('hero');escBN();}
 function irAuth(){ir('auth');authTab('login',document.getElementById('tab-login'));escBN();}
 function irAuthCad(){ir('auth');authTab('cadastro',document.getElementById('tab-cad'));escBN();}
-function irPerfil(){ir('perfil');carregarPerfil();carregarSistemaAdaptativo();mosBN();setABN('perfil');}
-function irPlano(){ir('plano');carregarPlanoAtivo();carregarHistoricoPeso();carregarSistemaAdaptativo();mosBN();setABN('plano');}
+function irPerfil(){ir('perfil');carregarPerfil();mosBN();setABN('perfil');}
+function irEvolucao(){ir('progresso');carregarGraficoPerfil();carregarHistoricoPeso();carregarSistemaAdaptativo();mosBN();setABN('progresso');}
+function irPlano(){ir('plano');carregarPlanoAtivo();mosBN();setABN('plano');}
 function irModo(){ir('modo');escBN();}
 function irPlanos(){ir('planos');atualizaCreds();escBN();}
 function irForm(){ir('form');escBN();}
 function irPag(){ir('pag');escBN();}
-function irProgresso(){ir('progresso');mosBN();setABN('progresso');}
+function irProgresso(){
+  // Abre modal de upload direto, sem trocar de tela
+  abrirModalFoto();
+}
 function irFeed(){ir('feed');carregarFeed();mosBN();setABN('feed');}
 function irAdmin(){ir('admin');carregaAdmin();carregarCfgAdmin();escBN();}
 function mosBN(){document.getElementById('bottom-nav').classList.add('show');}
@@ -2822,7 +2794,7 @@ function bnav(t){
   setABN(t);
   if(t==='perfil')irPerfil();
   else if(t==='plano')irPlano();
-  else if(t==='progresso')irProgresso();
+  else if(t==='progresso')irEvolucao();
   else if(t==='feed')irFeed();
   else if(t==='admin')irAdmin();
 }
@@ -3384,7 +3356,16 @@ async function carregarFeed(){
       // Usar template string para evitar problemas com aspas
       div.innerHTML = `
         <div class="feed-post-header">
-          <div class="feed-post-avatar" style="background:${['#C8432A','#2A8A4A','#2563eb','#7c3aed','#b45309'][(p.nome||'U').charCodeAt(0)%5]};color:#fff;font-weight:700;font-size:1rem;">${ini}</div>
+          <div class="feed-post-avatar" style="background:${['#C8432A','#2A8A4A','#2563eb','#7c3aed','#b45309'][(p.nome||'U').charCodeAt(0)%5]};">
+            ${(()=>{
+              // Mostrar foto de perfil se for o usuário logado
+              if(USER && p.usuario_id===USER.id){
+                var pf=ls.get('perfil_'+USER.id)||{};
+                if(pf.foto_url) return '<img src="'+pf.foto_url+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt="'+ini+'">';
+              }
+              return '<span style="color:#fff;font-weight:700;font-size:1rem;">'+ini+'</span>';
+            })()}
+          </div>
           <div style="flex:1;">
             <div class="feed-post-user">${nome}</div>
             <div class="feed-post-data">${new Date(p.criado_em).toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'})}</div>
@@ -3932,6 +3913,24 @@ function atualizarConquistas(conquistas){
 }
 
 // ── CARREGAR DADOS DO SISTEMA NO PERFIL ──────────────
+
+async function carregarGraficoPerfil(){
+  if(!USER) return;
+  try{
+    const progs = await api('/api/progresso?action=meu&usuario_id='+USER.id);
+    const comPeso = (progs||[]).filter(p=>p.peso).map(p=>({
+      peso: Number(p.peso),
+      data: p.criado_em
+    })).reverse();
+    if(comPeso.length >= 2){
+      desenharGrafico(comPeso);
+      document.getElementById('grafico-empty').style.display='none';
+    } else {
+      document.getElementById('grafico-empty').style.display='flex';
+    }
+  }catch(e){ console.warn('grafico:',e); }
+}
+
 async function carregarSistemaAdaptativo(){
   if(!USER || USER.id === 'admin') return;
   carregarHistoricoPeso();
