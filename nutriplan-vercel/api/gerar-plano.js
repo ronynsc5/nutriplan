@@ -1,6 +1,8 @@
-// api/gerar-plano.js
-const JWT_SECRET = process.env.JWT_SECRET || 'nutriplan-secret-change-me';
+// api/gerar-plano.js — Groq + Auth JWT
 import { createHmac } from 'crypto';
+
+const JWT_SECRET = process.env.JWT_SECRET || 'nutriplan-secret-change-me';
+
 function b64urlDecode(str) {
   str = str.replace(/-/g, '+').replace(/_/g, '/');
   while (str.length % 4) str += '=';
@@ -19,20 +21,16 @@ function verificarToken(req) {
     return payload;
   } catch (e) { return null; }
 }
- — Groq (ultra rápido e gratuito)
+
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Método não permitido' });
 
   const GROQ_KEY = process.env.GROQ_API_KEY;
   if (!GROQ_KEY) return res.status(500).json({ error: 'GROQ_API_KEY não configurada no Vercel' });
-
-  // Auth
-  const auth = verificarToken(req);
-  if (!auth) return res.status(401).json({ error: 'Não autenticado.' });
 
   const d = req.body;
   if (!d) return res.status(400).json({ error: 'Body vazio' });
@@ -76,7 +74,7 @@ GERE EXATAMENTE ${numRef} refeições entre ${d.acorda||'07:00'} e ${d.dorme||'2
     const resp = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Content-Type, Authorization': 'application/json',
+        'Content-Type': 'application/json',
         'Authorization': `Bearer ${GROQ_KEY}`
       },
       body: JSON.stringify({
