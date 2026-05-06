@@ -1808,8 +1808,9 @@ footer strong{color:rgba(245,242,238,0.8);}
   box-shadow:var(--sombra-lg);
   transform:translateY(-110%);
   transition:transform 0.3s var(--ease-spring);
+  visibility:hidden;
 }
-.notif-panel.show{transform:translateY(0);}
+.notif-panel.show{transform:translateY(0);visibility:visible;pointer-events:auto;}
 .notif-header{
   display:flex;align-items:center;justify-content:space-between;
   padding:0.8rem 1.2rem;border-bottom:1px solid var(--border);
@@ -2025,6 +2026,12 @@ footer strong{color:rgba(245,242,238,0.8);}
       </div>
     </div>
     <div class="perfil-bio" id="perfil-bio"></div>
+    <div id="perfil-instagram-link" style="display:none;margin-bottom:0.4rem;">
+      <a id="perfil-instagram-a" href="" target="_blank"
+        style="font-size:0.76rem;color:var(--cinza-med);font-family:var(--font-mono);text-decoration:none;">
+        📸 <span id="perfil-instagram-txt"></span>
+      </a>
+    </div>
     <div class="perfil-cred-pill">💳 <span id="perfil-cred">0 créditos</span></div>
     <button class="btn-editar-perfil" onclick="abrirEditarPerfil()">✏️ Editar perfil</button>
   </div>
@@ -2136,7 +2143,7 @@ footer strong{color:rgba(245,242,238,0.8);}
         <button class="grafico-periodo-btn" id="gbtn-ano" onclick="mudarPeriodoGrafico('ano',this)">1a</button>
       </div>
     </div>
-    <div class="grafico-wrap" style="height:160px;">
+    <div class="grafico-wrap" id="grafico-wrap" style="height:180px;">
       <canvas id="grafico-peso" style="width:100%;height:100%;"></canvas>
       <div class="grafico-empty" id="grafico-empty">Registre seu peso para ver o gráfico</div>
     </div>
@@ -2651,7 +2658,7 @@ footer strong{color:rgba(245,242,238,0.8);}
 </div>
 
 <!-- ═══════════ NOTIFICAÇÕES PANEL ═══════════ -->
-<div class="notif-panel" id="notif-panel">
+<div class="notif-panel" id="notif-panel" style="pointer-events:none;">
   <div class="notif-header">
     <span>🔔 NOTIFICAÇÕES</span>
     <button onclick="marcarTodasLidas()" style="background:none;border:none;cursor:pointer;font-size:0.7rem;color:var(--cinza-med);font-family:var(--font-mono);">Marcar todas como lidas</button>
@@ -3014,6 +3021,16 @@ async function carregarPerfil(){
   if(perfil.bio)document.getElementById('perfil-bio').textContent=perfil.bio;
   var bioExtra=document.getElementById('perfil-bio-extra');
   if(bioExtra) bioExtra.textContent=perfil.frase||'';
+  // Instagram
+  var igLink=document.getElementById('perfil-instagram-link');
+  var igTxt=document.getElementById('perfil-instagram-txt');
+  var igA=document.getElementById('perfil-instagram-a');
+  if(igLink&&perfil.instagram){
+    var ig=perfil.instagram.replace('@','');
+    if(igTxt)igTxt.textContent='@'+ig;
+    if(igA)igA.href='https://instagram.com/'+ig;
+    igLink.style.display='block';
+  } else if(igLink){ igLink.style.display='none'; }
   atualizarStatsPerfil();
   if(perfil.foto_url){const av=document.getElementById('perfil-avatar');av.innerHTML=`<img src="${perfil.foto_url}" alt="Avatar">`;}
   if(USER.id==='admin')return;
@@ -3164,8 +3181,16 @@ function desenharGrafico(todos, periodo){
 
   const canvas=document.getElementById('grafico-peso');
   if(!canvas) return;
+
+  // Altura adaptativa por período
+  var wrap=document.getElementById('grafico-wrap');
+  if(wrap){
+    var h = periodo==='semana' ? 180 : periodo==='mes' ? 200 : 220;
+    wrap.style.height=h+'px';
+  }
+
   const ctx=canvas.getContext('2d');
-  const W=canvas.offsetWidth||300,H=canvas.offsetHeight||160;
+  const W=canvas.offsetWidth||300,H=canvas.offsetHeight||180;
   canvas.width=W*2;canvas.height=H*2;ctx.scale(2,2);
 
   if(!pesos.length){
@@ -3207,22 +3232,29 @@ function desenharGrafico(todos, periodo){
   pesos.forEach((p,i)=>{if(i===0)ctx.moveTo(gx(i),gy(p.peso));else ctx.lineTo(gx(i),gy(p.peso));});
   ctx.stroke();
 
-  // Pontos + peso + data
+  // Pontos + peso + data — tamanho adaptativo por período
+  var rPonto = periodo==='semana' ? 4 : periodo==='mes' ? 3 : 2.5;
+  var fontPeso = periodo==='semana' ? 'bold 10px Syne,sans-serif' : 'bold 8px Syne,sans-serif';
+  var fontData = periodo==='semana' ? '9px DM Mono,monospace' : '8px DM Mono,monospace';
+  var maxPts = periodo==='semana' ? 99 : periodo==='mes' ? 8 : 6;
+
   pesos.forEach((p,i)=>{
     const x=gx(i),y=gy(p.peso);
-    // Ponto
-    ctx.beginPath();ctx.arc(x,y,3.5,0,Math.PI*2);ctx.fillStyle=cor;ctx.fill();
-    ctx.beginPath();ctx.arc(x,y,1.8,0,Math.PI*2);
+    // Ponto externo
+    ctx.beginPath();ctx.arc(x,y,rPonto,0,Math.PI*2);ctx.fillStyle=cor;ctx.fill();
+    // Ponto interno (efeito)
+    ctx.beginPath();ctx.arc(x,y,rPonto*0.45,0,Math.PI*2);
     ctx.fillStyle=isDark?'#0D0C0A':'#F5F2EE';ctx.fill();
-    // Peso acima
-    ctx.font='bold 9px Syne,sans-serif';
-    ctx.fillStyle=cor;ctx.textAlign='center';
-    ctx.fillText(p.peso.toFixed(1),x,Math.max(14,y-7));
-    // Data abaixo (só mostrar alguns para não poluir)
-    var mostrarData = n<=7 || i===0 || i===n-1 || i%Math.ceil(n/5)===0;
+    // Peso acima — só mostrar se não poluir
+    var mostrarPeso = n<=maxPts || i===0 || i===n-1;
+    if(mostrarPeso){
+      ctx.font=fontPeso;ctx.fillStyle=cor;ctx.textAlign='center';
+      ctx.fillText(p.peso.toFixed(1),x,Math.max(14,y-(rPonto+6)));
+    }
+    // Data abaixo
+    var mostrarData = n<=7 || i===0 || i===n-1 || i%Math.ceil(n/maxPts)===0;
     if(mostrarData){
-      ctx.font='9px DM Mono,monospace';
-      ctx.fillStyle=corMed;
+      ctx.font=fontData;ctx.fillStyle=corMed;ctx.textAlign='center';
       ctx.fillText(formatarDataGrafico(p.data,periodo),x,H-PAD_BOT+12);
     }
   });
@@ -3247,14 +3279,17 @@ async function salvarPerfil(){
   if(pesoObj) perfil.peso_objetivo=parseFloat(pesoObj);
   if(frasePerfil!==undefined) perfil.frase=frasePerfil;
   ls.set('perfil_'+USER?.id,perfil);
-  // Salvar nome no banco
-  if(nome&&USER&&nome!==USER.nome){
+  // Salvar nome no banco e localmente
+  if(nome&&USER){
+    USER.nome=nome;
+    ls.set('session',USER.email);
+    // Atualizar nome exibido imediatamente
+    var nEl=document.getElementById('perfil-nome');
+    if(nEl)nEl.textContent=nome;
     try{
       await api('/api/usuarios?action=atualizar','PATCH',{id:USER.id,nome});
-      USER.nome=nome;
-      ls.set('session',USER.email);
-    }catch(e){console.warn('Erro ao salvar nome:',e);}
-  } else if(nome&&USER){ USER.nome=nome; }
+    }catch(e){console.warn('API nome:',e.message);}
+  }
   document.getElementById('modal-perfil').classList.remove('show');
   toast('Perfil atualizado!');carregarPerfil();
   atualizarStatsPerfil();
@@ -3535,11 +3570,18 @@ function renderSliderFeed(p){
   ].join('');
 }
 
-function renderComentariosList(comentarios){
-  if(!comentarios||!comentarios.length)return '';
-  return comentarios.map(function(c){
+function renderComentariosList(comentarios, pid){
+  // Mesclar API + cache local
+  var local=pid?(ls.get('coms_'+pid)||[]):[];
+  var todos=[...(comentarios||[]),...local];
+  // Deduplicar por texto+nome
+  var vistos=new Set();
+  todos=todos.filter(c=>{var k=(c.nome||'')+(c.texto||'');if(vistos.has(k))return false;vistos.add(k);return true;});
+  if(!todos.length)return '';
+  return todos.map(function(c){
+    var cor=['#C8432A','#2A8A4A','#2563eb','#7c3aed','#b45309'][(c.nome||'?').charCodeAt(0)%5];
     return '<div class="comentario-item">'+
-      '<div class="comentario-avatar" style="background:'+(['#C8432A','#2A8A4A','#2563eb','#7c3aed','#b45309'][(c.nome||'?').charCodeAt(0)%5])+'">'+(c.nome?c.nome[0].toUpperCase():'?')+'</div>'+
+      '<div class="comentario-avatar" style="background:'+cor+'">'+(c.nome?c.nome[0].toUpperCase():'?')+'</div>'+
       '<div class="comentario-body">'+
         '<div class="comentario-user">'+(c.nome||'Usuário')+'</div>'+
         '<div class="comentario-txt">'+c.texto+'</div>'+
@@ -3563,10 +3605,29 @@ async function enviarComentario(pid){
   if(!texto||!USER)return;
   var nome=USER.nome||'Usuário';
   inp.value='';
+  // Adicionar visualmente imediatamente
+  var cor=['#C8432A','#2A8A4A','#2563eb','#7c3aed','#b45309'][nome.charCodeAt(0)%5];
   var item=document.createElement('div');item.className='comentario-item';
-  item.innerHTML='<div class="comentario-avatar">'+nome[0].toUpperCase()+'</div><div class="comentario-body"><div class="comentario-user">'+nome+'</div><div class="comentario-txt">'+texto+'</div></div>';
+  item.innerHTML='<div class="comentario-avatar" style="background:'+cor+'">'+nome[0].toUpperCase()+'</div>'+
+    '<div class="comentario-body"><div class="comentario-user">'+nome+'</div>'+
+    '<div class="comentario-txt">'+texto+'</div></div>';
   listEl.appendChild(item);
-  try{await api('/api/comentarios?action=salvar','POST',{progresso_id:pid,usuario_id:USER.id,nome,texto});}catch(e){}
+  // Salvar localmente para persistir
+  var KEY='coms_'+pid;
+  var coms=ls.get(KEY)||[];
+  coms.push({nome,texto,data:new Date().toISOString(),usuario_id:USER.id});
+  if(coms.length>20)coms=coms.slice(-20);
+  ls.set(KEY,coms);
+  // Enviar para API (silencioso se falhar)
+  try{
+    await api('/api/comentarios?action=salvar','POST',{
+      post_id:pid,
+      progresso_id:pid,
+      usuario_id:USER.id,
+      nome:nome,
+      texto:texto
+    });
+  }catch(e){console.warn('Comentario API:',e.message);}
 }
 
 async function carregarFeed(){
@@ -3645,7 +3706,7 @@ async function carregarFeed(){
           <button class="feed-action-btn" data-pid="${p.id}" data-action="comentar">💬 Comentar</button>
         </div>
         <div class="comentarios-section" id="coms-${p.id}" style="display:none;">
-          <div id="coms-list-${p.id}" style="padding:0 1.2rem;">${renderComentariosList(p.comentarios)}</div>
+          <div id="coms-list-${p.id}" style="padding:0 1.2rem;">${renderComentariosList(p.comentarios,p.id)}</div>
           <div class="add-comentario">
             <input type="text" placeholder="Comentar..." id="com-input-${p.id}">
             <button data-pid="${p.id}" data-action="enviar">Enviar</button>
@@ -4363,7 +4424,8 @@ function atualizarBadgeNotif(){
 function toggleNotificacoes(){
   var panel = document.getElementById('notif-panel');
   var aberto = panel.classList.contains('show');
-  if(aberto){ panel.classList.remove('show'); return; }
+  if(aberto){ panel.classList.remove('show'); panel.style.pointerEvents='none'; return; }
+  panel.style.pointerEvents='auto';
   renderNotificacoes();
   panel.classList.add('show');
   // Fechar ao clicar fora
