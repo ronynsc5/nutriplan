@@ -2745,7 +2745,17 @@ footer strong{color:rgba(245,242,238,0.8);}
     <div class="fv-nota" id="fv-nota"></div>
     <div class="fv-acts" id="fv-acts-owner" style="display:none;">
       <button class="fv-btn fv-btn-toggle" id="fv-btn-toggle" onclick="toggleVisibilidade()">Tornar público</button>
-      <button class="fv-btn fv-btn-del" onclick="apagarDoViewer()">Apagar</button>
+      <button class="fv-btn" onclick="editarPostViewer()" style="background:rgba(255,255,255,0.12);color:#fff;">✏️ Editar</button>
+      <button class="fv-btn fv-btn-del" onclick="apagarDoViewer()">🗑 Apagar</button>
+    </div>
+    <!-- Modal de edição inline no viewer -->
+    <div id="fv-edit-form" style="display:none;padding:0.8rem;background:rgba(0,0,0,0.5);border-top:1px solid rgba(255,255,255,0.1);">
+      <textarea id="fv-edit-nota" placeholder="Legenda / nota..." rows="2"
+        style="width:100%;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:8px;padding:8px;color:#fff;font-size:0.84rem;resize:none;font-family:var(--font-ui);box-sizing:border-box;"></textarea>
+      <div style="display:flex;gap:0.5rem;margin-top:0.5rem;">
+        <button onclick="salvarEdicaoPost()" style="flex:1;background:var(--verde);color:#fff;border:none;border-radius:50px;padding:8px;font-size:0.8rem;font-weight:700;cursor:pointer;font-family:var(--font-ui);">Salvar</button>
+        <button onclick="fecharEdicaoPost()" style="flex:1;background:rgba(255,255,255,0.1);color:#fff;border:none;border-radius:50px;padding:8px;font-size:0.8rem;cursor:pointer;font-family:var(--font-ui);">Cancelar</button>
+      </div>
     </div>
   </div>
 </div>
@@ -3379,6 +3389,44 @@ async function toggleVisibilidade(){
   p.publico=novo;fecharViewer();
   toast(novo?'Agora público!':'Agora privado!');carregarPerfil();
 }
+
+function editarPostViewer(){
+  var id=document.getElementById('foto-viewer').dataset.postId;
+  var p=window.PROGS_CACHE&&window.PROGS_CACHE[id];
+  if(!p)return;
+  var form=document.getElementById('fv-edit-form');
+  var nota=document.getElementById('fv-edit-nota');
+  if(nota) nota.value=p.nota||p.conteudo||'';
+  form.style.display='block';
+}
+function fecharEdicaoPost(){
+  document.getElementById('fv-edit-form').style.display='none';
+}
+async function salvarEdicaoPost(){
+  var id=document.getElementById('foto-viewer').dataset.postId;
+  var p=window.PROGS_CACHE&&window.PROGS_CACHE[id];
+  var nota=document.getElementById('fv-edit-nota').value.trim();
+  if(!p)return;
+  try{
+    await api('/api/progresso?action=editar','PATCH',{
+      id,
+      usuario_id:USER.id,
+      nota,
+      conteudo:nota
+    });
+    // Atualizar cache local
+    p.nota=nota;p.conteudo=nota;
+    window.PROGS_CACHE[id]=p;
+    // Atualizar texto no viewer
+    var notaEl=document.getElementById('fv-nota');
+    if(notaEl) notaEl.textContent=nota;
+    fecharEdicaoPost();
+    toast('✅ Post atualizado!');
+    // Recarregar perfil para refletir mudança
+    setTimeout(()=>carregarPerfil(),500);
+  }catch(e){toast('Erro ao salvar.');}
+}
+
 async function apagarDoViewer(){
   var id=document.getElementById('foto-viewer').dataset.postId;
   if(!confirm('Apagar este post?'))return;
@@ -3571,22 +3619,78 @@ function renderSliderFeed(p){
 }
 
 function renderComentariosList(comentarios, pid){
-  // Mesclar API + cache local
   var local=pid?(ls.get('coms_'+pid)||[]):[];
   var todos=[...(comentarios||[]),...local];
-  // Deduplicar por texto+nome
   var vistos=new Set();
   todos=todos.filter(c=>{var k=(c.nome||'')+(c.texto||'');if(vistos.has(k))return false;vistos.add(k);return true;});
   if(!todos.length)return '';
-  return todos.map(function(c){
+  return todos.map(function(c,i){
     var cor=['#C8432A','#2A8A4A','#2563eb','#7c3aed','#b45309'][(c.nome||'?').charCodeAt(0)%5];
-    return '<div class="comentario-item">'+
+    var isOwn=USER&&(c.usuario_id===USER.id||c.nome===USER.nome);
+    var acoes=isOwn?
+      '<div style="display:flex;gap:4px;margin-top:3px;">'+
+        '<button data-pid="'+pid+'" data-idx="'+i+'" onclick="editarComentario(this.dataset.pid,this.dataset.idx,this)" style="background:none;border:none;color:var(--cinza-med);font-size:0.65rem;cursor:pointer;font-family:var(--font-mono);">✏️ editar</button>'+
+        '<button data-pid="'+pid+'" data-idx="'+i+'" onclick="apagarComentario(this.dataset.pid,this.dataset.idx,this)" style="background:none;border:none;color:var(--acento);font-size:0.65rem;cursor:pointer;font-family:var(--font-mono);">🗑 apagar</button>'+
+      '</div>':'';
+    return '<div class="comentario-item" data-idx="'+i+'" data-pid="'+pid+'">'+
       '<div class="comentario-avatar" style="background:'+cor+'">'+(c.nome?c.nome[0].toUpperCase():'?')+'</div>'+
-      '<div class="comentario-body">'+
+      '<div class="comentario-body" style="flex:1;">'+
         '<div class="comentario-user">'+(c.nome||'Usuário')+'</div>'+
-        '<div class="comentario-txt">'+c.texto+'</div>'+
+        '<div class="comentario-txt" id="ctxt-'+pid+'-'+i+'">'+c.texto+'</div>'+
+        acoes+
       '</div></div>';
   }).join('');
+}
+
+function editarComentario(pid, idx, btnEl){
+  var txtEl=document.getElementById('ctxt-'+pid+'-'+idx);
+  if(!txtEl)return;
+  var textoAtual=txtEl.textContent;
+  // Substituir texto por input (DOM puro, sem aspas inline)
+  var inp2=document.createElement('input');
+  inp2.type='text';inp2.value=textoAtual;
+  inp2.style.cssText='width:100%;border:1px solid var(--cinza-cla);border-radius:6px;padding:4px 8px;font-size:0.82rem;background:var(--cinza-bg);color:var(--preto);box-sizing:border-box;';
+  var div2=document.createElement('div');div2.style.cssText='display:flex;gap:4px;margin-top:4px;';
+  var bs=document.createElement('button');bs.textContent='Salvar';
+  bs.style.cssText='background:var(--verde);color:#fff;border:none;border-radius:50px;padding:3px 10px;font-size:0.7rem;cursor:pointer;';
+  bs.onclick=(function(p,ix,el,inp){return function(){confirmarEdicaoCom(p,ix,inp.value);};})(pid,idx,txtEl,inp2);
+  var bc=document.createElement('button');bc.textContent='Cancelar';
+  bc.style.cssText='background:var(--cinza-bg);color:var(--cinza-med);border:none;border-radius:50px;padding:3px 10px;font-size:0.7rem;cursor:pointer;';
+  bc.onclick=(function(el,txt){return function(){el.textContent=txt;};})(txtEl,textoAtual);
+  div2.appendChild(bs);div2.appendChild(bc);
+  txtEl.innerHTML='';txtEl.appendChild(inp2);txtEl.appendChild(div2);
+}
+
+function cancelarEdicaoCom(pid, idx, textoOriginal){
+  var txtEl=document.getElementById('ctxt-'+pid+'-'+idx);
+  if(txtEl) txtEl.textContent=textoOriginal;
+}
+
+function confirmarEdicaoCom(pid, idx, novoTexto){
+  var txtEl=document.getElementById('ctxt-'+pid+'-'+idx);
+  if(!txtEl)return;
+  novoTexto=(novoTexto||'').trim();
+  if(!novoTexto)return;
+  // Atualizar cache local
+  var KEY='coms_'+pid;
+  var coms=ls.get(KEY)||[];
+  if(coms[idx])coms[idx].texto=novoTexto;
+  ls.set(KEY,coms);
+  txtEl.textContent=novoTexto;
+  toast('Comentário atualizado!');
+}
+
+function apagarComentario(pid, idx, btnEl){
+  if(!confirm('Apagar este comentário?'))return;
+  // Remover do cache local
+  var KEY='coms_'+pid;
+  var coms=ls.get(KEY)||[];
+  if(coms[idx])coms.splice(idx,1);
+  ls.set(KEY,coms);
+  // Remover da UI
+  var item=btnEl.closest('.comentario-item');
+  if(item) item.remove();
+  toast('Comentário apagado!');
 }
 
 function toggleComentarios(pid){
@@ -4315,8 +4419,10 @@ async function carregarGraficoPerfil(){
   try{
     // Buscar da API os registros com peso
     const progs = await api('/api/progresso?action=meu&usuario_id='+USER.id);
+    // Pegar QUALQUER registro que tenha peso — independente do tipo
+    // (registros antigos podem ter tipo='progresso' mas ter peso)
     var doApi = (progs||[])
-      .filter(p=>p.peso&&p.tipo==='peso')
+      .filter(p=>p.peso && Number(p.peso)>0)
       .map(p=>({peso:Number(p.peso),data:p.criado_em}))
       .reverse();
 
@@ -4324,12 +4430,15 @@ async function carregarGraficoPerfil(){
     var KEY='historico_peso_'+USER.id;
     var local=(ls.get(KEY)||[]).map(p=>({peso:Number(p.peso),data:p.data}));
 
-    // Merge e deduplicar por dia
+    // Merge, pegar o ÚLTIMO registro de cada dia, ordenar
     var todos=[...doApi,...local];
-    var vistos=new Set();
-    todos = todos
-      .filter(p=>{var d=p.data.slice(0,10);if(vistos.has(d))return false;vistos.add(d);return true;})
-      .sort((a,b)=>new Date(a.data)-new Date(b.data));
+    // Agrupar por dia — manter o mais recente de cada dia
+    var porDia={};
+    todos.forEach(p=>{
+      var d=p.data.slice(0,10);
+      if(!porDia[d]||new Date(p.data)>new Date(porDia[d].data)) porDia[d]=p;
+    });
+    todos=Object.values(porDia).sort((a,b)=>new Date(a.data)-new Date(b.data));
 
     if(todos.length>=1){
       desenharGrafico(todos, GRAFICO_PERIODO||'semana');
