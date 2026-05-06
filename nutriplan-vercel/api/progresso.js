@@ -1,45 +1,37 @@
 // api/progresso.js
 
-import { createHmac } from 'crypto';
+
 const JWT_SECRET = process.env.JWT_SECRET || 'nutriplan-secret-change-me';
 
-function b64urlDecode(str) {
-  str = str.replace(/-/g, '+').replace(/_/g, '/');
-  while (str.length % 4) str += '=';
-  return Buffer.from(str, 'base64').toString('utf8');
+// HMAC-SHA256 via Node crypto — compatível com ES Module sem import
+async function hmacSha256(secret, msg) {
+  const enc = new TextEncoder();
+  const key = await globalThis.crypto.subtle.importKey(
+    'raw', enc.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']
+  );
+  const sig = await globalThis.crypto.subtle.sign('HMAC', key, enc.encode(msg));
+  return Buffer.from(sig).toString('base64url');
 }
-function verificarToken(req) {
+
+function b64uDec(s) {
+  s = s.replace(/-/g,'+').replace(/_/g,'/');
+  while(s.length%4) s+='=';
+  return Buffer.from(s,'base64').toString('utf8');
+}
+
+async function verificarToken(req) {
   try {
     const header = req.headers['authorization'] || '';
     const token  = header.startsWith('Bearer ') ? header.slice(7) : null;
     if (!token) return null;
     const [h, b, sig] = token.split('.');
-    const esperado = createHmac('sha256', JWT_SECRET)
-      .update(h + '.' + b).digest('base64url');
+    const esperado = await hmacSha256(JWT_SECRET, h + '.' + b);
     if (sig !== esperado) return null;
-    const payload = JSON.parse(b64urlDecode(b));
+    const payload = JSON.parse(b64uDec(b));
     if (payload.exp && Date.now() / 1000 > payload.exp) return null;
     return payload;
   } catch (e) { return null; }
 }
-
-const JWT_SECRET = process.env.JWT_SECRET || 'nutriplan-secret-change-me';
-
-function verificarToken(req) {
-  try {
-    const header = req.headers['authorization'] || '';
-    const token  = header.startsWith('Bearer ') ? header.slice(7) : null;
-    if (!token) return null;
-    const [h, b, sig] = token.split('.');
-    const esperado = createHmac('sha256', JWT_SECRET).update(`${h}.${b}`).digest('base64url');
-    if (sig !== esperado) return null;
-    const payload = JSON.parse(b64urlDecode(b));
-    if (payload.exp && Date.now() / 1000 > payload.exp) return null;
-    return payload;
-  } catch (e) { return null; }
-}
-
-// Inclui: registro de progresso/fotos + sistema de conquistas (v2)
 
 const SUPA_URL = process.env.SUPABASE_URL;
 const SUPA_KEY = process.env.SUPABASE_SECRET_KEY;
@@ -84,7 +76,7 @@ export default async function handler(req, res) {
   // Rotas públicas (sem auth)
   const PUBLICAS = ['feed'];
   if (!PUBLICAS.includes(action)) {
-    const auth = verificarToken(req);
+    const auth = await verificarToken(req);
     if (!auth) return res.status(401).json({ error: 'Não autenticado.' });
     // Validar que usuario_id pertence ao token
     const uid = usuario_id || req.body?.usuario_id;
