@@ -74,6 +74,19 @@ export default async function handler(req,res) {
       await supa(`progresso?id=eq.${id}&usuario_id=eq.${uid}`,'DELETE');
       return res.status(200).json({ok:true});
     }
+    // ── EDITAR post (nota/legenda) ─────────────────────────────────────────
+    if(action==='editar'&&req.method==='PATCH') {
+      const id=req.query.id||req.body?.id;
+      const uid=req.body?.usuario_id;
+      if(!id||!uid) return res.status(400).json({error:'id e usuario_id obrigatórios'});
+      if(uid!==auth.sub&&!auth.is_admin) return res.status(403).json({error:'Acesso negado.'});
+      const updates={};
+      if(req.body.nota!==undefined) updates.nota=req.body.nota;
+      if(req.body.conteudo!==undefined) updates.conteudo=req.body.conteudo;
+      await supa(`progresso?id=eq.${id}&usuario_id=eq.${uid}`,'PATCH',updates);
+      return res.status(200).json({ok:true});
+    }
+
     if(action==='visibilidade'&&req.method==='PATCH') {
       const id=req.query.id||req.body?.id;
       const uid=req.query.uid||req.body?.usuario_id;
