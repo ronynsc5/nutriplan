@@ -99,6 +99,18 @@ export default async function handler(req, res) {
       const u = await supa('usuarios?is_admin=eq.false&select=id,nome,email,creditos,modo,criado_em&order=criado_em.desc');
       return res.status(200).json(u||[]);
     }
+    // ── ATUALIZAR PERFIL (nome, bio) ────────────────────────────────────────
+    if(action==='atualizar' && req.method==='PATCH') {
+      const {id, nome, bio} = req.body;
+      if(id !== auth.sub && !auth.is_admin) return res.status(403).json({error:'Acesso negado.'});
+      const updates = {};
+      if(nome) updates.nome = nome;
+      if(bio !== undefined) updates.bio = bio;
+      if(!Object.keys(updates).length) return res.status(400).json({error:'Nada para atualizar'});
+      await supa(`usuarios?id=eq.${id}`,'PATCH', updates);
+      return res.status(200).json({ok:true});
+    }
+
     return res.status(400).json({error:`Ação inválida: ${action}`});
   } catch(err) {
     console.error('Usuarios error:',err);
