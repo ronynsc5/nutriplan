@@ -1,13 +1,38 @@
-// api/gerar-plano.js — Groq (ultra rápido e gratuito)
+// api/gerar-plano.js
+const JWT_SECRET = process.env.JWT_SECRET || 'nutriplan-secret-change-me';
+import { createHmac } from 'crypto';
+function b64urlDecode(str) {
+  str = str.replace(/-/g, '+').replace(/_/g, '/');
+  while (str.length % 4) str += '=';
+  return Buffer.from(str, 'base64').toString('utf8');
+}
+function verificarToken(req) {
+  try {
+    const header = req.headers['authorization'] || '';
+    const token  = header.startsWith('Bearer ') ? header.slice(7) : null;
+    if (!token) return null;
+    const [h, b, sig] = token.split('.');
+    const esperado = createHmac('sha256', JWT_SECRET).update(`${h}.${b}`).digest('base64url');
+    if (sig !== esperado) return null;
+    const payload = JSON.parse(b64urlDecode(b));
+    if (payload.exp && Date.now() / 1000 > payload.exp) return null;
+    return payload;
+  } catch (e) { return null; }
+}
+ — Groq (ultra rápido e gratuito)
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Método não permitido' });
 
   const GROQ_KEY = process.env.GROQ_API_KEY;
   if (!GROQ_KEY) return res.status(500).json({ error: 'GROQ_API_KEY não configurada no Vercel' });
+
+  // Auth
+  const auth = verificarToken(req);
+  if (!auth) return res.status(401).json({ error: 'Não autenticado.' });
 
   const d = req.body;
   if (!d) return res.status(400).json({ error: 'Body vazio' });
@@ -51,7 +76,7 @@ GERE EXATAMENTE ${numRef} refeições entre ${d.acorda||'07:00'} e ${d.dorme||'2
     const resp = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type, Authorization': 'application/json',
         'Authorization': `Bearer ${GROQ_KEY}`
       },
       body: JSON.stringify({
