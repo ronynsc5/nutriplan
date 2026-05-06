@@ -1960,9 +1960,15 @@ footer strong{color:rgba(245,242,238,0.8);}
           </div>
           <div class="pstat">
             <div class="pstat-num" id="pstat-perda">—</div>
-            <div class="pstat-label">variação</div>
+            <div class="pstat-label" id="pstat-perda-label">kg perdidos</div>
+          </div>
+          <div class="pstat" id="pstat-obj-wrap" style="display:none;">
+            <div class="pstat-num" id="pstat-obj">—</div>
+            <div class="pstat-label">do objetivo</div>
           </div>
         </div>
+        <!-- Texto livre do perfil -->
+        <div class="perfil-bio" id="perfil-bio-extra" style="margin-top:0.4rem;font-size:0.78rem;color:var(--cinza-med);font-family:var(--font-mono);padding:0 0.5rem;text-align:center;"></div>
       </div>
     </div>
     <div class="perfil-bio" id="perfil-bio"></div>
@@ -2647,11 +2653,22 @@ footer strong{color:rgba(245,242,238,0.8);}
     <span class="fv-title" id="fv-title">Registro</span>
     <div style="width:36px;"></div>
   </div>
-  <div class="fv-img-wrap"><img id="fv-img" src="" alt=""></div>
+  <!-- Foto normal -->
+  <div class="fv-img-wrap" id="fv-img-wrap"><img id="fv-img" src="" alt=""></div>
+  <!-- Slider ADP -->
+  <div id="fv-adp-wrap" style="display:none;position:relative;width:100%;aspect-ratio:1;overflow:hidden;user-select:none;touch-action:none;">
+    <img id="fv-adp-depois" src="" alt="Depois" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">
+    <img id="fv-adp-antes" src="" alt="Antes" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;clip-path:inset(0 50% 0 0);">
+    <div id="fv-adp-divider" style="position:absolute;top:0;bottom:0;left:50%;width:3px;background:#fff;transform:translateX(-50%);z-index:10;pointer-events:none;box-shadow:0 0 8px rgba(0,0,0,0.5);">
+      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:14px;color:#333;box-shadow:0 2px 8px rgba(0,0,0,0.3);">⇔</div>
+    </div>
+    <div style="position:absolute;bottom:10px;left:12px;background:rgba(0,0,0,0.55);color:#fff;font-size:0.65rem;font-weight:700;padding:3px 10px;border-radius:50px;font-family:var(--font-mono);backdrop-filter:blur(4px);">ANTES</div>
+    <div style="position:absolute;bottom:10px;right:12px;background:rgba(0,0,0,0.55);color:#fff;font-size:0.65rem;font-weight:700;padding:3px 10px;border-radius:50px;font-family:var(--font-mono);backdrop-filter:blur(4px);">DEPOIS</div>
+  </div>
   <div class="fv-footer">
     <div class="fv-meta" id="fv-meta"></div>
     <div class="fv-nota" id="fv-nota"></div>
-    <div class="fv-acts">
+    <div class="fv-acts" id="fv-acts-owner" style="display:none;">
       <button class="fv-btn fv-btn-toggle" id="fv-btn-toggle" onclick="toggleVisibilidade()">Tornar público</button>
       <button class="fv-btn fv-btn-del" onclick="apagarDoViewer()">Apagar</button>
     </div>
@@ -2927,24 +2944,49 @@ async function carregarPerfil(){
   document.getElementById('perfil-cred').textContent=c+(c===1?' crédito':' créditos');
   const perfil=ls.get('perfil_'+USER.id)||{};
   if(perfil.bio)document.getElementById('perfil-bio').textContent=perfil.bio;
+  var bioExtra=document.getElementById('perfil-bio-extra');
+  if(bioExtra) bioExtra.textContent=perfil.frase||'';
+  atualizarStatsPerfil();
   if(perfil.foto_url){const av=document.getElementById('perfil-avatar');av.innerHTML=`<img src="${perfil.foto_url}" alt="Avatar">`;}
   if(USER.id==='admin')return;
   try{
-    const progs=await api('/api/progresso?action=meu&usuario_id='+USER.id);
+    const todosProgs=await api('/api/progresso?action=meu&usuario_id='+USER.id);
+    // Grid só mostra posts com foto (não registros internos de peso)
+    const progs=(todosProgs||[]).filter(p=>p.foto_url||p.foto_antes||p.foto_depois);
     const pub=progs.filter(p=>p.publico);
     const priv=progs.filter(p=>!p.publico);
     document.getElementById('pstat-posts').textContent=progs.length;
-    const comPeso=progs.filter(p=>p.peso).sort((a,b)=>new Date(b.criado_em)-new Date(a.criado_em));
+    // Atualizar stats de peso no perfil
+    const comPeso=(todosProgs||[]).filter(p=>p.peso&&p.tipo==='peso');
     if(comPeso.length>0){
-      document.getElementById('pstat-peso').textContent=parseFloat(comPeso[0].peso).toFixed(1)+'kg';
-      if(comPeso.length>1){
-        const diff=comPeso[0].peso-comPeso[comPeso.length-1].peso;
-        document.getElementById('pstat-perda').textContent=(diff>0?'+':'')+diff.toFixed(1)+'kg';
-      }
+      const pesoAtual=Number(comPeso[0].peso);
+      const pesoInicial=Number(comPeso[comPeso.length-1].peso);
+      document.getElementById('pstat-peso').textContent=pesoAtual.toFixed(1);
+      const variacao=pesoInicial-pesoAtual;
+      const el=document.getElementById('pstat-perda');
+      const labelEl=document.getElementById('pstat-perda-label');
+      if(variacao>0){el.textContent='-'+variacao.toFixed(1)+'kg';if(labelEl)labelEl.textContent='kg perdidos';}
+      else if(variacao<0){el.textContent='+'+Math.abs(variacao).toFixed(1)+'kg';if(labelEl)labelEl.textContent='kg ganhos';}
+      else el.textContent='0kg';
+      // % objetivo — busca peso objetivo do plano
+      try{
+        const planos=await api('/api/planos?action=meu&usuario_id='+USER.id);
+        const plano=(planos&&planos.length)?planos[0]:null;
+        const pesoObj=plano&&plano.dados_form&&plano.dados_form.peso_objetivo?Number(plano.dados_form.peso_objetivo):null;
+        if(pesoObj&&pesoInicial&&pesoObj!==pesoInicial){
+          const totalMeta=Math.abs(pesoInicial-pesoObj);
+          const atingido=Math.abs(pesoAtual-pesoObj);
+          const pct=Math.max(0,Math.min(100,Math.round((1-(atingido/totalMeta))*100)));
+          document.getElementById('pstat-obj').textContent=pct+'%';
+          document.getElementById('pstat-obj-wrap').style.display='';
+        }
+      }catch(e){}
     }
-    const pesos=comPeso.slice(0,10).reverse();
-    if(pesos.length>1)desenharGrafico(pesos);
-    else document.getElementById('grafico-empty').style.display='block';
+    // Texto livre — bio extra (campo livre no editar perfil)
+    const perfilLocal=ls.get('perfil_'+USER.id)||{};
+    const bioExtra=document.getElementById('perfil-bio-extra');
+    if(bioExtra&&perfilLocal.bio_extra){bioExtra.textContent=perfilLocal.bio_extra;}
+    // stats de peso tratados acima
     renderGrid('posts-grid-pub',pub);
     if(priv.length>0){document.getElementById('privados-section').style.display='block';renderGrid('posts-grid-priv',priv);}
   }catch(e){console.error(e);}
@@ -2958,6 +3000,8 @@ function renderGrid(id,progs){
     el.textContent='Nenhum post ainda';grid.appendChild(el);return;
   }
   if(!window.PROGS_CACHE)window.PROGS_CACHE={};
+  // Filtrar: só mostra fotos e slides (não registros de peso)
+  progs = progs.filter(function(p){ return p.tipo!=='peso' && (p.foto_url||p.foto_antes||p.foto_depois); });
   progs.forEach(function(p){
     window.PROGS_CACHE[p.id]=p;
     var isADP=p.tipo==='antes_depois'&&p.foto_antes&&p.foto_depois;
@@ -2966,10 +3010,19 @@ function renderGrid(id,progs){
     thumb.style.position='relative';
 
     if(isADP){
-      // Slider miniatura no grid do perfil
+      // Slider miniatura + clicável para abrir viewer
       var pid='mini-'+p.id;
       thumb.style.overflow='hidden';
-      thumb.style.cursor='ew-resize';
+      thumb.style.cursor='pointer';
+      (function(pid2){
+        thumb.addEventListener('click',function(e){
+          // Se arrastar, não abre viewer
+          if(Math.abs(e.screenX-(thumb._downX||e.screenX))>5) return;
+          verPost(pid2);
+        });
+        thumb.addEventListener('mousedown',function(e){thumb._downX=e.screenX;});
+        thumb.addEventListener('touchstart',function(e){thumb._downX=e.touches[0].screenX;},{passive:true});
+      })(p.id);
       thumb.innerHTML=
         '<img style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;" src="'+p.foto_depois+'" alt="Depois">'+
         '<img id="sdi-'+pid+'" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;clip-path:inset(0 50% 0 0);" src="'+p.foto_antes+'" alt="Antes">'+
@@ -3057,17 +3110,24 @@ function abrirEditarPerfil(){
   document.getElementById('edit-nome').value=USER?.nome||'';
   document.getElementById('edit-bio').value=perfil.bio||'';
   document.getElementById('edit-instagram').value=perfil.instagram||'';
+  if(document.getElementById('edit-peso-obj')) document.getElementById('edit-peso-obj').value=perfil.peso_objetivo||'';
+  if(document.getElementById('edit-frase-perfil')) document.getElementById('edit-frase-perfil').value=perfil.frase||'';
   document.getElementById('modal-perfil').classList.add('show');
 }
 function salvarPerfil(){
   const nome=document.getElementById('edit-nome').value.trim();
   const bio=document.getElementById('edit-bio').value.trim();
   const instagram=document.getElementById('edit-instagram').value.trim();
+  const pesoObj=document.getElementById('edit-peso-obj')?.value.trim();
+  const frasePerfil=document.getElementById('edit-frase-perfil')?.value.trim();
   const perfil={...ls.get('perfil_'+USER?.id)||{},bio,instagram};
+  if(pesoObj) perfil.peso_objetivo=parseFloat(pesoObj);
+  if(frasePerfil!==undefined) perfil.frase=frasePerfil;
   ls.set('perfil_'+USER?.id,perfil);
   if(nome&&USER)USER.nome=nome;
   document.getElementById('modal-perfil').classList.remove('show');
   toast('Perfil atualizado!');carregarPerfil();
+  atualizarStatsPerfil();
 }
 function editarFotoPerfil(){
   const input=document.createElement('input');input.type='file';input.accept='image/*';
@@ -3081,24 +3141,69 @@ function editarFotoPerfil(){
   };input.click();
 }
 
-function verPost(id){
+function verPost(id, mostrarBotoes){
   if(!window.PROGS_CACHE||!window.PROGS_CACHE[id]){toast('Carregando...');return;}
   var p=window.PROGS_CACHE[id];
-  if(!p.foto_url){toast('Sem foto neste registro');return;}
-  document.getElementById('fv-img').src=p.foto_url;
+  var isADP=p.tipo==='antes_depois'&&p.foto_antes&&p.foto_depois;
+  if(!p.foto_url&&!isADP){toast('Sem foto neste registro');return;}
+
   var data=new Date(p.criado_em).toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
   document.getElementById('fv-title').textContent=data;
+
+  // Mostrar slider ADP ou foto normal
+  var imgWrap=document.getElementById('fv-img-wrap');
+  var adpWrap=document.getElementById('fv-adp-wrap');
+  if(isADP){
+    imgWrap.style.display='none';
+    adpWrap.style.display='block';
+    document.getElementById('fv-adp-antes').src=p.foto_antes;
+    document.getElementById('fv-adp-depois').src=p.foto_depois;
+    iniciarSliderViewer();
+  }else{
+    adpWrap.style.display='none';
+    imgWrap.style.display='block';
+    document.getElementById('fv-img').src=p.foto_url;
+  }
+
   var metaEl=document.getElementById('fv-meta');metaEl.innerHTML='';
   if(p.peso){var m1=document.createElement('div');m1.className='fv-meta-item';m1.innerHTML='<div class="fv-meta-val">'+p.peso+'kg</div><div class="fv-meta-label">peso</div>';metaEl.appendChild(m1);}
-  var m2=document.createElement('div');m2.className='fv-meta-item';m2.innerHTML='<div class="fv-meta-val">'+(p.publico?'público':'privado')+'</div><div class="fv-meta-label">visibilidade</div>';metaEl.appendChild(m2);
+  if(isADP){var m0=document.createElement('div');m0.className='fv-meta-item';m0.innerHTML='<div class="fv-meta-val">A/D</div><div class="fv-meta-label">slide</div>';metaEl.prepend(m0);}
   document.getElementById('fv-nota').textContent=p.nota||p.conteudo||'';
-  var btn=document.getElementById('fv-btn-toggle');
-  btn.textContent=p.publico?'Tornar privado':'Tornar público';
-  btn.className='fv-btn fv-btn-toggle'+(p.publico?' pub':'');
+
+  // Botões de ação só para o dono do post
+  var actsEl=document.getElementById('fv-acts-owner');
+  var isOwner=mostrarBotoes!==false&&USER&&p.usuario_id===USER.id;
+  actsEl.style.display=isOwner?'flex':'none';
+  if(isOwner){
+    var btn=document.getElementById('fv-btn-toggle');
+    btn.textContent=p.publico?'Tornar privado':'Tornar público';
+    btn.className='fv-btn fv-btn-toggle'+(p.publico?' pub':'');
+  }
+
   var viewer=document.getElementById('foto-viewer');
   viewer.dataset.postId=id;
   viewer.classList.add('show');
   document.body.style.overflow='hidden';
+}
+
+// Slider interativo no viewer
+function iniciarSliderViewer(){
+  var wrap=document.getElementById('fv-adp-wrap');
+  var antes=document.getElementById('fv-adp-antes');
+  var div=document.getElementById('fv-adp-divider');
+  function mover(clientX){
+    var rect=wrap.getBoundingClientRect();
+    var pct=Math.min(100,Math.max(0,((clientX-rect.left)/rect.width)*100));
+    antes.style.clipPath='inset(0 '+(100-pct)+'% 0 0)';
+    div.style.left=pct+'%';
+  }
+  var arr=drag=false;
+  wrap.onmousedown=function(e){drag=true;mover(e.clientX);};
+  window.onmousemove=function(e){if(drag)mover(e.clientX);};
+  window.onmouseup=function(){drag=false;};
+  wrap.ontouchstart=function(e){drag=true;mover(e.touches[0].clientX);e.preventDefault();};
+  wrap.ontouchmove=function(e){if(drag)mover(e.touches[0].clientX);e.preventDefault();};
+  wrap.ontouchend=function(){drag=false;};
 }
 function fecharViewer(){document.getElementById('foto-viewer').classList.remove('show');document.body.style.overflow='';}
 async function toggleVisibilidade(){
@@ -3353,7 +3458,18 @@ async function carregarFeed(){
 
       var adpBadge=isADP?'<span style="background:var(--cinza-bg);border:1px solid var(--cinza-cla);border-radius:50px;padding:3px 10px;font-size:0.6rem;font-weight:700;color:var(--cinza-med);font-family:var(--font-mono);">ANTES/DEPOIS</span>':'';
 
-      // Usar template string para evitar problemas com aspas
+      // Guardar no cache para o viewer
+      if(!window.PROGS_CACHE) window.PROGS_CACHE={};
+      window.PROGS_CACHE[p.id]=p;
+
+      div.setAttribute('data-post-id', p.id);
+      // Click na mídia abre viewer
+      div.addEventListener('click', function(e){
+        if(!e.target.closest('.feed-post-actions') && !e.target.closest('.coms-section')){
+          if(p.foto_url||isADP) verPost(p.id, false);
+        }
+      });
+      div.style.cursor='pointer';
       div.innerHTML = `
         <div class="feed-post-header">
           <div class="feed-post-avatar" style="background:${['#C8432A','#2A8A4A','#2563eb','#7c3aed','#b45309'][(p.nome||'U').charCodeAt(0)%5]};">
@@ -3391,6 +3507,24 @@ async function carregarFeed(){
           </div>
         </div>
       `;
+      // Clique na imagem do feed abre viewer
+      var imgs=div.querySelectorAll('.feed-post-img');
+      imgs.forEach(function(img){
+        img.style.cursor='pointer';
+        img.addEventListener('click',function(){verPost(p.id,false);});
+      });
+      // Clique no slider do feed abre viewer (sem arrastar)
+      if(isADP){
+        var slArea=div.querySelector('[id^="fc-"]');
+        if(slArea){
+          var _dx=0;
+          slArea.addEventListener('mousedown',function(e){_dx=e.clientX;});
+          slArea.addEventListener('mouseup',function(e){if(Math.abs(e.clientX-_dx)<8){verPost(p.id,false);}});
+          slArea.addEventListener('touchstart',function(e){_dx=e.touches[0].clientX;},{passive:true});
+          slArea.addEventListener('touchend',function(e){if(Math.abs(e.changedTouches[0].clientX-_dx)<8){verPost(p.id,false);}});
+        }
+        iniciarSliderADP(p.id);
+      }
       container.appendChild(div);
     });
   }catch(e){
@@ -3769,17 +3903,17 @@ function registrarPesoRapido(){
   api('/api/progresso?action=salvar','POST',{
     usuario_id: USER.id,
     nome: USER.nome || 'Usuário',
-    tipo: 'progresso',
-    conteudo: 'Registro de peso: ' + val + 'kg',
+    tipo: 'peso',        // tipo peso = não aparece no feed nem no grid de fotos
+    conteudo: null,
     foto_url: null,
     peso: val,
     nota: null,
-    publico: false
+    publico: false       // sempre privado
   }).then(function(){
     document.getElementById('peso-input').value = '';
     toast('⚖️ Peso registrado!');
     atualizarHistoricoPeso(val);
-    // Atualiza análise automática após novo peso
+    atualizarStatsPerfil(val);  // atualiza stats do perfil
     setTimeout(carregarSistemaAdaptativo, 500);
   }).catch(function(e){
     toast('Erro ao registrar peso');
@@ -3913,6 +4047,45 @@ function atualizarConquistas(conquistas){
 }
 
 // ── CARREGAR DADOS DO SISTEMA NO PERFIL ──────────────
+
+function atualizarStatsPerfil(novoPeso){
+  if(!USER) return;
+  var perfil = ls.get('perfil_'+USER.id)||{};
+  var KEY = 'historico_peso_' + USER.id;
+  var hist = ls.get(KEY)||[];
+
+  // Peso atual
+  var pesoAtual = novoPeso || (hist.length>0 ? hist[0].peso : null);
+  var pesoInicial = hist.length>0 ? hist[hist.length-1].peso : null;
+  if(pesoInicial && hist.length===1) pesoInicial = pesoAtual; // só um registro
+
+  if(pesoAtual) document.getElementById('pstat-peso') && (document.getElementById('pstat-peso').textContent = pesoAtual.toFixed(1)+'kg');
+
+  // Variação: perdidos ou ganhos
+  var labelEl = document.getElementById('pstat-perda-label');
+  var perdaEl = document.getElementById('pstat-perda');
+  if(pesoAtual && pesoInicial && pesoAtual !== pesoInicial){
+    var variacao = pesoInicial - pesoAtual; // positivo = perdeu
+    if(perdaEl){
+      perdaEl.textContent = (variacao>=0?'-':'+') + Math.abs(variacao).toFixed(1)+'kg';
+      perdaEl.style.color = variacao>=0 ? 'var(--verde)' : 'var(--acento)';
+    }
+    if(labelEl) labelEl.textContent = variacao>=0 ? 'kg perdidos' : 'kg ganhos';
+  }
+
+  // % do objetivo (se definido no perfil)
+  var objEl = document.getElementById('pstat-obj');
+  var objWrap = document.getElementById('pstat-obj-wrap');
+  var pesoObjetivo = perfil.peso_objetivo ? Number(perfil.peso_objetivo) : null;
+  if(pesoObjetivo && pesoInicial && pesoAtual && objEl && objWrap){
+    var totalParaPerder = Math.abs(pesoInicial - pesoObjetivo);
+    var jaPerdeu = pesoInicial - pesoAtual;
+    var pct = totalParaPerder>0 ? Math.round(Math.min(100,(jaPerdeu/totalParaPerder)*100)) : 100;
+    objEl.textContent = pct+'%';
+    objWrap.style.display = '';
+  }
+}
+
 
 async function carregarGraficoPerfil(){
   if(!USER) return;
