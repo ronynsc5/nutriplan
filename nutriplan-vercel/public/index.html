@@ -640,6 +640,15 @@ textarea{resize:vertical;min-height:72px;}
 .btn-editar-perfil:hover{background:var(--preto);color:var(--bg);}
 
 /* ═══════════ GRÁFICO ═══════════ */
+.grafico-periodo-btn{
+  background:var(--cinza-bg);border:1px solid var(--cinza-cla);
+  border-radius:50px;padding:2px 10px;font-size:0.62rem;font-weight:700;
+  font-family:var(--font-mono);color:var(--cinza-med);cursor:pointer;
+  transition:all 0.2s;
+}
+.grafico-periodo-btn.active{
+  background:var(--preto);color:var(--bg);border-color:var(--preto);
+}
 .grafico-card{
   background:var(--card);
   border-radius:var(--radius);
@@ -952,6 +961,8 @@ textarea{resize:vertical;min-height:72px;}
 .comentarios-section{padding:0 1.2rem 0.9rem;}
 .comentario-item{display:flex;gap:0.5rem;margin-bottom:0.5rem;align-items:flex-start;}
 .comentario-avatar{
+  color:#fff;font-weight:700;font-size:0.82rem;display:flex;align-items:center;justify-content:center;
+
   width:28px;height:28px;border-radius:50%;
   background:var(--cinza-bg);flex-shrink:0;
   display:flex;align-items:center;justify-content:center;
@@ -1777,6 +1788,45 @@ footer strong{color:rgba(245,242,238,0.8);}
 .conquista-badge.nova{background:var(--verde-bg);color:var(--verde);}
 .conquista-badge.em-progresso{background:var(--cinza-bg);color:var(--cinza-med);}
 
+
+/* ═══════════ NOTIFICAÇÕES ═══════════ */
+.notif-btn{
+  position:relative;background:none;border:none;cursor:pointer;
+  font-size:1.1rem;padding:4px;display:flex;align-items:center;
+}
+.notif-dot{
+  position:absolute;top:0;right:0;width:8px;height:8px;
+  background:var(--acento);border-radius:50%;
+  border:2px solid var(--bg);display:none;
+}
+.notif-dot.show{display:block;}
+.notif-panel{
+  position:fixed;top:60px;right:0;left:0;
+  max-width:480px;margin:0 auto;
+  background:var(--card);border-bottom:1px solid var(--border);
+  z-index:300;max-height:60vh;overflow-y:auto;
+  box-shadow:var(--sombra-lg);
+  transform:translateY(-110%);
+  transition:transform 0.3s var(--ease-spring);
+}
+.notif-panel.show{transform:translateY(0);}
+.notif-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0.8rem 1.2rem;border-bottom:1px solid var(--border);
+  font-family:var(--font-mono);font-size:0.72rem;font-weight:700;
+  color:var(--cinza-med);letter-spacing:0.08em;
+}
+.notif-item{
+  display:flex;align-items:flex-start;gap:0.8rem;
+  padding:0.8rem 1.2rem;border-bottom:1px solid var(--cinza-bg);
+}
+.notif-item.nao-lida{background:var(--acento-bg);}
+.notif-icon{font-size:1.2rem;flex-shrink:0;}
+.notif-body{flex:1;}
+.notif-txt{font-size:0.82rem;color:var(--preto);line-height:1.4;}
+.notif-tempo{font-size:0.62rem;color:var(--cinza-med);font-family:var(--font-mono);margin-top:2px;}
+.notif-vazia{text-align:center;padding:2rem;color:var(--cinza-med);font-family:var(--font-mono);font-size:0.76rem;}
+
 /* ═══════════ SCROLLBAR CUSTOMIZADA ═══════════ */
 ::-webkit-scrollbar{width:4px;}
 ::-webkit-scrollbar-track{background:transparent;}
@@ -1793,6 +1843,9 @@ footer strong{color:rgba(245,242,238,0.8);}
     <span class="logo-badge">by MFCT</span>
   </div>
   <div class="nav-right">
+    <button class="notif-btn" onclick="toggleNotificacoes()" title="Notificações">
+      🔔<span class="notif-dot" id="notif-dot"></span>
+    </button>
     <button class="btn-tema" onclick="toggleTema()" id="btn-tema" title="Alternar tema">🌙</button>
     <button class="nav-btn" id="nav-cta" onclick="irAuth()">Entrar</button>
     <button class="nav-btn sec" id="nav-sair" onclick="sair()" style="display:none;">Sair</button>
@@ -2077,9 +2130,13 @@ footer strong{color:rgba(245,242,238,0.8);}
   <div class="grafico-card">
     <div class="grafico-card-header">
       <h3>📈 Curva de peso</h3>
-      <span class="grafico-badge">últimos registros</span>
+      <div style="display:flex;gap:0.3rem;">
+        <button class="grafico-periodo-btn active" id="gbtn-semana" onclick="mudarPeriodoGrafico('semana',this)">7d</button>
+        <button class="grafico-periodo-btn" id="gbtn-mes" onclick="mudarPeriodoGrafico('mes',this)">30d</button>
+        <button class="grafico-periodo-btn" id="gbtn-ano" onclick="mudarPeriodoGrafico('ano',this)">1a</button>
+      </div>
     </div>
-    <div class="grafico-wrap">
+    <div class="grafico-wrap" style="height:160px;">
       <canvas id="grafico-peso" style="width:100%;height:100%;"></canvas>
       <div class="grafico-empty" id="grafico-empty">Registre seu peso para ver o gráfico</div>
     </div>
@@ -2593,6 +2650,17 @@ footer strong{color:rgba(245,242,238,0.8);}
   </div>
 </div>
 
+<!-- ═══════════ NOTIFICAÇÕES PANEL ═══════════ -->
+<div class="notif-panel" id="notif-panel">
+  <div class="notif-header">
+    <span>🔔 NOTIFICAÇÕES</span>
+    <button onclick="marcarTodasLidas()" style="background:none;border:none;cursor:pointer;font-size:0.7rem;color:var(--cinza-med);font-family:var(--font-mono);">Marcar todas como lidas</button>
+  </div>
+  <div id="notif-lista">
+    <div class="notif-vazia">Sem notificações</div>
+  </div>
+</div>
+
 <!-- ═══════════ MODAIS ═══════════ -->
 <div class="modal-bg" id="modal-pix">
   <div class="modal">
@@ -2788,7 +2856,7 @@ function ir(id){
 function irHero(){ir('hero');escBN();}
 function irAuth(){ir('auth');authTab('login',document.getElementById('tab-login'));escBN();}
 function irAuthCad(){ir('auth');authTab('cadastro',document.getElementById('tab-cad'));escBN();}
-function irPerfil(){ir('perfil');carregarPerfil();mosBN();setABN('perfil');}
+function irPerfil(){ir('perfil');carregarPerfil();atualizarBadgeNotif();mosBN();setABN('perfil');}
 function irEvolucao(){ir('progresso');carregarGraficoPerfil();carregarHistoricoPeso();carregarSistemaAdaptativo();mosBN();setABN('progresso');}
 function irPlano(){ir('plano');carregarPlanoAtivo();mosBN();setABN('plano');}
 function irModo(){ir('modo');escBN();}
@@ -3061,48 +3129,103 @@ function renderGrid(id,progs){
   });
 }
 
-function desenharGrafico(pesos){
+// Dados globais do gráfico
+var GRAFICO_TODOS_PESOS = [];
+var GRAFICO_PERIODO = 'semana';
+
+function mudarPeriodoGrafico(periodo, btnEl){
+  GRAFICO_PERIODO = periodo;
+  document.querySelectorAll('.grafico-periodo-btn').forEach(b=>b.classList.remove('active'));
+  if(btnEl) btnEl.classList.add('active');
+  desenharGrafico(GRAFICO_TODOS_PESOS, periodo);
+}
+
+function filtrarPorPeriodo(pesos, periodo){
+  if(!pesos||!pesos.length) return [];
+  var agora = Date.now();
+  var dias = periodo==='semana' ? 7 : periodo==='mes' ? 30 : 365;
+  var limite = agora - dias*24*60*60*1000;
+  var filtrados = pesos.filter(p => new Date(p.data).getTime() >= limite);
+  // Se não tiver dados no período, mostrar todos
+  return filtrados.length >= 1 ? filtrados : pesos.slice(-Math.min(pesos.length, 7));
+}
+
+function formatarDataGrafico(dataStr, periodo){
+  var d = new Date(dataStr);
+  if(periodo==='semana') return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});
+  if(periodo==='mes')    return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'});
+  return d.toLocaleDateString('pt-BR',{month:'short',year:'2-digit'});
+}
+
+function desenharGrafico(todos, periodo){
+  GRAFICO_TODOS_PESOS = todos || GRAFICO_TODOS_PESOS;
+  periodo = periodo || GRAFICO_PERIODO || 'semana';
+  var pesos = filtrarPorPeriodo(GRAFICO_TODOS_PESOS, periodo);
+
   const canvas=document.getElementById('grafico-peso');
+  if(!canvas) return;
   const ctx=canvas.getContext('2d');
-  const W=canvas.offsetWidth||300,H=canvas.offsetHeight||130;
+  const W=canvas.offsetWidth||300,H=canvas.offsetHeight||160;
   canvas.width=W*2;canvas.height=H*2;ctx.scale(2,2);
+
+  if(!pesos.length){
+    document.getElementById('grafico-empty').style.display='flex';
+    return;
+  }
+  document.getElementById('grafico-empty').style.display='none';
+
   const vals=pesos.map(p=>p.peso);
-  const min=Math.min(...vals)-2,max=Math.max(...vals)+2;
-  // padding interno para não cortar pontos/labels nas bordas
-  const PAD_X=20,PAD_TOP=18,PAD_BOT=8;
+  const minV=Math.min(...vals),maxV=Math.max(...vals);
+  const spread=Math.max(maxV-minV,1);
+  const min=minV-spread*0.15, max=maxV+spread*0.15;
+
+  const PAD_X=36,PAD_TOP=22,PAD_BOT=28;
   const GW=W-PAD_X*2,GH=H-PAD_TOP-PAD_BOT;
-  const xStep=GW/(pesos.length-1);
+  const n=pesos.length;
+  const xStep=n>1?GW/(n-1):0;
   const yScale=GH/(max-min);
   const isDark=document.documentElement.getAttribute('data-theme')==='dark';
   const cor=isDark?'#F5F2EE':'#0D0C0A';
+  const corMed=isDark?'rgba(245,242,238,0.35)':'rgba(13,12,10,0.3)';
+
   ctx.clearRect(0,0,W,H);
-  // Área sob a linha — com offset de padding
-  const gx=i=>PAD_X+i*xStep;
-  const gy=peso=>PAD_TOP+GH-(peso-min)*yScale;
+
+  const gx=i=>PAD_X+(n>1?i*xStep:GW/2);
+  const gy=p=>PAD_TOP+GH-(p-min)*yScale;
+
+  // Área
   ctx.beginPath();
   pesos.forEach((p,i)=>{if(i===0)ctx.moveTo(gx(i),gy(p.peso));else ctx.lineTo(gx(i),gy(p.peso));});
-  ctx.lineTo(gx(pesos.length-1),H-PAD_BOT);ctx.lineTo(PAD_X,H-PAD_BOT);ctx.closePath();
+  ctx.lineTo(gx(n-1),H-PAD_BOT);ctx.lineTo(gx(0),H-PAD_BOT);ctx.closePath();
   const grad=ctx.createLinearGradient(0,PAD_TOP,0,H);
-  grad.addColorStop(0,isDark?'rgba(245,242,238,0.12)':'rgba(13,12,10,0.08)');
+  grad.addColorStop(0,isDark?'rgba(245,242,238,0.10)':'rgba(13,12,10,0.07)');
   grad.addColorStop(1,'transparent');
   ctx.fillStyle=grad;ctx.fill();
+
   // Linha
-  ctx.beginPath();ctx.strokeStyle=cor;ctx.lineWidth=2.5;ctx.lineJoin='round';ctx.lineCap='round';
+  ctx.beginPath();ctx.strokeStyle=cor;ctx.lineWidth=2;ctx.lineJoin='round';ctx.lineCap='round';
   pesos.forEach((p,i)=>{if(i===0)ctx.moveTo(gx(i),gy(p.peso));else ctx.lineTo(gx(i),gy(p.peso));});
   ctx.stroke();
-  // Pontos + labels
+
+  // Pontos + peso + data
   pesos.forEach((p,i)=>{
     const x=gx(i),y=gy(p.peso);
-    ctx.beginPath();ctx.arc(x,y,4,0,Math.PI*2);
-    ctx.fillStyle=cor;ctx.fill();
-    ctx.beginPath();ctx.arc(x,y,2,0,Math.PI*2);
+    // Ponto
+    ctx.beginPath();ctx.arc(x,y,3.5,0,Math.PI*2);ctx.fillStyle=cor;ctx.fill();
+    ctx.beginPath();ctx.arc(x,y,1.8,0,Math.PI*2);
     ctx.fillStyle=isDark?'#0D0C0A':'#F5F2EE';ctx.fill();
-    ctx.font='bold 10px Syne,sans-serif';
-    ctx.fillStyle=isDark?'rgba(245,242,238,0.55)':'rgba(13,12,10,0.45)';
-    ctx.textAlign='center';
-    ctx.fillText(p.peso.toFixed(1),x,Math.max(12,y-10));
+    // Peso acima
+    ctx.font='bold 9px Syne,sans-serif';
+    ctx.fillStyle=cor;ctx.textAlign='center';
+    ctx.fillText(p.peso.toFixed(1),x,Math.max(14,y-7));
+    // Data abaixo (só mostrar alguns para não poluir)
+    var mostrarData = n<=7 || i===0 || i===n-1 || i%Math.ceil(n/5)===0;
+    if(mostrarData){
+      ctx.font='9px DM Mono,monospace';
+      ctx.fillStyle=corMed;
+      ctx.fillText(formatarDataGrafico(p.data,periodo),x,H-PAD_BOT+12);
+    }
   });
-  document.getElementById('grafico-empty').style.display='none';
 }
 
 function abrirEditarPerfil(){
@@ -3114,7 +3237,7 @@ function abrirEditarPerfil(){
   if(document.getElementById('edit-frase-perfil')) document.getElementById('edit-frase-perfil').value=perfil.frase||'';
   document.getElementById('modal-perfil').classList.add('show');
 }
-function salvarPerfil(){
+async function salvarPerfil(){
   const nome=document.getElementById('edit-nome').value.trim();
   const bio=document.getElementById('edit-bio').value.trim();
   const instagram=document.getElementById('edit-instagram').value.trim();
@@ -3124,7 +3247,14 @@ function salvarPerfil(){
   if(pesoObj) perfil.peso_objetivo=parseFloat(pesoObj);
   if(frasePerfil!==undefined) perfil.frase=frasePerfil;
   ls.set('perfil_'+USER?.id,perfil);
-  if(nome&&USER)USER.nome=nome;
+  // Salvar nome no banco
+  if(nome&&USER&&nome!==USER.nome){
+    try{
+      await api('/api/usuarios?action=atualizar','PATCH',{id:USER.id,nome});
+      USER.nome=nome;
+      ls.set('session',USER.email);
+    }catch(e){console.warn('Erro ao salvar nome:',e);}
+  } else if(nome&&USER){ USER.nome=nome; }
   document.getElementById('modal-perfil').classList.remove('show');
   toast('Perfil atualizado!');carregarPerfil();
   atualizarStatsPerfil();
@@ -3360,10 +3490,25 @@ function toggleLike(pid,btnEl){
   var isLiked=!!likes[pid];
   btnEl.classList.toggle('ativo',isLiked);
   var span=btnEl.querySelector('.like-count');
-  if(span){var cur=parseInt(span.textContent)||0;span.textContent=isLiked?cur+1:Math.max(0,cur-1);}
+  if(span){
+    var cur=parseInt(span.textContent)||0;
+    var novo=isLiked?cur+1:Math.max(0,cur-1);
+    span.textContent=novo;
+    // Persistir count no cache do post
+    var cache=ls.get('post_likes_count')||{};
+    cache[pid]=novo;
+    ls.set('post_likes_count',cache);
+  }
   btnEl.querySelector('.like-icon').textContent=isLiked?'❤️':'🤍';
   btnEl.style.transform='scale(1.35)';
   setTimeout(()=>{btnEl.style.transform='';},200);
+  // Notificar dono do post (se não é o próprio usuário)
+  if(isLiked&&window.PROGS_CACHE&&PROGS_CACHE[pid]){
+    var post=PROGS_CACHE[pid];
+    if(post.usuario_id===USER?.id){
+      adicionarNotificacao('like','❤️ Você curtiu seu próprio post','like');
+    }
+  }
 }
 
 function renderSliderFeed(p){
@@ -3394,7 +3539,7 @@ function renderComentariosList(comentarios){
   if(!comentarios||!comentarios.length)return '';
   return comentarios.map(function(c){
     return '<div class="comentario-item">'+
-      '<div class="comentario-avatar">'+(c.nome?c.nome[0].toUpperCase():'?')+'</div>'+
+      '<div class="comentario-avatar" style="background:'+(['#C8432A','#2A8A4A','#2563eb','#7c3aed','#b45309'][(c.nome||'?').charCodeAt(0)%5])+'">'+(c.nome?c.nome[0].toUpperCase():'?')+'</div>'+
       '<div class="comentario-body">'+
         '<div class="comentario-user">'+(c.nome||'Usuário')+'</div>'+
         '<div class="comentario-txt">'+c.texto+'</div>'+
@@ -3926,20 +4071,26 @@ function atualizarHistoricoPeso(novoPeso){
   var KEY = 'historico_peso_' + (USER?.id||'');
   var hist = ls.get(KEY) || [];
   hist.unshift({ peso: novoPeso, data: new Date().toISOString() });
-  if(hist.length > 10) hist = hist.slice(0, 10);
+  // Manter só os 3 últimos
+  if(hist.length > 3) hist = hist.slice(0, 3);
   ls.set(KEY, hist);
   renderHistoricoPeso(hist);
 }
 
 function renderHistoricoPeso(hist){
   var el = document.getElementById('historico-peso');
-  if(!el || !hist || !hist.length) return;
-  el.innerHTML = hist.slice(0, 5).map(function(item, i){
+  if(!el) return;
+  if(!hist || !hist.length){
+    el.innerHTML = '<div style="font-size:0.72rem;color:var(--cinza-med);font-family:var(--font-mono);padding:0.4rem 0;">Nenhum registro ainda</div>';
+    return;
+  }
+  el.innerHTML = '<div style="margin-top:0.5rem;font-size:0.68rem;color:var(--cinza-med);font-family:var(--font-mono);margin-bottom:0.3rem;">ÚLTIMOS 3 REGISTROS</div>'
+    + hist.map(function(item, i){
     var diff = i < hist.length - 1 ? (item.peso - hist[i+1].peso) : null;
     var diffHtml = diff !== null
       ? '<span class="historico-diff ' + (diff > 0 ? 'diff-pos' : 'diff-neg') + '">'
         + (diff > 0 ? '+' : '') + diff.toFixed(1) + 'kg</span>'
-      : '';
+      : '<span style="font-size:0.65rem;color:var(--cinza-med);">—</span>';
     var data = new Date(item.data).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});
     return '<div class="historico-item">'
       + '<span class="historico-peso-val">' + item.peso.toFixed(1) + 'kg</span>'
@@ -4026,22 +4177,33 @@ function atualizarSaldoMacros(meta, consumido){
 // ── ATUALIZAR CONQUISTAS ──────────────────────────────
 // Chamado com array de conquistas e seus progressos
 function atualizarConquistas(conquistas){
-  // conquistas: [{ id, desbloqueada, progresso, total, label }]
   if(!conquistas || !conquistas.length) return;
+  var KEY_NOTIF = 'cq_notificadas_'+(USER?.id||'');
+  var notificadas = ls.get(KEY_NOTIF) || {};
+
   conquistas.forEach(function(cq){
-    var icon = document.querySelector('#cq-' + cq.id + ' .conquista-icon');
-    var prog = document.getElementById('prog-' + cq.id);
+    var icon  = document.querySelector('#cq-' + cq.id + ' .conquista-icon');
+    var prog  = document.getElementById('prog-' + cq.id);
     var badge = document.getElementById('badge-' + cq.id);
-    if(icon){
-      icon.className = 'conquista-icon ' + (cq.desbloqueada ? 'desbloqueada' : 'bloqueada');
-    }
-    if(prog){
-      var pct = Math.min(100, (cq.progresso / cq.total) * 100);
-      prog.style.width = pct + '%';
-    }
-    if(badge){
-      badge.textContent = cq.desbloqueada ? '✅' : (cq.progresso + '/' + cq.label);
-      badge.className = 'conquista-badge ' + (cq.desbloqueada ? 'nova' : 'em-progresso');
+    var item  = document.getElementById('cq-' + cq.id);
+
+    if(cq.desbloqueada){
+      // Notificar conquista nova (só uma vez)
+      if(!notificadas[cq.id]){
+        notificadas[cq.id] = true;
+        ls.set(KEY_NOTIF, notificadas);
+        adicionarNotificacao('app','🏆 Conquista desbloqueada: '+cq.nome+'!','conquista');
+        // Animação de destaque
+        if(item){ item.style.background='var(--verde-bg)'; setTimeout(()=>{item.style.background='';},3000); }
+      }
+      if(icon) icon.className = 'conquista-icon desbloqueada';
+      if(badge){ badge.textContent='✅'; badge.className='conquista-badge nova'; }
+      if(prog)  prog.style.width = '100%';
+    } else {
+      if(icon) icon.className = 'conquista-icon bloqueada';
+      var pct = cq.total > 0 ? Math.min(100,(cq.progresso/cq.total)*100) : 0;
+      if(prog)  prog.style.width = pct+'%';
+      if(badge){ badge.textContent = cq.progresso+'/'+cq.label; badge.className='conquista-badge em-progresso'; }
     }
   });
 }
@@ -4090,16 +4252,28 @@ function atualizarStatsPerfil(novoPeso){
 async function carregarGraficoPerfil(){
   if(!USER) return;
   try{
+    // Buscar da API os registros com peso
     const progs = await api('/api/progresso?action=meu&usuario_id='+USER.id);
-    const comPeso = (progs||[]).filter(p=>p.peso).map(p=>({
-      peso: Number(p.peso),
-      data: p.criado_em
-    })).reverse();
-    if(comPeso.length >= 2){
-      desenharGrafico(comPeso);
-      document.getElementById('grafico-empty').style.display='none';
+    var doApi = (progs||[])
+      .filter(p=>p.peso&&p.tipo==='peso')
+      .map(p=>({peso:Number(p.peso),data:p.criado_em}))
+      .reverse();
+
+    // Combinar com histórico local (pode ter mais recentes)
+    var KEY='historico_peso_'+USER.id;
+    var local=(ls.get(KEY)||[]).map(p=>({peso:Number(p.peso),data:p.data}));
+
+    // Merge e deduplicar por dia
+    var todos=[...doApi,...local];
+    var vistos=new Set();
+    todos = todos
+      .filter(p=>{var d=p.data.slice(0,10);if(vistos.has(d))return false;vistos.add(d);return true;})
+      .sort((a,b)=>new Date(a.data)-new Date(b.data));
+
+    if(todos.length>=1){
+      desenharGrafico(todos, GRAFICO_PERIODO||'semana');
     } else {
-      document.getElementById('grafico-empty').style.display='flex';
+      document.getElementById('grafico-empty') && (document.getElementById('grafico-empty').style.display='flex');
     }
   }catch(e){ console.warn('grafico:',e); }
 }
@@ -4154,6 +4328,102 @@ async function carregarSistemaAdaptativo(){
 //   - verificar eventos: primeiro peso, 7 dias, -1kg, publicar
 //   - chamar: atualizarConquistas(array)
 // ─────────────────────────────────────────────────────
+
+
+
+// ═══════════════════════════════════════════════════════
+// SISTEMA DE NOTIFICAÇÕES
+// ═══════════════════════════════════════════════════════
+var NOTIF_KEY = 'notificacoes_';
+function getNotifs(){ return ls.get(NOTIF_KEY+(USER?.id||'guest'))||[]; }
+function salvarNotifs(n){ ls.set(NOTIF_KEY+(USER?.id||'guest'),n); }
+
+function adicionarNotificacao(tipo, texto, subtipo){
+  var notifs = getNotifs();
+  notifs.unshift({
+    id: Date.now()+'',
+    tipo: tipo,      // 'like','comentario','app'
+    subtipo: subtipo||'',
+    texto: texto,
+    lida: false,
+    data: new Date().toISOString()
+  });
+  if(notifs.length > 50) notifs = notifs.slice(0,50);
+  salvarNotifs(notifs);
+  atualizarBadgeNotif();
+}
+
+function atualizarBadgeNotif(){
+  var notifs = getNotifs();
+  var naolidas = notifs.filter(n=>!n.lida).length;
+  var dot = document.getElementById('notif-dot');
+  if(dot) dot.classList.toggle('show', naolidas>0);
+}
+
+function toggleNotificacoes(){
+  var panel = document.getElementById('notif-panel');
+  var aberto = panel.classList.contains('show');
+  if(aberto){ panel.classList.remove('show'); return; }
+  renderNotificacoes();
+  panel.classList.add('show');
+  // Fechar ao clicar fora
+  setTimeout(()=>{
+    document.addEventListener('click', function fecharNotif(e){
+      if(!panel.contains(e.target) && !e.target.closest('.notif-btn')){
+        panel.classList.remove('show');
+        document.removeEventListener('click', fecharNotif);
+      }
+    });
+  },100);
+}
+
+function renderNotificacoes(){
+  var notifs = getNotifs();
+  var lista = document.getElementById('notif-lista');
+  if(!lista) return;
+  if(!notifs.length){
+    lista.innerHTML='<div class="notif-vazia">Sem notificações 🎉</div>';
+    return;
+  }
+  var icons = {like:'❤️',comentario:'💬',app:'🍀',conquista:'🏆',plano:'📋'};
+  lista.innerHTML = notifs.map(n=>`
+    <div class="notif-item ${n.lida?'':'nao-lida'}">
+      <div class="notif-icon">${icons[n.subtipo]||icons[n.tipo]||'🔔'}</div>
+      <div class="notif-body">
+        <div class="notif-txt">${n.texto}</div>
+        <div class="notif-tempo">${tempoRelativo(n.data)}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function marcarTodasLidas(){
+  var notifs = getNotifs().map(n=>({...n,lida:true}));
+  salvarNotifs(notifs);
+  atualizarBadgeNotif();
+  renderNotificacoes();
+}
+
+function tempoRelativo(dataStr){
+  var diff = (Date.now()-new Date(dataStr).getTime())/1000;
+  if(diff<60) return 'agora mesmo';
+  if(diff<3600) return Math.floor(diff/60)+'min atrás';
+  if(diff<86400) return Math.floor(diff/3600)+'h atrás';
+  return Math.floor(diff/86400)+'d atrás';
+}
+
+function verificarNotificacoesPlano(){
+  // Checar se plano está perto de vencer
+  try{
+    var planos=ls.get('planos_cache_'+USER?.id)||[];
+    if(planos[0]&&planos[0].expira_em){
+      var diasRestantes=Math.ceil((new Date(planos[0].expira_em)-Date.now())/(1000*60*60*24));
+      if(diasRestantes<=2&&diasRestantes>0){
+        adicionarNotificacao('app','⏰ Seu plano alimentar vence em '+diasRestantes+' dia(s). Gere um novo!','plano');
+      }
+    }
+  }catch(e){}
+}
 
 
 // SLIDER GLOBAL — clip-path na imagem ANTES, linha divisória
