@@ -1,32 +1,12 @@
 // api/usuarios.js — com autenticação JWT
-
-const SUPA_URL = process.env.SUPABASE_URL;
-const SUPA_KEY = process.env.SUPABASE_SECRET_KEY;
-const JWT_SECRET = process.env.JWT_SECRET || 'nutriplan-secret-change-me';
-
 import { createHmac } from 'crypto';
 
-// ── JWT helpers (sem deps externas) ─────────────────────────────────────────
-function b64url(str) {
-  return Buffer.from(str).toString('base64')
-    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
-}
+const JWT_SECRET = process.env.JWT_SECRET || 'nutriplan-secret-change-me';
+
 function b64urlDecode(str) {
   str = str.replace(/-/g, '+').replace(/_/g, '/');
   while (str.length % 4) str += '=';
   return Buffer.from(str, 'base64').toString('utf8');
-}
-function gerarToken(usuario) {
-  const header = b64url(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
-  const body   = b64url(JSON.stringify({
-    sub:      usuario.id,
-    email:    usuario.email,
-    is_admin: usuario.is_admin || false,
-    exp:      Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30 // 30 dias
-  }));
-  const sig = createHmac('sha256', JWT_SECRET)
-    .update(`${header}.${body}`).digest('base64url');
-  return `${header}.${body}.${sig}`;
 }
 function verificarToken(req) {
   try {
@@ -34,14 +14,14 @@ function verificarToken(req) {
     const token  = header.startsWith('Bearer ') ? header.slice(7) : null;
     if (!token) return null;
     const [h, b, sig] = token.split('.');
-    const esperado = createHmac('sha256', JWT_SECRET)
-      .update(`${h}.${b}`).digest('base64url');
+    const esperado = createHmac('sha256', JWT_SECRET).update(`${h}.${b}`).digest('base64url');
     if (sig !== esperado) return null;
     const payload = JSON.parse(b64urlDecode(b));
     if (payload.exp && Date.now() / 1000 > payload.exp) return null;
     return payload;
   } catch (e) { return null; }
 }
+
 
 // ── Supabase helper ──────────────────────────────────────────────────────────
 async function supa(path, method = 'GET', body = null) {
