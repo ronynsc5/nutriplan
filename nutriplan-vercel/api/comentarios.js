@@ -25,26 +25,18 @@ export default async function handler(req, res) {
   const {action} = req.query;
 
   try {
-    // SALVAR comentário
     if(action==='salvar' && req.method==='POST') {
       const {usuario_id, nome, texto} = req.body;
-      // Aceitar tanto progresso_id quanto post_id
       const progresso_id = req.body.progresso_id || req.body.post_id;
-
       if(!usuario_id || !nome || !texto || !progresso_id)
         return res.status(400).json({error:'Campos obrigatórios: usuario_id, nome, texto, progresso_id'});
-
       const novo = await supa('comentarios','POST',{
-        progresso_id,
-        usuario_id,
-        nome,
-        texto,
+        progresso_id, usuario_id, nome, texto,
         criado_em: new Date().toISOString()
       });
       return res.status(200).json(novo[0]||{ok:true});
     }
 
-    // BUSCAR comentários de um post
     if(action==='buscar' && req.method==='GET') {
       const {progresso_id, post_id} = req.query;
       const pid = progresso_id || post_id;
@@ -53,7 +45,6 @@ export default async function handler(req, res) {
       return res.status(200).json(coms||[]);
     }
 
-    // DELETAR
     if(action==='deletar' && req.method==='DELETE') {
       const {id, usuario_id} = req.body;
       await supa(`comentarios?id=eq.${id}&usuario_id=eq.${usuario_id}`,'DELETE');
