@@ -1,164 +1,146 @@
-// api/gerar-plano.js — Groq + Auth JWT
+// api/gerar-plano.js — Calculadora Nutricional v2
+// Lógica: Sistema calcula todos os números → IA só organiza as refeições
 
-
+const GROQ_KEY = process.env.GROQ_API_KEY;
 const JWT_SECRET = process.env.JWT_SECRET || 'nutriplan-secret-change-me';
 
-// HMAC-SHA256 via Node crypto — compatível com ES Module sem import
-async function hmacSha256(secret, msg) {
+async function hmac(msg) {
   const enc = new TextEncoder();
-  const key = await globalThis.crypto.subtle.importKey(
-    'raw', enc.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']
-  );
-  const sig = await globalThis.crypto.subtle.sign('HMAC', key, enc.encode(msg));
-  return Buffer.from(sig).toString('base64url');
+  const key = await globalThis.crypto.subtle.importKey('raw',enc.encode(JWT_SECRET),{name:'HMAC',hash:'SHA-256'},false,['sign']);
+  return Buffer.from(await globalThis.crypto.subtle.sign('HMAC',key,enc.encode(msg))).toString('base64url');
 }
-
-function b64uDec(s) {
-  s = s.replace(/-/g,'+').replace(/_/g,'/');
-  while(s.length%4) s+='=';
-  return Buffer.from(s,'base64').toString('utf8');
-}
-
+function b64uDec(s){s=s.replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';return Buffer.from(s,'base64').toString('utf8');}
 async function verificarToken(req) {
   try {
-    const header = req.headers['authorization'] || '';
-    const token  = header.startsWith('Bearer ') ? header.slice(7) : null;
-    if (!token) return null;
-    const [h, b, sig] = token.split('.');
-    const esperado = await hmacSha256(JWT_SECRET, h + '.' + b);
-    if (sig !== esperado) return null;
-    const payload = JSON.parse(b64uDec(b));
-    if (payload.exp && Date.now() / 1000 > payload.exp) return null;
-    return payload;
-  } catch (e) { return null; }
+    const tok=(req.headers['authorization']||'').replace('Bearer ','');
+    if(!tok) return null;
+    const [h,b,sig]=tok.split('.');
+    if((await hmac(h+'.'+b))!==sig) return null;
+    const p=JSON.parse(b64uDec(b));
+    if(p.exp&&Date.now()/1000>p.exp) return null;
+    return p;
+  } catch(e){return null;}
 }
 
-const SUPA_URL = process.env.SUPABASE_URL;
-const SUPA_KEY = process.env.SUPABASE_SECRET_KEY;
+function calcTMB(peso, altura, idade, sexo) {
+  if (sexo === 'feminino') return (10*peso)+(6.25*altura)-(5*idade)-161;
+  return (10*peso)+(6.25*altura)-(5*idade)+5;
+}
+
+function fatorAtividade(atividade) {
+  const f={'sedentario':1.2,'leve':1.375,'moderado':1.55,'intenso':1.725,'muito_intenso':1.9,'atleta':2.0};
+  const k=Object.keys(f).find(k=>(atividade||'').toLowerCase().includes(k));
+  return f[k]||1.375;
+}
+
+function ajusteObjetivo(objetivo) {
+  const o=(objetivo||'').toLowerCase();
+  if(o.includes('emagrecer_suave')) return {deficit:-300,prot:1.8,carb:0.40,gord:0.25,nome:'Emagrecimento Saudável'};
+  if(o.includes('emagrecer')||o.includes('cutting_moderado')) return {deficit:-500,prot:2.2,carb:0.30,gord:0.20,nome:'Cutting Moderado'};
+  if(o.includes('cutting_agressivo')) return {deficit:-750,prot:2.6,carb:0.20,gord:0.20,nome:'Cutting Agressivo'};
+  if(o.includes('cutting_competitivo')||o.includes('peak')) return {deficit:-1000,prot:3.0,carb:0.10,gord:0.15,nome:'Cutting Competitivo'};
+  if(o.includes('recomposicao')) return {deficit:-100,prot:2.2,carb:0.40,gord:0.25,nome:'Recomposição Corporal'};
+  if(o.includes('manutencao')) return {deficit:0,prot:1.6,carb:0.45,gord:0.25,nome:'Manutenção'};
+  if(o.includes('ganhar_suave')||o.includes('bulking_limpo')) return {deficit:+250,prot:1.8,carb:0.50,gord:0.25,nome:'Bulking Limpo'};
+  if(o.includes('bulking_moderado')||o.includes('ganhar')) return {deficit:+400,prot:2.0,carb:0.55,gord:0.25,nome:'Bulking Moderado'};
+  if(o.includes('bulking_agressivo')) return {deficit:+700,prot:2.2,carb:0.55,gord:0.25,nome:'Bulking Agressivo'};
+  if(o.includes('atleta_resistencia')) return {deficit:+100,prot:1.6,carb:0.60,gord:0.20,nome:'Atleta Resistência'};
+  if(o.includes('atleta_forca')) return {deficit:+200,prot:2.4,carb:0.45,gord:0.20,nome:'Atleta Força'};
+  return {deficit:-400,prot:2.0,carb:0.35,gord:0.25,nome:'Emagrecimento Moderado'};
+}
+
+function calcMacros(kcal, protGkg, peso, carbPct, gordPct) {
+  const protG=Math.round(protGkg*peso);
+  const rest=kcal-(protG*4);
+  const carbG=Math.round((rest*(carbPct/(carbPct+gordPct)))/4);
+  const gordG=Math.round((rest*(gordPct/(carbPct+gordPct)))/9);
+  return {protG,carbG,gordG,kcalReal:Math.round(protG*4+carbG*4+gordG*9)};
+}
+
+function distribuirRefeicoes(n, kcal, macros) {
+  const s={3:[0.30,0.40,0.30],4:[0.25,0.30,0.20,0.25],5:[0.20,0.15,0.30,0.15,0.20],6:[0.20,0.10,0.25,0.15,0.15,0.15]};
+  const nm={3:['Café da manhã','Almoço','Jantar'],4:['Café da manhã','Almoço','Lanche da tarde','Jantar'],5:['Café da manhã','Lanche manhã','Almoço','Pré-treino','Jantar'],6:['Café da manhã','Lanche manhã','Almoço','Lanche tarde','Pré-treino','Jantar']};
+  const p=s[n]||s[4];
+  return p.map((pct,i)=>({nome:(nm[n]||nm[4])[i],kcal:Math.round(kcal*pct),prot:Math.round(macros.protG*pct),carb:Math.round(macros.carbG*pct),gord:Math.round(macros.gordG*pct)}));
+}
+
+function precisaMultivit(macros, kcal, obj, rest) {
+  const r=[];
+  if(kcal<1500)r.push('dieta hipocalórica');
+  if((rest||[]).length>=3)r.push('muitas restrições');
+  if((obj||'').includes('cutting_competitivo')||(obj||'').includes('peak'))r.push('protocolo competitivo');
+  if(macros.carbG<50)r.push('carb muito baixo');
+  return r;
+}
 
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  if (req.method === 'OPTIONS') return res.status(200).end();
-  if (req.method !== 'POST') return res.status(405).json({ error: 'Método não permitido' });
+  res.setHeader('Access-Control-Allow-Origin','*');
+  res.setHeader('Access-Control-Allow-Methods','POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers','Content-Type, Authorization');
+  if(req.method==='OPTIONS') return res.status(200).end();
+  if(req.method!=='POST') return res.status(405).json({error:'Método não permitido'});
+  if(!GROQ_KEY) return res.status(500).json({error:'GROQ_API_KEY não configurada'});
+  const auth=await verificarToken(req);
+  if(!auth) return res.status(401).json({error:'Não autenticado.'});
+  const d=req.body;
+  if(!d||!d.peso||!d.altura) return res.status(400).json({error:'Dados incompletos'});
 
-  const GROQ_KEY = process.env.GROQ_API_KEY;
-  if (!GROQ_KEY) return res.status(500).json({ error: 'GROQ_API_KEY não configurada no Vercel' });
+  const peso=Number(d.peso),altura=Number(d.altura),idade=Number(d.idade)||25;
+  const tmb=calcTMB(peso,altura,idade,d.sexo);
+  const tdee=Math.round(tmb*fatorAtividade(d.atividade));
+  const aj=ajusteObjetivo(d.objetivo);
+  const kcalMeta=Math.max(1000,tdee+aj.deficit);
+  const macros=calcMacros(kcalMeta,aj.prot,peso,aj.carb,aj.gord);
+  const refs=distribuirRefeicoes(Number(d.numRef)||4,kcalMeta,macros);
+  const mv=precisaMultivit(macros,kcalMeta,d.objetivo,d.restricoes);
+  const prem=d.plano==='premium';
 
-  const d = req.body;
-  if (!d) return res.status(400).json({ error: 'Body vazio' });
+  const prompt=`Você é nutricionista esportivo. APENAS organize refeições com alimentos reais brasileiros.
 
-  // Normalizar campos — aceita tanto os nomes novos quanto os antigos
-  const peso   = Number(d.peso)   || 75;
-  const altura = Number(d.altura) || 170;
-  const idade  = Number(d.idade)  || 25;
-  const numRef = Number(d.numRef || d.refeicoes) || 4;
-  const horTreino    = d.horTreino    || d.htreino    || 'Manhã';
-  const tempoPreparo = d.tempoPreparo || d.tempo      || '~30min';
-  const naoGosta     = d.naoGosta     || d.nao_gosta  || 'nada';
-  const saude        = d.saude        || 'nenhuma';
-  const treinos      = Array.isArray(d.treinos) ? d.treinos.join(', ') : (d.treino || 'Não treino');
-  const restricoes   = Array.isArray(d.restricoes) ? d.restricoes.join(', ') : (d.restricoes || 'Nenhuma');
+NÚMEROS CALCULADOS (NÃO ALTERE): TMB:${Math.round(tmb)} TDEE:${tdee} META:${kcalMeta}kcal P:${macros.protG}g C:${macros.carbG}g G:${macros.gordG}g
+Objetivo: ${aj.nome}
+PERFIL: ${d.nome||'Usuário'}, ${d.sexo||'masculino'}, ${idade}a, ${peso}kg, ${altura}cm, gordura:${d.gordura||'N/I'}, nível:${d.nivel||'intermediário'}
+Atividade:${d.atividade||'moderada'} treino:${d.horTreino||'manhã'} restrições:${(d.restricoes||[]).join(',')||'nenhuma'} não gosta:${d.naoGosta||'nada'}
+Suplementos:${(d.suplementos||[]).join(',')||'nenhum'} ergogênicos:${d.ergogenicos||'não usa'} preparo:${d.tempoPreparo||'~30min'}
 
-  const hc   = d.modo === 'hardcore';
-  const prem = d.plano === 'premium';
-  const tmb  = calcTMB({ ...d, peso, altura, idade });
+DISTRIBUIÇÃO:
+${refs.map((r,i)=>`${i+1}.${r.nome}: ${r.kcal}kcal P:${r.prot}g C:${r.carb}g G:${r.gord}g`).join('\n')}
 
-  const prompt = `Você é especialista em nutrição esportiva. Crie um plano alimentar PERSONALIZADO.
+REGRAS:
+1.Café: SEMPRE proteína+carb+gordura. NUNCA só aveia/fruta.
+2.Pré-treino: carb médio IG+proteína leve. SEM gordura.
+3.Pós-treino: proteína rápida+carb simples.
+4.Jantar: proteína+vegetais. Carb reduzido se secar.
+5.Alimentos BRASILEIROS: arroz,feijão,frango,carne,ovo,batata-doce.
+6.${prem?'PREMIUM: 2-3 OPÇÕES EQUIVALENTES por item (mesmo macros).':'ECONÔMICO: 1 alimento, baixo custo.'}
+7.Quantidades em gramas/medidas caseiras.
+8.NÃO invente calorias. Quantidades corretas para bater macros.
+${mv.length?`9.Recomende multivitamínico: ${mv.join(', ')}.`:''}
 
-PACIENTE: ${d.nome||'Usuário'}|${d.sexo||'masculino'}|${idade}a|${peso}kg|${altura}cm|gordura:${d.gordura||'Não sei'}
-OBJETIVO: ${d.objetivo||'Secar'}|atividade:${d.atividade||'Levemente ativo'}|treinos:${treinos}|horTreino:${horTreino}
-RESTRIÇÕES: ${restricoes}|naoGosta:${naoGosta}|saude:${saude}
-ROTINA: ${d.acorda||'07:00'}→${d.dorme||'23:00'}|${numRef} refeições|preparo:${tempoPreparo}
-MODO: ${hc?'HARDCORE':'SAUDÁVEL'} | PLANO: ${prem?'PREMIUM(salmão,quinoa,whey,ovos caipiras,aveia,batata-doce)':'ECONÔMICO(arroz,feijão,frango,ovos,atum,banana)'}
-TDEE: ~${tmb}kcal
+JSON (sem markdown):
+{"calorias":${kcalMeta},"proteinas":${macros.protG},"carboidratos":${macros.carbG},"gorduras":${macros.gordG},"agua_litros":${Math.round(peso*0.035*10)/10},"tmb":${Math.round(tmb)},"tdee":${tdee},"objetivo_nome":"${aj.nome}","estrategia":"texto 2 linhas","refeicoes":[{"nome":"str","hora":"HH:MM","funcao":"str","kcal_alvo":n,"prot_alvo":n,"carb_alvo":n,"gord_alvo":n,"itens":[{"alimento":"str","quantidade":"str","kcal":n,"prot":n,"carb":n,"gord":n,${prem?'"opcoes":[{"alimento":"str","quantidade":"str","kcal":n,"prot":n,"carb":n,"gord":n}],':''}"funcao":"str"}]}],"suplementos":[""],"multivitaminico":${mv.length>0},"razao_multivit":${JSON.stringify(mv)},"aerobico":"str","dicas":["x3"],"ajuste_semanal":"str"}
 
-${hc
-  ? `HARDCORE: Déficit 500-700kcal(secar)/superávit 400-500kcal(ganhar). Proteína 2.4-3.0g/kg. Carbo SOMENTE peri-treino. Hidratação ${Math.round(peso*40)}ml/dia.`
-  : `SAUDÁVEL: Déficit 300-400kcal(secar)/superávit 200kcal(ganhar). Proteína 1.6-2.0g/kg. Carbo distribuído. Aeróbico 3-4x/sem.`
-}
-
-Responda APENAS com JSON válido, sem markdown, sem explicações:
-{"calorias":n,"proteinas":n,"carboidratos":n,"gorduras":n,"agua_litros":n,"estrategia":"texto","modo":"str","refeicoes":[{"nome":"str","hora":"HH:MM","funcao":"str","calorias_estimadas":n,"itens":[{"alimento":"str","quantidade":"str","funcao":"str"}]}],"suplementos":[""],"termogenicos":[""],"ciclos":[""],"multivitaminico":true,"aerobico":"str","principios":["x5"],"dicas_performance":["x3"],"ajuste_semanal":"str"}
-
-GERE EXATAMENTE ${numRef} refeições entre ${d.acorda||'07:00'} e ${d.dorme||'23:00'}. Seja específico e personalizado.`;
+Gere ${Number(d.numRef)||4} refeições entre ${d.acorda||'07:00'} e ${d.dorme||'23:00'}.`;
 
   try {
-    const resp = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${GROQ_KEY}`
-      },
-      body: JSON.stringify({
-        model: 'llama-3.3-70b-versatile',
-        temperature: 0.7,
-        max_tokens: 4000,
-        messages: [
-          {
-            role: 'system',
-            content: 'Você é um nutricionista esportivo especializado. Responda SEMPRE apenas com JSON válido, sem markdown, sem texto adicional.'
-          },
-          { role: 'user', content: prompt }
-        ]
-      })
+    const resp=await fetch('https://api.groq.com/openai/v1/chat/completions',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+GROQ_KEY},
+      body:JSON.stringify({model:'llama-3.3-70b-versatile',temperature:0.3,max_tokens:4000,
+        messages:[{role:'system',content:'Nutricionista esportivo. JSON válido apenas, sem markdown. NUNCA altere valores calculados.'},{role:'user',content:prompt}]})
     });
-
-    if (!resp.ok) {
-      const errText = await resp.text();
-      console.error('Groq HTTP error:', resp.status, errText);
-      return res.status(500).json({ error: `Groq retornou ${resp.status}`, details: errText.substring(0, 200) });
-    }
-
-    const data = await resp.json();
-    if (data.error) throw new Error(data.error.message || JSON.stringify(data.error));
-
-    const txt = data.choices?.[0]?.message?.content || '';
-    if (!txt) throw new Error('Groq retornou resposta vazia');
-
-    // Limpar markdown se houver
-    const clean = txt.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
-
+    if(!resp.ok){const e=await resp.text();return res.status(500).json({error:'Groq '+resp.status,details:e.substring(0,200)});}
+    const data=await resp.json();
+    if(data.error) throw new Error(data.error.message);
+    const txt=data.choices?.[0]?.message?.content||'';
+    const clean=txt.replace(/```json\s*/gi,'').replace(/```\s*/g,'').trim();
     let plano;
-    try {
-      plano = JSON.parse(clean);
-    } catch (parseErr) {
-      console.error('JSON parse error. Raw txt:', txt.substring(0, 300));
-      throw new Error('Resposta da IA não é JSON válido: ' + parseErr.message);
-    }
-
-    // Salvar no banco via progresso (opcional — só registra uso)
+    try{plano=JSON.parse(clean);}catch(e){throw new Error('IA retornou JSON inválido');}
+    plano.calorias=kcalMeta;plano.proteinas=macros.protG;plano.carboidratos=macros.carbG;plano.gorduras=macros.gordG;
+    plano.tmb=Math.round(tmb);plano.tdee=tdee;plano.objetivo_nome=aj.nome;plano.agua_litros=Math.round(peso*0.035*10)/10;
     return res.status(200).json(plano);
-
-  } catch (err) {
-    console.error('Erro gerar-plano:', err.message);
-    return res.status(500).json({ error: 'Erro ao gerar plano', details: err.message });
+  } catch(err) {
+    console.error('Erro gerar-plano:',err.message);
+    return res.status(500).json({error:'Erro ao gerar plano',details:err.message});
   }
-}
-
-function calcTMB(d) {
-  const peso   = Number(d.peso)   || 75;
-  const altura = Number(d.altura) || 170;
-  const idade  = Number(d.idade)  || 25;
-
-  let tmb = d.sexo === 'feminino'
-    ? 655 + (9.6 * peso) + (1.8 * altura) - (4.7 * idade)
-    : 66  + (13.7 * peso) + (5 * altura)  - (6.8 * idade);
-
-  const fat = {
-    'Sedentário': 1.2,
-    'Levemente':  1.375,
-    'Moderado':   1.55,
-    'Muito':      1.725,
-    'Atleta':     1.9
-  };
-  const k = Object.keys(fat).find(k => d.atividade && d.atividade.startsWith(k)) || 'Levemente';
-  tmb *= fat[k];
-
-  const obj = (d.objetivo || '').toLowerCase();
-  if (obj.includes('secar'))                              tmb -= 400;
-  else if (obj.includes('músculo') || obj.includes('ganhar')) tmb += 300;
-
-  return Math.round(tmb);
 }
