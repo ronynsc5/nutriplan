@@ -2414,11 +2414,20 @@ footer strong{color:rgba(245,242,238,0.8);}
       <div class="form-grid">
         <div class="fsec">Objetivo e atividade</div>
         <div class="fg full"><label>Objetivo *</label>
-          <div class="cbg" id="obj-g">
-            <div class="cb active" onclick="s1(this,'obj-g')">🔥 Secar</div>
-            <div class="cb" onclick="s1(this,'obj-g')">💪 Ganhar músculo</div>
+          <div class="cbg" id="obj-g" style="flex-wrap:wrap;gap:0.4rem;">
+            <div class="cb active" onclick="s1(this,'obj-g')">🔥 Emagrecer</div>
+            <div class="cb" onclick="s1(this,'obj-g')">🌱 Emagrecer suave</div>
+            <div class="cb" onclick="s1(this,'obj-g')">⚡ Cutting agressivo</div>
+            <div class="cb" onclick="s1(this,'obj-g')">🏆 Cutting competitivo</div>
+            <div class="cb" onclick="s1(this,'obj-g')">🎯 Peak week</div>
             <div class="cb" onclick="s1(this,'obj-g')">⚖️ Recomposição</div>
-            <div class="cb" onclick="s1(this,'obj-g')">🏃 Performance</div>
+            <div class="cb" onclick="s1(this,'obj-g')">🔄 Manutenção</div>
+            <div class="cb" onclick="s1(this,'obj-g')">📈 Ganhar suave</div>
+            <div class="cb" onclick="s1(this,'obj-g')">💪 Bulking</div>
+            <div class="cb" onclick="s1(this,'obj-g')">🚀 Bulking agressivo</div>
+            <div class="cb" onclick="s1(this,'obj-g')">🏃 Atleta resistência</div>
+            <div class="cb" onclick="s1(this,'obj-g')">🏋️ Atleta força</div>
+            <div class="cb" onclick="s1(this,'obj-g')">🎖️ Fisiculturismo</div>
           </div>
         </div>
         <div class="fg full"><label>Nível de atividade</label>
@@ -2438,6 +2447,28 @@ footer strong{color:rgba(245,242,238,0.8);}
             <div class="cb" onclick="tm(this)">Crossfit</div>
             <div class="cb" onclick="tm(this)">Esporte</div>
           </div>
+        </div>
+        <div class="fg full"><label>Nível de condicionamento</label>
+          <div class="cbg" id="nivel-g">
+            <div class="cb" onclick="s1(this,'nivel-g')">🆕 Iniciante</div>
+            <div class="cb active" onclick="s1(this,'nivel-g')">⚡ Intermediário</div>
+            <div class="cb" onclick="s1(this,'nivel-g')">💪 Avançado</div>
+            <div class="cb" onclick="s1(this,'nivel-g')">🏆 Atleta competitivo</div>
+          </div>
+        </div>
+        <div class="fg full"><label>Suplementos que usa</label>
+          <div class="cbg" id="supl-g" style="flex-wrap:wrap;gap:0.4rem;">
+            <div class="cb cb-multi" onclick="tm(this)">Whey protein</div>
+            <div class="cb cb-multi" onclick="tm(this)">Creatina</div>
+            <div class="cb cb-multi" onclick="tm(this)">Cafeína</div>
+            <div class="cb cb-multi" onclick="tm(this)">BCAA</div>
+            <div class="cb cb-multi" onclick="tm(this)">Multivitamínico</div>
+            <div class="cb cb-multi" onclick="tm(this)">Albumina</div>
+            <div class="cb cb-multi active" onclick="tm(this)">Nenhum</div>
+          </div>
+        </div>
+        <div class="fg full"><label>Recurso ergogênico <span style="font-weight:400;color:var(--cinza-med);font-size:0.75rem;">(opcional — não prescreveremos, mas leva em conta)</span></label>
+          <input type="text" id="fergogenicos" placeholder="Ex: hormônio, termogênico, outro...">
         </div>
         <div class="fg full"><label>Restrições</label>
           <div class="cbg" id="rest-g">
@@ -3892,25 +3923,71 @@ function goFS(step){
 function confirmarEGerar(){
   if(!document.getElementById('fidade').value){toast('Preencha sua idade');return;}
   if(!document.getElementById('fsexo').value){toast('Selecione seu sexo');return;}
+  if(!document.getElementById('fpeso').value){toast('Preencha seu peso');return;}
+
+  // Mapear objetivo para chave interna da calculadora
+  var objTexto=document.querySelector('#obj-g .cb.active')?.textContent||'Emagrecer';
+  var objMap={
+    'Emagrecer':         'emagrecer',
+    'Emagrecer suave':   'emagrecer_suave',
+    '🔥 Emagrecer':      'emagrecer',
+    '🌱 Emagrecer suave': 'emagrecer_suave',
+    '⚡ Cutting agressivo':'cutting_agressivo',
+    '🏆 Cutting competitivo':'cutting_competitivo',
+    '🎯 Peak week':       'cutting_competitivo',
+    '⚖️ Recomposição':    'recomposicao',
+    '🔄 Manutenção':      'manutencao',
+    '📈 Ganhar suave':    'ganhar_suave',
+    '💪 Bulking':         'bulking_moderado',
+    '🚀 Bulking agressivo':'bulking_agressivo',
+    '🏃 Atleta resistência':'atleta_resistencia',
+    '🏋️ Atleta força':   'atleta_forca',
+    '🎖️ Fisiculturismo': 'cutting_competitivo',
+    'Secar':             'emagrecer',
+    'Cutting moderado':  'cutting_moderado',
+    'Cutting agressivo': 'cutting_agressivo',
+    'Cutting competitivo':'cutting_competitivo',
+    'Peak week':         'cutting_competitivo',
+    'Recomposição':      'recomposicao',
+    'Manutenção':        'manutencao',
+    'Ganhar suave':      'ganhar_suave',
+    'Ganhar massa':      'ganhar_moderado',
+    'Bulking':           'bulking_moderado',
+    'Bulking agressivo': 'bulking_agressivo',
+    'Atleta resistência':'atleta_resistencia',
+    'Atleta força':      'atleta_forca',
+    'Fisiculturismo':    'cutting_competitivo',
+  };
+  var objKey=objMap[objTexto]||'emagrecer';
+
+  // Mapear atividade para chave
+  var atvTexto=document.querySelector('#atv-g .cb.active')?.textContent||'Moderado';
+  var atvMap={
+    'Sedentário':'sedentario','Levemente':'leve','Moderado':'moderado',
+    'Muito':'intenso','Atleta':'atleta'
+  };
+  var atvKey=Object.keys(atvMap).find(k=>atvTexto.startsWith(k))||'moderado';
+
   FORM_DATA={
-    // Dados físicos
-    nome:USER?.nome||'Usuário',
-    idade:Number(document.getElementById('fidade').value),
-    sexo:document.getElementById('fsexo').value,
-    peso:Number(document.getElementById('fpeso').value),
-    altura:Number(document.getElementById('faltura').value),
-    gordura:document.querySelector('#gord-g .cb.active')?.textContent||'Não sei',
-    // Objetivo
-    objetivo:document.querySelector('#obj-g .cb.active')?.textContent||'Secar',
-    atividade:document.querySelector('#atv-g .cb.active')?.textContent||'Levemente ativo',
-    treinos:[...document.querySelectorAll('#tren-g .cb.active')].map(e=>e.textContent),
+    nome:     USER?.nome||'Usuário',
+    idade:    Number(document.getElementById('fidade').value),
+    sexo:     document.getElementById('fsexo').value,
+    peso:     Number(document.getElementById('fpeso').value),
+    altura:   Number(document.getElementById('faltura').value),
+    gordura:  document.querySelector('#gord-g .cb.active')?.textContent||'Não sei',
+    nivel:    document.querySelector('#nivel-g .cb.active')?.textContent||'⚡ Intermediário',
+    suplementos:[...document.querySelectorAll('#supl-g .cb.active')].map(e=>e.textContent),
+    objetivo: objKey,
+    atividade:atvKey,
+    treinos:  [...document.querySelectorAll('#tren-g .cb.active')].map(e=>e.textContent),
     restricoes:[...document.querySelectorAll('#rest-g .cb.active')].map(e=>e.textContent),
-    naoGosta:document.getElementById('fng').value||'nada',
-    saude:document.getElementById('fsaude').value||'nenhuma',
-    // Rotina — nomes que a API espera
-    acorda:document.getElementById('facorda').value,
-    dorme:document.getElementById('fdorme').value,
-    numRef:Number(document.querySelector('#ref-g .cb.active')?.textContent)||4,
+    suplementos:[...document.querySelectorAll('#supl-g .cb.active')].map(e=>e.textContent),
+    ergogenicos:document.getElementById('fergogenicos')?.value||'',
+    naoGosta: document.getElementById('fng').value||'nada',
+    saude:    document.getElementById('fsaude').value||'nenhuma',
+    acorda:   document.getElementById('facorda').value,
+    dorme:    document.getElementById('fdorme').value,
+    numRef:   Number(document.querySelector('#ref-g .cb.active')?.textContent)||4,
     horTreino:document.querySelector('#htren-g .cb.active')?.textContent||'Manhã',
     tempoPreparo:document.querySelector('#tempo-g .cb.active')?.textContent||'~30min',
     modo:MODO_SEL,
