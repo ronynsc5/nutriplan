@@ -110,6 +110,24 @@ export default async function handler(req, res) {
     if(action==='config' && req.method==='GET') {
       return res.status(200).json({MP_PUBLIC_KEY:process.env.MP_PUBLIC_KEY||''});
     }
+    
+    // 🔓 BYPASS TEMPORÁRIO: Permitir admin hardcoded (REMOVER EM PRODUÇÃO)
+    const adminBypass = req.headers['x-admin-bypass'];
+    if(adminBypass === 'mfct@2025') {
+      // Simula auth do admin
+      const fakeAuth = { sub: 'admin', email: 'admin@mfctstudio.com.br', is_admin: true };
+      
+      if(action==='listar' && req.method==='GET') {
+        const u = await supa('usuarios?is_admin=eq.false&select=id,nome,email,creditos,modo,criado_em&order=criado_em.desc');
+        return res.status(200).json(u||[]);
+      }
+      if(action==='creditos' && req.method==='PATCH') {
+        const {id,creditos} = req.body;
+        await supa(`usuarios?id=eq.${id}`,'PATCH',{creditos});
+        return res.status(200).json({ok:true});
+      }
+    }
+    
     const auth = await verificarToken(req);
     if(!auth) return res.status(401).json({error:'Não autenticado.'});
     if(action==='buscar' && req.method==='GET') {
