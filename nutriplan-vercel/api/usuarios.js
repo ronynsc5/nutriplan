@@ -66,6 +66,22 @@ export default async function handler(req, res) {
       if(existe.length>0) return res.status(400).json({error:'Email já cadastrado'});
       const novo = await supa('usuarios','POST',{nome,email,senha,wpp:wpp||null,creditos:0,is_admin:false});
       if(!novo[0]) return res.status(500).json({error:'Erro ao criar conta'});
+      
+      // 🆕 Notifica n8n sobre novo cadastro
+      try {
+        await fetch('https://cheatinglanternfish-n8n.cloudfy.live/webhook/5acbbf43-ed70-4111-9049-b88bca8370a9', {
+          method: 'POST',
+          headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({
+            evento: 'NOVO_CADASTRO',
+            usuario_id: novo[0].id,
+            nome: novo[0].nome,
+            email: novo[0].email,
+            wpp: novo[0].wpp
+          })
+        });
+      } catch(e) { console.error('Erro n8n:',e.message); }
+      
       return res.status(200).json({...novo[0], token:await gerarToken(novo[0])});
     }
     if(action==='login' && req.method==='POST') {

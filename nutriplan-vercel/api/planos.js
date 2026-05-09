@@ -47,6 +47,29 @@ export default async function handler(req,res) {
       const {usuario_id:uid,tipo,modo,dados_form,plano_gerado,expira_em}=req.body;
       const novo=await supa('planos','POST',{usuario_id:uid,tipo,modo,dados_form,plano_gerado,refeicoes_puladas:[],expira_em});
       try{const u=await supa(`usuarios?id=eq.${uid}&select=creditos`);if(u[0]&&u[0].creditos<999999)await supa(`usuarios?id=eq.${uid}`,'PATCH',{creditos:Math.max(0,u[0].creditos-1)});}catch(e){}
+      
+      // 🆕 Notifica n8n sobre plano criado
+      try {
+        const usuario = await supa(`usuarios?id=eq.${uid}&select=nome,wpp`);
+        const horarios = plano_gerado?.refeicoes?.map(r => ({nome: r.nome, hora: r.hora})) || [];
+        await fetch('https://cheatinglanternfish-n8n.cloudfy.live/webhook/5acbbf43-ed70-4111-9049-b88bca8370a9', {
+          method: 'POST',
+          headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({
+            evento: 'PLANO_CRIADO',
+            usuario_id: uid,
+            plano_id: novo[0]?.id || 'local',
+            nome: usuario[0]?.nome || 'Usuário',
+            wpp: usuario[0]?.wpp,
+            tipo: tipo,
+            modo: modo,
+            horarios: horarios,
+            expira_em: expira_em,
+            link_plano: `https://nutriplan.app/plano/${novo[0]?.id || 'local'}`
+          })
+        });
+      } catch(e) { console.error('Erro n8n:',e.message); }
+      
       return res.status(200).json(novo[0]||{id:'local',plano_gerado,dados_form,modo,tipo,expira_em});
     }
     if((action==='buscar'||action==='meu')&&req.method==='GET') {

@@ -50,6 +50,25 @@ export default async function handler(req,res) {
       let nomeU=nome||null;
       if(!nomeU){try{const u=await supa(`usuarios?id=eq.${uid}&select=nome`);nomeU=u[0]?.nome||'Usuário';}catch(e){nomeU='Usuário';}}
       const novo=await supa('progresso','POST',{usuario_id:uid,nome:nomeU,tipo:tipo||'progresso',conteudo:conteudo||null,publico:publico??false,foto_url:foto_url||null,peso:peso?Number(peso):null,nota:nota||null,foto_antes:foto_antes||null,foto_depois:foto_depois||null});
+      
+      // 🆕 Notifica n8n quando peso é registrado
+      if(peso) {
+        try {
+          const usuario = await supa(`usuarios?id=eq.${uid}&select=nome,wpp`);
+          await fetch('https://cheatinglanternfish-n8n.cloudfy.live/webhook/5acbbf43-ed70-4111-9049-b88bca8370a9', {
+            method: 'POST',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({
+              evento: 'PESO_REGISTRADO',
+              usuario_id: uid,
+              nome: usuario[0]?.nome || 'Usuário',
+              wpp: usuario[0]?.wpp,
+              peso: Number(peso)
+            })
+          });
+        } catch(e) { console.error('Erro n8n:',e.message); }
+      }
+      
       return res.status(200).json(novo[0]||{ok:true});
     }
     if(action==='meu'&&req.method==='GET') {
