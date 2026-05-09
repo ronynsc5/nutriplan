@@ -2,6 +2,8 @@
 // Lógica: Sistema calcula todos os números → IA só organiza as refeições
 
 const GROQ_KEY = process.env.GROQ_API_KEY;
+const SUPA_URL = process.env.SUPABASE_URL;
+const SUPA_KEY = process.env.SUPABASE_SECRET_KEY;
 const JWT_SECRET = process.env.JWT_SECRET || 'nutriplan-secret-change-me';
 
 async function hmac(msg) {
@@ -20,6 +22,21 @@ async function verificarToken(req) {
     if(p.exp&&Date.now()/1000>p.exp) return null;
     return p;
   } catch(e){return null;}
+}
+
+async function supa(path, method='GET', body=null) {
+  const opts = { method, headers: {
+    'Content-Type':'application/json',
+    'apikey':SUPA_KEY,
+    'Authorization':`Bearer ${SUPA_KEY}`,
+    'Prefer':method==='POST'?'return=representation':'return=minimal'
+  }};
+  if(body) opts.body=JSON.stringify(body);
+  const r = await fetch(`${SUPA_URL}/rest/v1/${path}`, opts);
+  const t = await r.text();
+  if(!r.ok) throw new Error(`Supabase ${r.status}`);
+  if(!t) return [];
+  try{ return JSON.parse(t); }catch(e){ return []; }
 }
 
 function calcTMB(peso, altura, idade, sexo) {
@@ -138,6 +155,47 @@ Gere ${Number(d.numRef)||4} refeições entre ${d.acorda||'07:00'} e ${d.dorme||
     try{plano=JSON.parse(clean);}catch(e){throw new Error('IA retornou JSON inválido');}
     plano.calorias=kcalMeta;plano.proteinas=macros.protG;plano.carboidratos=macros.carbG;plano.gorduras=macros.gordG;
     plano.tmb=Math.round(tmb);plano.tdee=tdee;plano.objetivo_nome=aj.nome;plano.agua_litros=Math.round(peso*0.035*10)/10;
+    
+    // ═══════════════════════════════════════════════════════════════════════════
+    // 🤖 DISPARAR AUTOMAÇÃO N8N (WHATSAPP BOT)
+    // Envia dados pro webhook quando plano é gerado
+    // Não bloqueia se falhar - automação é opcional
+    // ═══════════════════════════════════════════════════════════════════════════
+    try {
+      const usuarios = await supa(`usuarios?id=eq.${auth.sub}&select=nome,whatsapp,peso`);
+      const usuario = usuarios && usuarios.length > 0 ? usuarios[0] : null;
+      
+      if (usuario && usuario.whatsapp) {
+        const horarios = plano.refeicoes ? plano.refeicoes.map(r => ({
+          refeicao: r.nome,
+          hora: r.hora || '12:00'
+        })) : [];
+        
+        const validade = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+        
+        await fetch('https://cheatinglanternfish-n8n.cloudfy.live/webhook/5acbbf43-ed70-4111-9049-b88bca8370a9', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            nome: usuario.nome,
+            whatsapp: usuario.whatsapp,
+            horarios,
+            pesoAtual: usuario.peso + 'kg',
+            validadePlano: validade,
+            linkPlano: `https://nutriplan.vercel.app/plano?id=${usuario.whatsapp}`,
+            calorias: plano.calorias,
+            objetivo: plano.objetivo_nome,
+            timestamp: new Date().toISOString()
+          })
+        });
+        console.log('✅ Automação N8N enviada com sucesso!');
+      } else {
+        console.log('⚠️ Usuário sem WhatsApp cadastrado - automação não enviada');
+      }
+    } catch (autoErr) {
+      console.error('⚠️ Erro ao enviar automação N8N (não crítico):', autoErr.message);
+    }
+    
     return res.status(200).json(plano);
   } catch(err) {
     console.error('Erro gerar-plano:',err.message);
