@@ -87,6 +87,22 @@ export default async function handler(req, res) {
     if(action==='login' && req.method==='POST') {
       const {email,senha} = req.body;
       if(!email||!senha) return res.status(400).json({error:'Email e senha obrigatórios'});
+      
+      // 🔐 ADMIN HARDCODED (funciona sem banco)
+      if(email.toLowerCase()==='admin@mfctstudio.com.br' && senha==='mfct@2025') {
+        const adminUser = {
+          id: 'admin',
+          nome: 'Admin MFCT',
+          email: 'admin@mfctstudio.com.br',
+          creditos: 999999,
+          is_admin: true,
+          modo: null,
+          criado_em: new Date().toISOString()
+        };
+        return res.status(200).json({...adminUser, token:await gerarToken(adminUser)});
+      }
+      
+      // Login normal (usuários do banco)
       const u = await supa(`usuarios?email=eq.${encodeURIComponent(email)}&senha=eq.${encodeURIComponent(senha)}&select=*`);
       if(!u.length) return res.status(401).json({error:'Email ou senha incorretos'});
       return res.status(200).json({...u[0], token:await gerarToken(u[0])});
